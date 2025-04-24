@@ -9,6 +9,9 @@ public class PodaciZaSesiju
     public string Datum;
     public string Vrijeme;
     public string Lokacija;
+    public string MapUrl;
+    public string Coordinates;
+    public string Address;
 
     public PodaciZaSesiju(string dan, string datum, string vrijeme, string lokacija)
     {
@@ -16,6 +19,9 @@ public class PodaciZaSesiju
         Datum = datum;
         Vrijeme = vrijeme;
         Lokacija = lokacija;
+        MapUrl = "";
+        Coordinates = "";
+        Address = "";
     }
 
     public override string ToString()
@@ -65,9 +71,14 @@ internal class Tools
             {
                 foreach (string vrijemeIlokacija in dan.VremenaILokacije)
                 {
-                    (string vrijeme, string lokacija) = ObradiVrijemeILokaciju(vrijemeIlokacija);
+                    (string vrijeme, string lokacija, string mapUrl, string coordinates, string address) = ObradiVrijemeILokaciju(vrijemeIlokacija);
 
-                    PodaciZaSesiju sesija = new PodaciZaSesiju(dan.Dan, $"{datum:yyyy-MM-dd}", vrijeme, lokacija);
+                    PodaciZaSesiju sesija = new PodaciZaSesiju(dan.Dan, $"{datum:yyyy-MM-dd}", vrijeme, lokacija)
+                    {
+                        MapUrl = mapUrl,
+                        Coordinates = coordinates,
+                        Address = address
+                    };
 
                     sesije.Add(sesija);
                 }
@@ -75,7 +86,12 @@ internal class Tools
 
             foreach (var datum in neradniDatumi)
             {
-                PodaciZaSesiju sesija = new PodaciZaSesiju(dan.Dan, $"{datum:yyyy-MM-dd}", "", "=== neradni dan ===");
+                PodaciZaSesiju sesija = new PodaciZaSesiju(dan.Dan, $"{datum:yyyy-MM-dd}", "", "=== neradni dan ===")
+                {
+                    MapUrl = "",
+                    Coordinates = "",
+                    Address = "Neradni dan"
+                };
 
                 sesije.Add(sesija);
             }
@@ -92,19 +108,82 @@ internal class Tools
         return sesije;
     }
 
-    public static (string vrijeme, string lokacija) ObradiVrijemeILokaciju(string vrijemeIlokacija)
+    public static (string vrijeme, string lokacija, string mapUrl, string coordinates, string address) ObradiVrijemeILokaciju(string vrijemeIlokacija)
     {
         string[] parts = vrijemeIlokacija.Split('#');
         if (parts.Length != 2)
             throw new Exception("Vrijeme i lokacija nisu u ispravnom formatu.");
 
-        string text1 = parts[1].Trim().Replace(Environment.NewLine, " ").Replace("\n", " ").Trim();
-        text1 = text1.Replace("\t", " ").Replace("&nbsp;", " ");
+        // Parse HTML to extract Google Maps URL and address
+        string mapUrl = "";
+        string coordinates = "";
+        string address = "";
+        string locationHtml = parts[1];
+        string cleanedText = "";
+        
+        // Parse HTML to extract Google Maps URL
+        HtmlDocument doc = new HtmlDocument();
+        doc.LoadHtml(locationHtml);
+        
+        // Extract clean text first
+        cleanedText = doc.DocumentNode.InnerText.Trim();
+        cleanedText = cleanedText.Replace("\t", " ").Replace("\r", " ").Replace("\n", " ").Replace("&nbsp;", " ");
+        while (cleanedText.Contains("  "))
+            cleanedText = cleanedText.Replace("  ", " ");
+        
+        // Look for Google Maps link
+        var linkNode = doc.DocumentNode.SelectSingleNode(".//a[contains(@href, 'google.com/maps')]");
+        if (linkNode != null)
+        {
+            mapUrl = linkNode.GetAttributeValue("href", "");
+            
+            // Try to extract address from link text if different from location name
+            string linkText = linkNode.InnerText.Trim();
+            if (linkText != cleanedText && !string.IsNullOrWhiteSpace(linkText))
+            {
+                address = linkText;
+            }
+            
+            // Extract coordinates from URL
+            if (mapUrl.Contains("@"))
+            {
+                // Format: .../place/Location/@45.832091,15.988697,...
+                int atIndex = mapUrl.IndexOf('@');
+                if (atIndex > 0)
+                {
+                    int commaIndex = mapUrl.IndexOf(',', atIndex);
+                    if (commaIndex > 0)
+                    {
+                        // Find the end index (next comma or slash after coordinates)
+                        int endIndex = mapUrl.IndexOf(',', commaIndex + 1);
+                        int slashIndex = mapUrl.IndexOf('/', commaIndex);
+                        
+                        if (slashIndex > 0 && (slashIndex < endIndex || endIndex < 0))
+                            endIndex = slashIndex;
+                        if (endIndex < 0)
+                            endIndex = mapUrl.Length;
+                        
+                        coordinates = mapUrl.Substring(atIndex + 1, endIndex - atIndex - 1);
+                    }
+                }
+            }
+            else if (mapUrl.Contains("ll="))
+            {
+                // Format: ...?ll=45.748839%2C15.946312...
+                int llIndex = mapUrl.IndexOf("ll=");
+                if (llIndex > 0)
+                {
+                    int startIndex = llIndex + 3;
+                    int endIndex = mapUrl.IndexOf('&', startIndex);
+                    if (endIndex < 0) endIndex = mapUrl.Length;
+                    
+                    string encodedCoordinates = mapUrl.Substring(startIndex, endIndex - startIndex);
+                    coordinates = Uri.UnescapeDataString(encodedCoordinates); // Handle %2C format
+                }
+            }
+        }
 
-
-        while (text1.IndexOf("  ") > -1)
-            text1 = text1.Replace("  ", " ");
-
+        // Process the time part
         string text2 = parts[0].Trim().Replace(Environment.NewLine, " ").Replace("\n", " ").Replace(" ", "").Trim();
         text2 = text2.Replace(" ", "").Replace("&nbsp;", "");
         if (text2.IndexOf(':') == 1) text2 = "0" + text2;
@@ -115,7 +194,7 @@ internal class Tools
             text2 = text2.Insert(6, "0");
         }
 
-        return (text2, text1);
+        return (text2, cleanedText, mapUrl, coordinates, address);
     }
     private static (List<DateTime> sviDatumi, List<DateTime> radniDatumi, List<DateTime> neradniDatumi) IzvadiDatume(HtmlNode danNode)
     {

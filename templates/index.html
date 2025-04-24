@@ -53,6 +53,7 @@
                         <th>Datum</th>
                         <th>Vrijeme</th>
                         <th>Lokacija</th>
+                        <th>Karta</th>
                     </tr>
                 </thead>
                 <tbody id="schedule-data">
@@ -355,10 +356,25 @@
                             return 0;
                         });
                         
-                        // Display all entries in time-first format
+                        // Display all entries in time-first format with map links
                         allEntries.forEach(entry => {
+                            // Find the data for this entry to get map URL
+                            const sessionData = dayEntries.find(s => 
+                                s.lokacija === entry.location && 
+                                s.vrijeme && s.vrijeme.startsWith(entry.startTime)
+                            );
+                            
+                            let mapLink = '';
+                            if (sessionData && sessionData.mapUrl) {
+                                mapLink = `<a href="${sessionData.mapUrl}" target="_blank" class="map-link" 
+                                    title="${sessionData.address || sessionData.lokacija}">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </a>`;
+                            }
+                            
                             calendarHTML += `<div class="calendar-location">
                                 <span class="location-entry">${entry.startTime} ${entry.location}</span>
+                                ${mapLink}
                             </div>`;
                         });
                     }

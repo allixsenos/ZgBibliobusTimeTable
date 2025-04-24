@@ -37,7 +37,8 @@ public static class WebContent
                 {
                     tekuciDan = new PodaciZaDan();
                     tekuciDan.danNode = tableDatas[0];
-                    tekuciDan.VremenaILokacije.Add(tableDatas[2].InnerText + "#" + tableDatas[1].InnerText);
+                    // Store InnerHtml instead of InnerText to preserve links
+                    tekuciDan.VremenaILokacije.Add(tableDatas[2].InnerHtml + "#" + tableDatas[1].InnerHtml);
                     dani.Add(tekuciDan);
                 }
                 else if (tdCount == 2)
@@ -45,7 +46,8 @@ public static class WebContent
                     if (tekuciDan.danNode is null)
                         throw new Exception("Tekuci dan je prazan.");
 
-                    tekuciDan.VremenaILokacije.Add(tableDatas[1].InnerText + "#" + tableDatas[0].InnerText);
+                    // Store InnerHtml instead of InnerText to preserve links
+                    tekuciDan.VremenaILokacije.Add(tableDatas[1].InnerHtml + "#" + tableDatas[0].InnerHtml);
                 }
                 else
                     throw new Exception("TableDatas count is not 2 or 3.");

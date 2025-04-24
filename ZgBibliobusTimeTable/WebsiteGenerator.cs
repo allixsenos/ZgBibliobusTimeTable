@@ -113,11 +113,26 @@ public static class WebsiteGenerator
             string formattedDate = ConvertDateFormat(sesija.Datum);
             
             string rowClass = sesija.Lokacija.Contains("neradni dan") ? " class=\"non-working-day\"" : "";
-            sb.AppendLine($"<tr{rowClass}>");
+            string locationId = SanitizeLocationId(sesija.Lokacija);
+            
+            sb.AppendLine($"<tr{rowClass} data-location-id=\"{locationId}\">");
             sb.AppendLine($"<td>{sesija.Dan}</td>");
             sb.AppendLine($"<td>{formattedDate}</td>");
             sb.AppendLine($"<td>{sesija.Vrijeme}</td>");
             sb.AppendLine($"<td>{sesija.Lokacija}</td>");
+            
+            // Add map link if available
+            if (!string.IsNullOrEmpty(sesija.MapUrl))
+            {
+                sb.AppendLine($"<td><a href=\"{sesija.MapUrl}\" target=\"_blank\" class=\"map-link\" " +
+                    $"title=\"{(string.IsNullOrEmpty(sesija.Address) ? sesija.Lokacija : sesija.Address)}\">" +
+                    $"<i class=\"fas fa-map-marker-alt\"></i></a></td>");
+            }
+            else
+            {
+                sb.AppendLine("<td></td>");
+            }
+            
             sb.AppendLine("</tr>");
         }
 
@@ -169,7 +184,10 @@ public static class WebsiteGenerator
             vrijeme = s.Vrijeme,
             lokacija = s.Lokacija,
             locationId = SanitizeLocationId(s.Lokacija),
-            isNeradniDan = s.Lokacija.Contains("neradni dan")
+            isNeradniDan = s.Lokacija.Contains("neradni dan"),
+            mapUrl = s.MapUrl,
+            coordinates = s.Coordinates,
+            address = s.Address
         });
         
         // Create the combined data object

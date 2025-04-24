@@ -219,8 +219,35 @@ public static class ICalGenerator
                 sb.AppendLine($"DTSTART:{startDateTimeString}");
                 sb.AppendLine($"DTEND:{endDateTimeString}");
                 sb.AppendLine($"SUMMARY:Bibliobus - {sesija.Lokacija}");
-                sb.AppendLine($"LOCATION:{sesija.Lokacija}");
-                sb.AppendLine($"DESCRIPTION:Bibliobus u {sesija.Lokacija} ({sesija.Dan})");
+                
+                // Include address and/or coordinates in LOCATION if available
+                string locationInfo = string.IsNullOrEmpty(sesija.Address) ? sesija.Lokacija : sesija.Address;
+                if (!string.IsNullOrEmpty(sesija.Coordinates)) 
+                {
+                    locationInfo = $"{locationInfo}, geo:{sesija.Coordinates}";
+                }
+                sb.AppendLine($"LOCATION:{locationInfo}");
+                
+                // Include maps URL in description if available
+                string description = $"Bibliobus u {sesija.Lokacija} ({sesija.Dan})";
+                if (!string.IsNullOrEmpty(sesija.MapUrl))
+                {
+                    // Need to escape special characters in description
+                    description = $"{description}\\n\\nMaps: {sesija.MapUrl.Replace(",", "\\,")}";
+                }
+                sb.AppendLine($"DESCRIPTION:{description}");
+                
+                // Add geographic position if coordinates are available
+                if (!string.IsNullOrEmpty(sesija.Coordinates) && sesija.Coordinates.Contains(','))
+                {
+                    string[] latLng = sesija.Coordinates.Split(',');
+                    if (latLng.Length == 2 && 
+                        double.TryParse(latLng[0], out double lat) && 
+                        double.TryParse(latLng[1], out double lng))
+                    {
+                        sb.AppendLine($"GEO:{lat};{lng}");
+                    }
+                }
                 
                 // Add reminder alert 30 minutes before
                 sb.AppendLine("BEGIN:VALARM");
