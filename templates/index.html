@@ -32,9 +32,11 @@
                 <option value="SUBOTA">Subota</option>
                 <option value="NEDJELJA">Nedjelja</option>
             </select>
-            <select id="filter-location">
-                <!-- Will be populated from JSON data -->
+            <select id="filter-location" aria-label="Filtriraj lokaciju i preuzmi specifični kalendar">
+                <option value="" selected>Odaberi lokaciju</option>
+                <!-- Additional options will be populated from JSON data -->
             </select>
+            <label for="filter-location" class="sr-only">Odaberi lokaciju za filtriranje i preuzimanje kalendara</label>
         </div>
 
         <div class="data-info">
@@ -42,7 +44,9 @@
             <div class="data-tab" data-tab="calendar">Kalendarski prikaz</div>
             <div class="data-download">
                 <a href="bibliobus-data.json" download><i class="fas fa-download"></i> Preuzmi JSON</a>
-                <a id="calendar-download" href="bibliobus-calendar.ics" download><i class="fas fa-calendar-alt"></i> Preuzmi iCalendar</a>
+                <a id="calendar-download" href="bibliobus-calendar.ics" download>
+                    <i class="fas fa-calendar-alt"></i> <span id="calendar-download-text">Preuzmi iCalendar (sve lokacije)</span>
+                </a>
             </div>
         </div>
 
@@ -72,7 +76,8 @@
             <div class="calendar-info">
                 <p>Za dodavanje u Google Calendar ili drugi kalendar, preuzmite <a id="calendar-info-link" href="bibliobus-calendar.ics" download>iCalendar datoteku</a>, 
                 a zatim je uvezite u vašu aplikaciju za kalendar.</p>
-                <p>Možete preuzeti raspored samo za određenu lokaciju tako da je odaberete iz padajućeg izbornika.</p>
+                <p class="location-specific-note"><strong>Važno:</strong> Kada odaberete lokaciju iz padajućeg izbornika, 
+                gumb za preuzimanje kalendara će automatski preuzeti iCalendar <strong>samo za odabranu lokaciju</strong>.</p>
             </div>
             <div id="calendar-container">
                 <!-- Calendar will be rendered here -->
@@ -113,8 +118,8 @@
         // Initialize the location filter dropdown
         const locationFilterSelect = document.getElementById('filter-location');
         
-        // Add location options to the dropdown
-        locationOptions.forEach(location => {
+        // Add location options to the dropdown (skip "all locations" since we already have a placeholder)
+        locationOptions.slice(1).forEach(location => {
             const option = document.createElement('option');
             option.value = location.value;
             option.textContent = location.name;
@@ -122,14 +127,28 @@
             locationFilterSelect.appendChild(option);
         });
         
+        // Update the placeholder option with the "all locations" calendar file
+        const placeholderOption = locationFilterSelect.options[0];
+        placeholderOption.dataset.calendarFile = "bibliobus-calendar.ics";
+        
         // Update calendar download links when location changes
         locationFilterSelect.addEventListener('change', function() {
             const selectedOption = locationFilterSelect.options[locationFilterSelect.selectedIndex];
             const calendarFile = selectedOption.dataset.calendarFile;
+            const locationName = selectedOption.textContent;
+            const isAllLocations = selectedOption.value === '';
             
             // Update download links
             document.getElementById('calendar-download').href = calendarFile;
             document.getElementById('calendar-info-link').href = calendarFile;
+            
+            // Update download text
+            const downloadTextElement = document.getElementById('calendar-download-text');
+            if (isAllLocations) {
+                downloadTextElement.textContent = 'Preuzmi iCalendar (sve lokacije)';
+            } else {
+                downloadTextElement.textContent = `Preuzmi iCalendar (${locationName})`;
+            }
             
             // Update calendar and table views
             filterSchedule();
