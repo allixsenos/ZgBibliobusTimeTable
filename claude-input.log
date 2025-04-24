@@ -230,3 +230,12 @@ also hide dates in the past from the default view, put them behind a little text
 \"show past schedule\" on list view is great, just put it at the top of the list instead of at the bottom
 
 can you add an \"add to calendar\" widget that creates links for the most common calendars - google calendar, outlook.com, etc? I'm sure there's a js widget available for this."
+38. "there's a JS error with the add to calendar widget:
+
+atcb.js:5549  TypeError: Cannot read properties of undefined (reading 'replace')
+    at zt (atcb.js:3908:29)
+    at atcb.js:5533:28
+    at atcb.js:5532:18
+    at window.atcb_action (atcb.js:1:116)
+    at updateAddToCalendarWidget (ZgBibliobusTimeTable/:5362:17)
+    at ZgBibliobusTimeTable/:5392:17"
