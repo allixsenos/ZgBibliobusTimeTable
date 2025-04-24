@@ -79,35 +79,18 @@ header p {
     opacity: 0.8;
 }
 
-/* Search and filter styles */
-.search-container {
-    display: flex;
-    gap: 10px;
+/* Navigation container styles */
+.navigation-container {
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-#search {
-    flex: 1;
-    padding: 10px 15px;
-    border: 1px solid var(--medium-gray);
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-#filter-day, #filter-location {
-    padding: 10px 15px;
-    border: 1px solid var(--medium-gray);
-    border-radius: 4px;
-    font-size: 1rem;
-    background-color: white;
-    min-width: 150px;
-}
-
-/* Data info and tabs */
-.data-info {
+/* Data views tab bar */
+.data-views {
     display: flex;
     border-bottom: 1px solid var(--medium-gray);
-    margin-bottom: 20px;
 }
 
 .data-tab {
@@ -122,27 +105,105 @@ header p {
     color: var(--primary-color);
 }
 
+/* Location tabs styles */
+.location-tabs-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--medium-gray);
+    margin: 10px 0;
+}
+
+.location-tabs {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    gap: 5px;
+    padding: 0 5px 10px 5px;
+    flex-grow: 1;
+}
+
+.location-tabs::-webkit-scrollbar { /* Chrome, Safari and Opera */
+    display: none;
+}
+
+.location-tab {
+    padding: 8px 15px;
+    cursor: pointer;
+    white-space: nowrap;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.location-tab:hover {
+    background-color: #e0e0e0;
+}
+
+.location-tab.active {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.location-tabs-scroll {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 5px;
+}
+
+.scroll-btn {
+    background-color: white;
+    border: 1px solid var(--medium-gray);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.scroll-btn:hover {
+    background-color: #f4f4f4;
+}
+
+/* Download links */
 .data-download {
-    margin-left: auto;
-    padding: 12px 20px;
+    padding: 12px 0;
     display: flex;
     flex-direction: column;
     gap: 6px;
+    margin-top: 10px;
 }
 
 .data-download a {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 8px;
+    padding: 8px 15px;
     background-color: #f4f4f4;
-    border-radius: 4px;
+    border-radius: 20px;
     transition: background-color 0.2s;
+    width: fit-content;
 }
 
 .data-download a:hover {
     background-color: #e0e0e0;
     text-decoration: none;
+}
+
+/* Highlighted row style */
+.highlighted-row {
+    background-color: #fffde7 !important;
+    border-left: 3px solid var(--accent-color);
+    font-weight: bold;
 }
 
 /* Table styles */
@@ -233,6 +294,7 @@ tr.non-working-day {
     border-radius: 4px;
     padding: 8px 10px;
     color: #7d5700;
+    margin-top: 8px;
 }
 
 .calendar-info a {
@@ -368,13 +430,13 @@ footer a {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .search-container {
-        flex-direction: column;
-        gap: 10px;
+    .location-tab {
+        padding: 6px 12px;
+        font-size: 0.85rem;
     }
     
-    #filter-day, #filter-location {
-        width: 100%;
+    .location-tabs {
+        padding-bottom: 8px;
     }
     
     .calendar-day {
@@ -397,22 +459,48 @@ footer a {
 }
 
 @media (max-width: 576px) {
-    .data-info {
-        flex-wrap: wrap;
+    .data-views {
+        border-bottom: none;
     }
     
     .data-tab {
-        padding: 10px 15px;
+        padding: 8px 12px;
+        flex: 1;
+        text-align: center;
+        font-size: 0.9rem;
+        border: 1px solid var(--medium-gray);
+        border-radius: 4px 4px 0 0;
+        margin-right: 2px;
+    }
+    
+    .data-tab.active {
+        border-bottom-color: transparent;
+        border-top-color: var(--accent-color);
+        border-top-width: 3px;
+        background-color: #f9f9f9;
+    }
+    
+    .location-tabs {
+        padding-bottom: 6px;
+    }
+    
+    .location-tab {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .scroll-btn {
+        width: 28px;
+        height: 28px;
     }
     
     .data-download {
-        width: 100%;
-        text-align: center;
-        margin-top: 10px;
-        padding: 10px 0;
+        align-items: center;
+        margin-top: 15px;
     }
     
     .data-download a {
+        width: 100%;
         justify-content: center;
     }
 }
