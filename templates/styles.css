@@ -210,13 +210,13 @@ tr.non-working-day {
 }
 
 .calendar-day {
-    padding: 10px;
-    min-height: 120px;
-    height: 120px;
+    padding: 6px;
+    min-height: 140px;
+    height: auto;
     border-right: 1px solid var(--medium-gray);
     border-bottom: 1px solid var(--medium-gray);
     position: relative;
-    overflow: visible;
+    overflow: hidden;
 }
 
 .calendar-day:nth-child(7n) {
@@ -242,44 +242,28 @@ tr.non-working-day {
 }
 
 .day-events {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--primary-color);
-}
-
-.location-count {
-    display: inline-block;
-    padding: 2px 6px;
-    background-color: #e3f2fd;
-    border-radius: 4px;
     margin-top: 2px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.location-count:hover {
-    background-color: #c9e6fc;
-}
-
-.location-details {
-    background-color: white;
-    border-radius: 4px;
-    border: 1px solid #e3f2fd;
-    padding: 4px;
-    margin-top: 4px;
-    max-height: 180px;
     overflow-y: auto;
-    z-index: 100; /* Higher z-index to ensure it's on top */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    position: absolute;
-    width: calc(100% - 12px);
-    left: 0;
+    max-height: 110px; /* Limit height to prevent overflow */
+}
+
+.more-locations {
+    margin-top: 2px;
+    font-size: 0.75rem;
+    color: var(--accent-color);
+    text-align: center;
+    border-top: 1px dashed var(--medium-gray);
+    padding-top: 2px;
 }
 
 .calendar-location {
-    padding: 4px 0;
+    padding: 2px 0;
     border-bottom: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
+    line-height: 1.2;
 }
 
 .calendar-location:last-child {
@@ -287,18 +271,25 @@ tr.non-working-day {
 }
 
 .location-name {
-    font-weight: bold;
+    font-weight: 600;
     color: var(--primary-color);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .location-time {
     color: var(--dark-gray);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 }
 
 .calendar-location.non-working-day {
     font-style: italic;
     color: var(--error-color);
+    text-align: center;
+    font-weight: 600;
+    padding: 6px 0;
 }
 
 /* Footer styles */

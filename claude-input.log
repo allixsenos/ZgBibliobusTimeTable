@@ -26,3 +26,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 12. "something failed on the latest run"
 13. "calendar view is empty, issues: 1. calendar view is empty 2. date format is yyyy-mm-dd, please use the croatian standard d.m.yyyy."
 14. "the calendar view shows \"4 lokacije\" \"5 lokacije\" \"6 lokacije\"... I would like to see a list of actual locations with start times."
+15. "the locations are hidden behind a dropdown. make them always visible, one per line, in every day of the calendar"

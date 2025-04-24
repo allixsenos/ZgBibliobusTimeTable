@@ -78,32 +78,6 @@
     </footer>
 
     <script>
-        // Function to toggle visibility of location details in calendar
-        function toggleLocationDetails(element) {
-            const detailsElement = element.nextElementSibling;
-            const isHidden = detailsElement.style.display === 'none';
-            
-            // Hide all other open detail elements first
-            document.querySelectorAll('.location-details').forEach(el => {
-                el.style.display = 'none';
-            });
-            document.querySelectorAll('.location-count').forEach(el => {
-                el.textContent = el.textContent.replace('▲', '▼');
-            });
-            
-            // Toggle this element
-            if (isHidden) {
-                detailsElement.style.display = 'block';
-                element.textContent = element.textContent.replace('▼', '▲');
-            } else {
-                detailsElement.style.display = 'none';
-                element.textContent = element.textContent.replace('▲', '▼');
-            }
-            
-            // Prevent event from bubbling to parent elements
-            event.stopPropagation();
-        }
-    
         // Data loaded from JSON file
         const scheduleData = {{JSON_DATA}};
         
@@ -245,30 +219,33 @@
                         entriesByLocation[entry.lokacija].push(entry);
                     });
                     
-                    // Create a button to show/hide details
-                    const locationCount = Object.keys(entriesByLocation).length;
-                    calendarHTML += `<div class="location-count" onclick="toggleLocationDetails(this)">${locationCount} ${locationCount === 1 ? 'lokacija' : 'lokacije'} ▼</div>`;
+                    // Display all locations directly, always visible
+                    const locations = Object.keys(entriesByLocation).sort();
                     
-                    // Create the hidden details element
-                    calendarHTML += '<div class="location-details" style="display: none;">';
-                    
-                    // Add each location with its time
-                    Object.keys(entriesByLocation).sort().forEach(location => {
-                        const entries = entriesByLocation[location];
-                        const times = entries.map(e => e.vrijeme).filter(t => t).join(', ');
+                    // For non-working days, display specially
+                    if (locations.includes("=== neradni dan ===")) {
+                        calendarHTML += `<div class="calendar-location non-working-day">=== neradni dan ===</div>`;
+                    } else {
+                        // Limited to first 5 locations to avoid overwhelming UI, with indicator if more exist
+                        const displayLocations = locations.length > 5 ? locations.slice(0, 5) : locations;
                         
-                        // Skip displaying "neradni dan" in the list of locations
-                        if (location === "=== neradni dan ===") {
-                            calendarHTML += `<div class="calendar-location non-working-day">${location}</div>`;
-                        } else {
+                        displayLocations.forEach(location => {
+                            const entries = entriesByLocation[location];
+                            const times = entries.map(e => e.vrijeme).filter(t => t).join(', ');
+                            
                             calendarHTML += `<div class="calendar-location">
                                 <span class="location-name">${location}</span>
                                 <span class="location-time">${times}</span>
                             </div>`;
+                        });
+                        
+                        // If there are more locations than we're displaying, add indicator
+                        if (locations.length > 5) {
+                            const remaining = locations.length - 5;
+                            calendarHTML += `<div class="more-locations">+ ${remaining} ${remaining === 1 ? 'more location' : 'more locations'}</div>`;
                         }
-                    });
+                    }
                     
-                    calendarHTML += '</div>'; // Close location-details
                     calendarHTML += '</div>'; // Close day-events
                 }
                 
