@@ -365,6 +365,14 @@ tr.non-working-day {
     background-color: #ddeeff;
 }
 
+.calendar-day.past-date {
+    opacity: 0.5;
+}
+
+.show-past-dates .calendar-day.past-date {
+    opacity: 1;
+}
+
 .day-events {
     font-size: 0.8rem;
     color: var(--primary-color);
@@ -533,6 +541,42 @@ tr.non-working-day {
     padding: 20px;
     color: var(--dark-gray);
     font-style: italic;
+}
+
+.past-dates-button {
+    display: block;
+    background-color: #f0f0f0;
+    color: #666;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 10px auto 20px;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.past-dates-button:hover {
+    background-color: #e0e0e0;
+}
+
+.past-date-heading {
+    display: none;
+}
+
+body.show-past-dates .past-date-heading,
+#list-view-container.show-past-dates .past-date-heading {
+    display: block;
+}
+
+.past-schedule-entries {
+    display: none;
+}
+
+body.show-past-dates .past-schedule-entries,
+#list-view-container.show-past-dates .past-schedule-entries {
+    display: block;
 }
 
 /* Keep old map link style for backwards compatibility */
