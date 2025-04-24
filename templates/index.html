@@ -226,24 +226,42 @@
                     if (locations.includes("=== neradni dan ===")) {
                         calendarHTML += `<div class="calendar-location non-working-day">=== neradni dan ===</div>`;
                     } else {
-                        // Limited to first 5 locations to avoid overwhelming UI, with indicator if more exist
-                        const displayLocations = locations.length > 5 ? locations.slice(0, 5) : locations;
+                        // Create a sorted list of entries by start time
+                        let allEntries = [];
                         
-                        displayLocations.forEach(location => {
-                            const entries = entriesByLocation[location];
-                            const times = entries.map(e => e.vrijeme).filter(t => t).join(', ');
-                            
-                            calendarHTML += `<div class="calendar-location">
-                                <span class="location-name">${location}</span>
-                                <span class="location-time">${times}</span>
-                            </div>`;
+                        locations.forEach(location => {
+                            entriesByLocation[location].forEach(entry => {
+                                // Extract the start time from the time range
+                                let startTime = "";
+                                if (entry.vrijeme && entry.vrijeme.includes('-')) {
+                                    startTime = entry.vrijeme.split('-')[0].trim();
+                                } else if (entry.vrijeme) {
+                                    startTime = entry.vrijeme;
+                                }
+                                
+                                if (startTime) {
+                                    allEntries.push({
+                                        startTime: startTime,
+                                        location: entry.lokacija,
+                                        fullTime: entry.vrijeme
+                                    });
+                                }
+                            });
                         });
                         
-                        // If there are more locations than we're displaying, add indicator
-                        if (locations.length > 5) {
-                            const remaining = locations.length - 5;
-                            calendarHTML += `<div class="more-locations">+ ${remaining} ${remaining === 1 ? 'more location' : 'more locations'}</div>`;
-                        }
+                        // Sort entries by start time
+                        allEntries.sort((a, b) => {
+                            if (a.startTime < b.startTime) return -1;
+                            if (a.startTime > b.startTime) return 1;
+                            return 0;
+                        });
+                        
+                        // Display all entries in time-first format
+                        allEntries.forEach(entry => {
+                            calendarHTML += `<div class="calendar-location">
+                                <span class="location-entry">${entry.startTime} ${entry.location}</span>
+                            </div>`;
+                        });
                     }
                     
                     calendarHTML += '</div>'; // Close day-events
