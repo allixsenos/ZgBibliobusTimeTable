@@ -111,12 +111,24 @@ header p {
 .data-download {
     margin-left: auto;
     padding: 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .data-download a {
     display: flex;
     align-items: center;
     gap: 6px;
+    padding: 4px 8px;
+    background-color: #f4f4f4;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.data-download a:hover {
+    background-color: #e0e0e0;
+    text-decoration: none;
 }
 
 /* Table styles */
@@ -181,6 +193,25 @@ tr.non-working-day {
 
 .calendar-nav button:hover {
     background-color: var(--secondary-color);
+}
+
+.calendar-info {
+    background-color: #f3f9ff;
+    border: 1px solid #e0f0ff;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+}
+
+.calendar-info p {
+    margin: 0;
+}
+
+.calendar-info a {
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
 .calendar {
