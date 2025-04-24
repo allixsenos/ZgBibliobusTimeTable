@@ -60,6 +60,7 @@ header {
     padding: 1.5rem 0;
     margin-bottom: 2rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
 }
 
 header h1 {
@@ -77,6 +78,40 @@ header p {
     font-size: 0.9rem;
     margin-top: 0.8rem;
     opacity: 0.8;
+}
+
+/* Language selector styles */
+.language-selector {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.language-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    padding: 3px 5px;
+    transition: color 0.2s;
+}
+
+.language-link.active {
+    color: white;
+    text-decoration: underline;
+}
+
+.language-link:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.language-separator {
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 3px;
 }
 
 /* Navigation container styles */
@@ -452,10 +487,10 @@ tr.non-working-day {
 }
 
 .calendar-location {
-    padding: 3px 0;
+    padding: 1px 0;
     border-bottom: 1px solid #f0f0f0;
     line-height: 1.3;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 
 .calendar-location:last-child {
@@ -532,23 +567,22 @@ tr.non-working-day {
 
 /* Styles for the calendar location entry links */
 .location-entry-link {
-    display: flex;
-    align-items: flex-start;
+    display: inline-block;
+    width: 100%;
     padding: 3px;
-    color: inherit;
+    color: var(--primary-color);
     text-decoration: none;
     border-radius: 3px;
     transition: background-color 0.2s;
     cursor: pointer;
+    font-size: 0.8rem;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .location-entry-link:hover {
     background-color: #ddeeff;
     text-decoration: none;
-}
-
-.location-entry-link .location-name {
-    color: var(--primary-color);
 }
 
 /* Keep for backwards compatibility */
@@ -571,6 +605,20 @@ tr.non-working-day {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 20px;
     margin-bottom: 30px;
+}
+
+.list-section-header {
+    color: var(--secondary-color);
+    background-color: var(--light-gray);
+    padding: 10px 15px;
+    margin: 20px 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.list-section-header:first-child {
+    margin-top: 0;
 }
 
 .date-heading {
@@ -637,6 +685,17 @@ tr.non-working-day {
     font-style: italic;
 }
 
+.list-section-header {
+    background-color: #f0f0f0;
+    color: var(--dark-gray);
+    padding: 10px 15px;
+    margin: 20px 0 15px 0;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
 .past-dates-button {
     display: block;
     background-color: #f0f0f0;
@@ -659,7 +718,6 @@ tr.non-working-day {
     display: none;
 }
 
-body.show-past-dates .past-date-heading,
 #list-view-container.show-past-dates .past-date-heading {
     display: block;
 }
@@ -668,7 +726,6 @@ body.show-past-dates .past-date-heading,
     display: none;
 }
 
-body.show-past-dates .past-schedule-entries,
 #list-view-container.show-past-dates .past-schedule-entries {
     display: block;
 }

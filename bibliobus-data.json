@@ -3,232 +3,370 @@
     {
       "name": "Sve lokacije",
       "value": "",
-      "calendarFile": "bibliobus-calendar.ics"
+      "calendarFile": "bibliobus-calendar.ics",
+      "mapUrl": "",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "BOROVJE",
       "value": "borovje",
-      "calendarFile": "bibliobus-borovje.ics"
+      "calendarFile": "bibliobus-borovje.ics",
+      "mapUrl": "https://goo.gl/maps/9BwKvpa76iLgVB5b6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "BOTINEC",
       "value": "botinec",
-      "calendarFile": "bibliobus-botinec.ics"
+      "calendarFile": "bibliobus-botinec.ics",
+      "mapUrl": "https://goo.gl/maps/KbWdwXH1mz7hBJK4A",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "BRATINA",
       "value": "bratina",
-      "calendarFile": "bibliobus-bratina.ics"
+      "calendarFile": "bibliobus-bratina.ics",
+      "mapUrl": "https://goo.gl/maps/RMbjX99GQ2c4KzgL7",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "CVJETNO NASELJE",
       "value": "cvjetno-naselje",
-      "calendarFile": "bibliobus-cvjetno-naselje.ics"
+      "calendarFile": "bibliobus-cvjetno-naselje.ics",
+      "mapUrl": "https://goo.gl/maps/2tWiB9Krdhki2jcV7",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
       "value": "dragonozec-dv-potocic",
-      "calendarFile": "bibliobus-dragonozec-dv-potocic.ics"
+      "calendarFile": "bibliobus-dragonozec-dv-potocic.ics",
+      "mapUrl": "https://www.kgz.hr/UserDocsImages/bibliobus/goo.gl/maps/mGHcd27CoYXXubAv8",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "DRAGONO\u017DEC P\u0160",
       "value": "dragonozec-ps",
-      "calendarFile": "bibliobus-dragonozec-ps.ics"
+      "calendarFile": "bibliobus-dragonozec-ps.ics",
+      "mapUrl": "https://maps.app.goo.gl/tCA1C4LD8BAsu5DR8",
+      "coordinates": "",
+      "address": "DRAGONO\u017DEC"
     },
     {
       "name": "DV POTO\u010CI\u0106",
       "value": "dv-potocic",
-      "calendarFile": "bibliobus-dv-potocic.ics"
+      "calendarFile": "bibliobus-dv-potocic.ics",
+      "mapUrl": "https://goo.gl/maps/SvtPWaQAhDL4MUdv8",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "GORNJA KUSTO\u0160IJA",
       "value": "gornja-kustosija",
-      "calendarFile": "bibliobus-gornja-kustosija.ics"
+      "calendarFile": "bibliobus-gornja-kustosija.ics",
+      "mapUrl": "https://goo.gl/maps/FBiAdX9qDNDzFrG28",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "HORVATI (RAKOV POTOK)",
       "value": "horvati-rakov-potok",
-      "calendarFile": "bibliobus-horvati-rakov-potok.ics"
+      "calendarFile": "bibliobus-horvati-rakov-potok.ics",
+      "mapUrl": "https://goo.gl/maps/qxBdTK4BYgwnX3He6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "HRVATSKI LESKOVAC",
       "value": "hrvatski-leskovac",
-      "calendarFile": "bibliobus-hrvatski-leskovac.ics"
+      "calendarFile": "bibliobus-hrvatski-leskovac.ics",
+      "mapUrl": "https://goo.gl/maps/HndcfDQ7e9Q4RUky6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
       "value": "institut-ruder-boskovic-okretiste-srebrnjak",
-      "calendarFile": "bibliobus-institut-ruder-boskovic-okretiste-srebrnjak.ics"
+      "calendarFile": "bibliobus-institut-ruder-boskovic-okretiste-srebrnjak.ics",
+      "mapUrl": "https://www.google.com/maps/place/Srebrnjak/@45.832091,15.988697,2018m/data=!3m1!1e3!4m6!3m5!1s0x4765d70cac51dd97:0xb5a4c19da13eff42!8m2!3d45.832091!4d15.988697!16s%2Fg%2F11qgffvqv3?entry=ttu",
+      "coordinates": "45.832091,15.988697",
+      "address": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106"
     },
     {
       "name": "IVER",
       "value": "iver",
-      "calendarFile": "bibliobus-iver.ics"
+      "calendarFile": "bibliobus-iver.ics",
+      "mapUrl": "https://goo.gl/maps/tQWUe7XAimLt9NaC7",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "JAKOVLJE",
       "value": "jakovlje",
-      "calendarFile": "bibliobus-jakovlje.ics"
+      "calendarFile": "bibliobus-jakovlje.ics",
+      "mapUrl": "https://goo.gl/maps/jxkZQWDH88vBTqMt6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "KAJZERICA",
       "value": "kajzerica",
-      "calendarFile": "bibliobus-kajzerica.ics"
+      "calendarFile": "bibliobus-kajzerica.ics",
+      "mapUrl": "https://goo.gl/maps/agM3Ds34bgKdHNe16",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "KRALJEVEC",
       "value": "kraljevec",
-      "calendarFile": "bibliobus-kraljevec.ics"
+      "calendarFile": "bibliobus-kraljevec.ics",
+      "mapUrl": "https://goo.gl/maps/twq2nWbdbkSuYXR2A",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "KUP\u010CINA",
       "value": "kupcina",
-      "calendarFile": "bibliobus-kupcina.ics"
+      "calendarFile": "bibliobus-kupcina.ics",
+      "mapUrl": "https://goo.gl/maps/RmHTbzHeaAsNFhKj9",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "KUPINE\u010CKI KRALJEVEC",
       "value": "kupinecki-kraljevec",
-      "calendarFile": "bibliobus-kupinecki-kraljevec.ics"
+      "calendarFile": "bibliobus-kupinecki-kraljevec.ics",
+      "mapUrl": "https://goo.gl/maps/pKKWHLuCBWw1BS9V6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "KUPLJENOVO",
       "value": "kupljenovo",
-      "calendarFile": "bibliobus-kupljenovo.ics"
+      "calendarFile": "bibliobus-kupljenovo.ics",
+      "mapUrl": "https://goo.gl/maps/nzZRr2ZMZTSMqXUUA",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "LUKA",
       "value": "luka",
-      "calendarFile": "bibliobus-luka.ics"
+      "calendarFile": "bibliobus-luka.ics",
+      "mapUrl": "https://goo.gl/maps/UftWAKkSpDk8rdj7A",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "MARKU\u0160EVEC",
       "value": "markusevec",
-      "calendarFile": "bibliobus-markusevec.ics"
+      "calendarFile": "bibliobus-markusevec.ics",
+      "mapUrl": "https://goo.gl/maps/PrnAbGg1AyCn9URX9",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "MLINOVI",
       "value": "mlinovi",
-      "calendarFile": "bibliobus-mlinovi.ics"
+      "calendarFile": "bibliobus-mlinovi.ics",
+      "mapUrl": "https://goo.gl/maps/yjfPDLhj6uKjJ93w7",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "ODRA",
       "value": "odra",
-      "calendarFile": "bibliobus-odra.ics"
+      "calendarFile": "bibliobus-odra.ics",
+      "mapUrl": "https://maps.app.goo.gl/4H1Tp5atPduZofmM9",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "PAVU\u010CNJAK",
       "value": "pavucnjak",
-      "calendarFile": "bibliobus-pavucnjak.ics"
+      "calendarFile": "bibliobus-pavucnjak.ics",
+      "mapUrl": "https://goo.gl/maps/dupAxRWpii9WKARbA",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "PISAROVINA",
       "value": "pisarovina",
-      "calendarFile": "bibliobus-pisarovina.ics"
+      "calendarFile": "bibliobus-pisarovina.ics",
+      "mapUrl": "https://maps.app.goo.gl/4fZHzyLsjpNa3mLA7",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "POGLAVARSTVO",
       "value": "poglavarstvo",
-      "calendarFile": "bibliobus-poglavarstvo.ics"
+      "calendarFile": "bibliobus-poglavarstvo.ics",
+      "mapUrl": "https://goo.gl/maps/9igNUvryTjDNsaWn7",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "POJATNO",
       "value": "pojatno",
-      "calendarFile": "bibliobus-pojatno.ics"
+      "calendarFile": "bibliobus-pojatno.ics",
+      "mapUrl": "https://goo.gl/maps/jPt9kivLCiVDubVPA",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "POPOVEC",
       "value": "popovec",
-      "calendarFile": "bibliobus-popovec.ics"
+      "calendarFile": "bibliobus-popovec.ics",
+      "mapUrl": "https://goo.gl/maps/TzkQ7auhocvKP6aE6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "PRIGORJE",
       "value": "prigorje",
-      "calendarFile": "bibliobus-prigorje.ics"
+      "calendarFile": "bibliobus-prigorje.ics",
+      "mapUrl": "https://goo.gl/maps/uv1iS7pDQsM7pKxd8",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "P\u0160 KERESTINEC",
       "value": "ps-kerestinec",
-      "calendarFile": "bibliobus-ps-kerestinec.ics"
+      "calendarFile": "bibliobus-ps-kerestinec.ics",
+      "mapUrl": "https://goo.gl/maps/CcevLBTa45DnwRzdA",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "P\u0160 RESNIK",
       "value": "ps-resnik",
-      "calendarFile": "bibliobus-ps-resnik.ics"
+      "calendarFile": "bibliobus-ps-resnik.ics",
+      "mapUrl": "https://maps.app.goo.gl/PweBEYCvba3HkQhG6",
+      "coordinates": "",
+      "address": "P\u0160"
     },
     {
       "name": "REMETE",
       "value": "remete",
-      "calendarFile": "bibliobus-remete.ics"
+      "calendarFile": "bibliobus-remete.ics",
+      "mapUrl": "https://goo.gl/maps/rFVsySkuUiKuWkv36",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "REMETINE\u010CKI GAJ",
       "value": "remetinecki-gaj",
-      "calendarFile": "bibliobus-remetinecki-gaj.ics"
+      "calendarFile": "bibliobus-remetinecki-gaj.ics",
+      "mapUrl": "https://maps.app.goo.gl/8rreTaagaEP4CEqu8",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "RETKOVEC",
       "value": "retkovec",
-      "calendarFile": "bibliobus-retkovec.ics"
+      "calendarFile": "bibliobus-retkovec.ics",
+      "mapUrl": "https://goo.gl/maps/fbnxKE3aUWVyXccX8",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "RUDE\u0160",
       "value": "rudes",
-      "calendarFile": "bibliobus-rudes.ics"
+      "calendarFile": "bibliobus-rudes.ics",
+      "mapUrl": "https://goo.gl/maps/R2i9M1ey9pxRn3Tq6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "\u0160ENKOVEC",
       "value": "senkovec",
-      "calendarFile": "bibliobus-senkovec.ics"
+      "calendarFile": "bibliobus-senkovec.ics",
+      "mapUrl": "https://goo.gl/maps/ocJD95WUS7uHesEG8",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "SESVETSKA SELA",
       "value": "sesvetska-sela",
-      "calendarFile": "bibliobus-sesvetska-sela.ics"
+      "calendarFile": "bibliobus-sesvetska-sela.ics",
+      "mapUrl": "https://maps.app.goo.gl/Q2Y1LajVa3dPnfqT9",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "SIGET",
       "value": "siget",
-      "calendarFile": "bibliobus-siget.ics"
+      "calendarFile": "bibliobus-siget.ics",
+      "mapUrl": "https://goo.gl/maps/bxLrufmn1aoQtqJ69",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "SOBLINEC",
       "value": "soblinec",
-      "calendarFile": "bibliobus-soblinec.ics"
+      "calendarFile": "bibliobus-soblinec.ics",
+      "mapUrl": "https://goo.gl/maps/CyfW9DWh5jmjAB347",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "SOPOT",
       "value": "sopot",
-      "calendarFile": "bibliobus-sopot.ics"
+      "calendarFile": "bibliobus-sopot.ics",
+      "mapUrl": "https://goo.gl/maps/MhBQRBWuXbTHi12w6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "SREDI\u0160\u0106E",
       "value": "sredisce",
-      "calendarFile": "bibliobus-sredisce.ics"
+      "calendarFile": "bibliobus-sredisce.ics",
+      "mapUrl": "https://goo.gl/maps/k4FZmUaU3Y5xgQt17",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "SREDNJACI",
       "value": "srednjaci",
-      "calendarFile": "bibliobus-srednjaci.ics"
+      "calendarFile": "bibliobus-srednjaci.ics",
+      "mapUrl": "https://goo.gl/maps/JR3gnB628iAJYXsP6",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "STRMEC",
       "value": "strmec",
-      "calendarFile": "bibliobus-strmec.ics"
+      "calendarFile": "bibliobus-strmec.ics",
+      "mapUrl": "https://goo.gl/maps/MBBNpBDS8F1gcxbS9",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "STUDENTSKI GRAD",
       "value": "studentski-grad",
-      "calendarFile": "bibliobus-studentski-grad.ics"
+      "calendarFile": "bibliobus-studentski-grad.ics",
+      "mapUrl": "https://goo.gl/maps/e8fiAoKCHBzjd8gY9",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "STUPNIK",
       "value": "stupnik",
-      "calendarFile": "bibliobus-stupnik.ics"
+      "calendarFile": "bibliobus-stupnik.ics",
+      "mapUrl": "https://goo.gl/maps/DENEdecAUhULWvhZ8",
+      "coordinates": "",
+      "address": ""
     },
     {
       "name": "VELIKA MLAKA",
       "value": "velika-mlaka",
-      "calendarFile": "bibliobus-velika-mlaka.ics"
+      "calendarFile": "bibliobus-velika-mlaka.ics",
+      "mapUrl": "https://goo.gl/maps/9ucVsdox2Gsp3wLu6",
+      "coordinates": "",
+      "address": ""
     }
   ],
   "sessions": [

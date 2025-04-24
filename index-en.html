@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zagreb Bibliobus - Raspored</title>
+    <title>Zagreb Bibliobus - Schedule</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,26 +17,26 @@
     <header>
         <div class="container">
             <div class="language-selector">
-                <a href="index.html" class="language-link active" data-lang="hr">HR</a>
+                <a href="index.html" class="language-link" data-lang="hr">HR</a>
                 <span class="language-separator">|</span>
-                <a href="index-en.html" class="language-link" data-lang="en">EN</a>
+                <a href="index-en.html" class="language-link active" data-lang="en">EN</a>
             </div>
             <h1><i class="fas fa-bus"></i> Zagreb Bibliobus</h1>
-            <p>Raspored bibliobusnih stajališta</p>
-            <div class="updated">Ažurirano: 24.04.2025. 15:58</div>
+            <p>Mobile Library Schedule</p>
+            <div class="updated">Updated: 04/24/2025 15:58</div>
         </div>
     </header>
 
     <main class="container">
         <div class="navigation-container">
             <div class="data-views">
-                <div class="data-tab active" data-tab="table">Popis po datumima</div>
-                <div class="data-tab" data-tab="calendar">Kalendarski prikaz</div>
+                <div class="data-tab active" data-tab="table">List by date</div>
+                <div class="data-tab" data-tab="calendar">Calendar view</div>
             </div>
             
             <div class="location-tabs-wrapper">
                 <div class="location-tabs" id="location-tabs">
-                    <div class="location-tab active" data-location-id="">Sve lokacije</div>
+                    <div class="location-tab active" data-location-id="">All locations</div>
                     <!-- Location tabs will be populated from JSON data -->
                 </div>
                 <div class="location-tabs-scroll">
@@ -46,9 +46,9 @@
             </div>
             
             <div class="data-download">
-                <a href="bibliobus-data.json" download><i class="fas fa-download"></i> Preuzmi JSON</a>
+                <a href="bibliobus-data.json" download><i class="fas fa-download"></i> Download JSON</a>
                 <a id="calendar-download" href="bibliobus-calendar.ics" download>
-                    <i class="fas fa-calendar-alt"></i> <span id="calendar-download-text">Preuzmi iCalendar (sve lokacije)</span>
+                    <i class="fas fa-calendar-alt"></i> <span id="calendar-download-text">Download iCalendar (all locations)</span>
                 </a>
             </div>
         </div>
@@ -61,27 +61,27 @@
 
         <div id="calendar-view" class="data-view">
             <div class="calendar-nav">
-                <button id="prev-month">&laquo; Prethodni mjesec</button>
-                <h2 id="current-month">Travanj 2025</h2>
-                <button id="next-month">Sljedeći mjesec &raquo;</button>
+                <button id="prev-month">&laquo; Previous month</button>
+                <h2 id="current-month">April 2025</h2>
+                <button id="next-month">Next month &raquo;</button>
             </div>
             <div class="calendar-info">
                 <div class="calendar-actions">
                     <div class="calendar-download">
-                        <p>Preuzimanje kalendarske datoteke:</p>
+                        <p>Download calendar file:</p>
                         <a id="calendar-info-link" href="bibliobus-calendar.ics" download class="calendar-download-btn">
-                            <i class="fas fa-download"></i> Preuzmi iCalendar
+                            <i class="fas fa-download"></i> Download iCalendar
                         </a>
                     </div>
                     
                     <div class="calendar-widget">
-                        <p>Direktno dodavanje u kalendar:</p>
+                        <p>Add directly to your calendar:</p>
                         <div id="add-to-calendar-widget"></div>
                     </div>
                 </div>
                 
-                <p class="location-specific-note"><strong>Važno:</strong> Kada odaberete lokaciju iznad (npr. "KAJZERICA"), 
-                kalendarska datoteka i widget će sadržavati podatke <strong>samo za odabranu lokaciju</strong>.</p>
+                <p class="location-specific-note"><strong>Important:</strong> When you select a location above (e.g. "KAJZERICA"), 
+                the calendar file and widget will contain data <strong>only for the selected location</strong>.</p>
             </div>
             <div id="calendar-container">
                 <!-- Calendar will be rendered here -->
@@ -91,7 +91,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 Zagreb Bibliobus - Generirano pomoću <a href="https://github.com/allixsenos/ZgBibliobusTimeTable">ZgBibliobusTimeTable</a></p>
+            <p>&copy; 2025 Zagreb Bibliobus - Generated using <a href="https://github.com/allixsenos/ZgBibliobusTimeTable">ZgBibliobusTimeTable</a></p>
         </div>
     </footer>
 
@@ -4890,22 +4890,20 @@
         const scheduleData = data.sessions;
         const locationOptions = data.locations;
         
-        // Function to convert ISO date (yyyy-MM-dd) to Croatian date (dd.MM.yyyy.)
-        function isoToCroatianDate(isoDate) {
+        // Function to convert ISO date (yyyy-MM-dd) to English date (MM/dd/yyyy)
+        function isoToEnglishDate(isoDate) {
             if (!isoDate) return '';
             const parts = isoDate.split('-');
             if (parts.length !== 3) return isoDate;
-            return `${parts[2]}.${parts[1]}.${parts[0]}.`;
+            return `${parts[1]}/${parts[2]}/${parts[0]}`;
         }
         
-        // Function to convert Croatian date (dd.MM.yyyy.) to ISO date (yyyy-MM-dd)
-        function croatianToIsoDate(croatianDate) {
-            if (!croatianDate) return '';
-            // Remove trailing dot if present
-            const cleanDate = croatianDate.endsWith('.') ? croatianDate.slice(0, -1) : croatianDate;
-            const parts = cleanDate.split('.');
-            if (parts.length < 3) return croatianDate;
-            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        // Function to convert English date (MM/dd/yyyy) to ISO date (yyyy-MM-dd)
+        function englishToIsoDate(englishDate) {
+            if (!englishDate) return '';
+            const parts = englishDate.split('/');
+            if (parts.length < 3) return englishDate;
+            return `${parts[2]}-${parts[0]}-${parts[1]}`;
         }
         
         // Function to normalize time for proper sorting
@@ -4941,13 +4939,28 @@
             return normalizedA.localeCompare(normalizedB);
         }
         
+        // Function to translate day names to English
+        function translateDayName(croatianDay) {
+            const dayTranslations = {
+                'ponedjeljak': 'Monday',
+                'utorak': 'Tuesday',
+                'srijeda': 'Wednesday',
+                'četvrtak': 'Thursday',
+                'petak': 'Friday',
+                'subota': 'Saturday',
+                'nedjelja': 'Sunday'
+            };
+            
+            return dayTranslations[croatianDay.toLowerCase()] || croatianDay;
+        }
+        
         // Initialize location tabs
         const locationTabsContainer = document.getElementById('location-tabs');
         
         // Debug location options
         console.log("All location options:", locationOptions);
         
-        // Add location options to the tabs (first one "Sve lokacije" is already there)
+        // Add location options to the tabs (first one "All locations" is already there)
         locationOptions.slice(1).forEach(location => {
             const tab = document.createElement('div');
             tab.className = 'location-tab';
@@ -4984,9 +4997,9 @@
                 // Update download text
                 const downloadTextElement = document.getElementById('calendar-download-text');
                 if (isAllLocations) {
-                    downloadTextElement.textContent = 'Preuzmi iCalendar (sve lokacije)';
+                    downloadTextElement.textContent = 'Download iCalendar (all locations)';
                 } else {
-                    downloadTextElement.textContent = `Preuzmi iCalendar (${locationName})`;
+                    downloadTextElement.textContent = `Download iCalendar (${locationName})`;
                 }
                 
                 // Debug the location filter and session data
@@ -5106,13 +5119,13 @@
             if (olderPastDates.length > 0) {
                 const showPastButton = document.createElement('button');
                 showPastButton.className = 'past-dates-button';
-                showPastButton.textContent = 'Prikaži stariji raspored';
+                showPastButton.textContent = 'Show older schedule';
                 showPastButton.addEventListener('click', function() {
                     const listContainer = document.getElementById('list-view-container');
                     listContainer.classList.toggle('show-past-dates');
                     this.textContent = listContainer.classList.contains('show-past-dates') 
-                        ? 'Sakrij stariji raspored' 
-                        : 'Prikaži stariji raspored';
+                        ? 'Hide older schedule' 
+                        : 'Show older schedule';
                 });
                 container.appendChild(showPastButton);
             }
@@ -5122,17 +5135,17 @@
                 const sessions = sessionsByDate[date];
                 const isNonWorking = sessions.some(s => s.isNeradniDan);
                 
-                // Get day name from the first session
-                const dayName = sessions.length > 0 ? sessions[0].dan : '';
+                // Get day name from the first session and translate to English
+                const dayName = sessions.length > 0 ? translateDayName(sessions[0].dan) : '';
                 
                 // Create date heading
                 const heading = document.createElement('h2');
                 heading.className = isPastDate ? 'date-heading past-date-heading' : 'date-heading';
                 
-                // Convert ISO date to Croatian format
-                const croatianDate = isoToCroatianDate(date);
+                // Convert ISO date to English format
+                const englishDate = isoToEnglishDate(date);
                 
-                heading.innerHTML = `${croatianDate} <span class="day-name">${dayName}</span>`;
+                heading.innerHTML = `${englishDate} <span class="day-name">${dayName}</span>`;
                 container.appendChild(heading);
                 
                 // Create entries container
@@ -5143,7 +5156,7 @@
                     // Non-working day
                     const entry = document.createElement('div');
                     entry.className = 'schedule-entry non-working-date';
-                    entry.innerHTML = '<div class="schedule-entry-time"></div><div class="schedule-entry-location">Neradni dan</div>';
+                    entry.innerHTML = '<div class="schedule-entry-time"></div><div class="schedule-entry-location">Non-working day</div>';
                     entriesDiv.appendChild(entry);
                 } else {
                     // Sort sessions by time using our custom time sorting function
@@ -5237,7 +5250,7 @@
             if (recentPastDates.length > 0) {
                 const recentPastHeader = document.createElement('h2');
                 recentPastHeader.className = 'list-section-header';
-                recentPastHeader.textContent = 'Nedavni datumi (zadnjih 7 dana)';
+                recentPastHeader.textContent = 'Recent dates (last 7 days)';
                 container.appendChild(recentPastHeader);
                 
                 recentPastDates.forEach(date => createDateSection(date, false));
@@ -5247,7 +5260,7 @@
             if (futureDates.length > 0) {
                 const futureHeader = document.createElement('h2');
                 futureHeader.className = 'list-section-header';
-                futureHeader.textContent = 'Nadolazeći datumi';
+                futureHeader.textContent = 'Upcoming dates';
                 container.appendChild(futureHeader);
                 
                 futureDates.forEach(date => createDateSection(date, false));
@@ -5262,13 +5275,13 @@
             if (sortedDates.length === 0) {
                 const noData = document.createElement('p');
                 noData.className = 'no-data-message';
-                noData.textContent = 'Nema podataka za odabranu lokaciju.';
+                noData.textContent = 'No data for the selected location.';
                 container.appendChild(noData);
             } else if (futureDates.length === 0 && recentPastDates.length === 0) {
                 // If there are no future or recent dates, but there might be older dates
                 const noData = document.createElement('p');
                 noData.className = 'no-data-message';
-                noData.textContent = 'Nema budućih ili nedavnih datuma za odabranu lokaciju.';
+                noData.textContent = 'No future or recent dates for the selected location.';
                 
                 // Insert this message before the past dates button if it exists
                 const pastButton = container.querySelector('.past-dates-button');
@@ -5332,8 +5345,8 @@
         }
         
         function renderCalendar(date) {
-            const monthNames = ['Siječanj', 'Veljača', 'Ožujak', 'Travanj', 'Svibanj', 'Lipanj', 
-                               'Srpanj', 'Kolovoz', 'Rujan', 'Listopad', 'Studeni', 'Prosinac'];
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                               'July', 'August', 'September', 'October', 'November', 'December'];
             
             const year = date.getFullYear();
             const month = date.getMonth();
@@ -5347,7 +5360,7 @@
             
             let calendarHTML = '<div class="calendar">';
             calendarHTML += '<div class="calendar-header">';
-            calendarHTML += '<div>Pon</div><div>Uto</div><div>Sri</div><div>Čet</div><div>Pet</div><div>Sub</div><div>Ned</div>';
+            calendarHTML += '<div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>';
             calendarHTML += '</div>';
             calendarHTML += '<div class="calendar-body">';
             
@@ -5361,7 +5374,7 @@
             for (let day = 1; day <= lastDay.getDate(); day++) {
                 const currentDay = new Date(year, month, day);
                 const isoDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const croatianDateString = `${String(day).padStart(2, '0')}.${String(month + 1).padStart(2, '0')}.${year}.`;
+                const englishDateString = `${month + 1}/${day}/${year}`;
                 
                 // Check if this day is in the past
                 const calendarDate = new Date(year, month, day);
@@ -5395,7 +5408,7 @@
                     dayClass += ' past-date';
                 }
                 
-                calendarHTML += `<div class="${dayClass}" data-date="${croatianDateString}">`;
+                calendarHTML += `<div class="${dayClass}" data-date="${englishDateString}">`;
                 calendarHTML += `<div class="day-number">${day}</div>`;
                 
                 if (dayEntries.length > 0) {
@@ -5415,7 +5428,7 @@
                     
                     // For non-working days, display specially
                     if (locations.includes("=== neradni dan ===")) {
-                        calendarHTML += `<div class="calendar-location non-working-day">=== neradni dan ===</div>`;
+                        calendarHTML += `<div class="calendar-location non-working-day">Non-working day</div>`;
                     } else {
                         // Create a sorted list of entries by start time
                         let allEntries = [];
@@ -5514,31 +5527,6 @@
             calendarHTML += '</div></div>';
             
             document.getElementById('calendar-container').innerHTML = calendarHTML;
-            
-            // No toggle button in calendar view, but we'll keep the dimmed effect on past dates
-            // The calendar will reflect the show-past-dates state from the list view
-            
-            // No click events or clickable styling for calendar days
-            // Individual location entries will be clickable if they have map links
-            
-            // Debug: Examine the rendered calendar entries
-            setTimeout(() => {
-                console.log('Examining rendered calendar entries:');
-                document.querySelectorAll('.calendar-location').forEach((el, idx) => {
-                    console.log(`Entry ${idx}:`, el.innerHTML);
-                    
-                    // Check for entry link
-                    const entryLink = el.querySelector('.location-entry-link');
-                    if (entryLink) {
-                        console.log(`  Entry link: ${entryLink.getAttribute('href')}`);
-                        console.log(`  Entry link working: true`);
-                        console.log(`  Content: ${entryLink.textContent.trim()}`);
-                    } else {
-                        // Check for plain text entry
-                        console.log(`  Plain text entry: ${el.textContent.trim()}`);
-                    }
-                });
-            }, 1000);
         }
         
         // Function to update the Add to Calendar Button widget
@@ -5559,13 +5547,12 @@
             const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
             
             // Using a simplified approach using direct initialization 
-            // with the global atcb_action function
             
             // Set widget properties
-            const widgetTitle = isAllLocations ? 'Zagreb Bibliobus - Raspored' : `Zagreb Bibliobus - ${locationName}`;
+            const widgetTitle = isAllLocations ? 'Zagreb Bibliobus - Schedule' : `Zagreb Bibliobus - ${locationName}`;
             const widgetDescription = isAllLocations 
-                ? 'Raspored bibliobusnih stajališta u Zagrebu' 
-                : `Raspored bibliobusa za lokaciju ${locationName}`;
+                ? 'Schedule of Zagreb mobile library' 
+                : `Zagreb mobile library schedule for ${locationName}`;
                 
             // Use absolute URL for iCal file (assume we're on the same domain)
             const host = window.location.origin;
@@ -5586,8 +5573,8 @@
                 iCalFileName: calPath.split('/').pop(),
                 listStyle: 'dropdown',
                 buttonStyle: 'round',
-                label: 'Dodaj u kalendar',
-                language: 'hr',
+                label: 'Add to calendar',
+                language: 'en',
                 ical: `${host}/${calPath}`
             };
             
@@ -5640,7 +5627,7 @@
             
             // Initialize the Add to Calendar widget
             const activeTab = document.querySelector('.location-tab.active');
-            const locationName = activeTab ? activeTab.textContent : 'Sve lokacije';
+            const locationName = activeTab ? activeTab.textContent : 'All locations';
             const isAllLocations = !activeTab || activeTab.dataset.locationId === '';
             const calendarFile = activeTab ? activeTab.dataset.calendarFile : 'bibliobus-calendar.ics';
             
