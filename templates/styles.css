@@ -572,6 +572,20 @@ tr.non-working-day {
     margin-bottom: 30px;
 }
 
+.list-section-header {
+    color: var(--secondary-color);
+    background-color: var(--light-gray);
+    padding: 10px 15px;
+    margin: 20px 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.list-section-header:first-child {
+    margin-top: 0;
+}
+
 .date-heading {
     color: var(--primary-color);
     border-bottom: 2px solid var(--primary-color);
@@ -634,6 +648,17 @@ tr.non-working-day {
     padding: 20px;
     color: var(--dark-gray);
     font-style: italic;
+}
+
+.list-section-header {
+    background-color: #f0f0f0;
+    color: var(--dark-gray);
+    padding: 10px 15px;
+    margin: 20px 0 15px 0;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
 }
 
 .past-dates-button {
