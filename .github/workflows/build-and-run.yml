@@ -1,0 +1,43 @@
+name: Build and Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      fetch_website:
+        description: 'Fetch data from website'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore ZgBibliobusTimeTable.sln
+      
+    - name: Build
+      run: dotnet build ZgBibliobusTimeTable.sln --configuration Release --no-restore
+      
+    - name: Enable website fetching if selected
+      if: ${{ inputs.fetch_website }}
+      run: |
+        sed -i 's/\/\/>>> uncomment >>>//' ZgBibliobusTimeTable/Program.cs
+      
+    - name: Run application
+      run: dotnet run --project ZgBibliobusTimeTable/ZgBibliobusTimeTable.csproj --configuration Release
+      
+    - name: Upload results
+      uses: actions/upload-artifact@v3
+      with:
+        name: output-data
+        path: ZgBibliobusTimeTable/Data/
