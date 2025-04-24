@@ -60,6 +60,7 @@ header {
     padding: 1.5rem 0;
     margin-bottom: 2rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
 }
 
 header h1 {
@@ -77,6 +78,40 @@ header p {
     font-size: 0.9rem;
     margin-top: 0.8rem;
     opacity: 0.8;
+}
+
+/* Language selector styles */
+.language-selector {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.language-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    padding: 3px 5px;
+    transition: color 0.2s;
+}
+
+.language-link.active {
+    color: white;
+    text-decoration: underline;
+}
+
+.language-link:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.language-separator {
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 3px;
 }
 
 /* Navigation container styles */
@@ -683,7 +718,6 @@ tr.non-working-day {
     display: none;
 }
 
-body.show-past-dates .past-date-heading,
 #list-view-container.show-past-dates .past-date-heading {
     display: block;
 }
@@ -692,7 +726,6 @@ body.show-past-dates .past-date-heading,
     display: none;
 }
 
-body.show-past-dates .past-schedule-entries,
 #list-view-container.show-past-dates .past-schedule-entries {
     display: block;
 }

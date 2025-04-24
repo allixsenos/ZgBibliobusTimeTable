@@ -97,8 +97,26 @@ public static class WebsiteGenerator
             .Replace("{{JSON_DATA}}", jsonData)
             .Replace("{{LAST_UPDATED}}", DateTime.Now.ToString("dd.MM.yyyy. HH:mm"));
 
-        // Write HTML file
+        // Write HTML file (Croatian version)
         File.WriteAllText(Path.Combine(outputDir, "index.html"), html);
+        
+        // Create English version
+        string englishTemplatePath = Path.Combine(templateDir, "index-en.html");
+        if (File.Exists(englishTemplatePath))
+        {
+            string englishTemplate = File.ReadAllText(englishTemplatePath);
+            string englishHtml = englishTemplate
+                .Replace("{{JSON_DATA}}", jsonData)
+                .Replace("{{LAST_UPDATED}}", DateTime.Now.ToString("MM/dd/yyyy HH:mm"));
+            
+            // Write English HTML file
+            File.WriteAllText(Path.Combine(outputDir, "index-en.html"), englishHtml);
+            Console.WriteLine("English website generated");
+        }
+        else
+        {
+            Console.WriteLine($"English template file not found: {englishTemplatePath}");
+        }
 
         Console.WriteLine($"Website generated in {outputDir}");
     }

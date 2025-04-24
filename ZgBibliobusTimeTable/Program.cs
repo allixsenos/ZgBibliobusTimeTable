@@ -20,8 +20,8 @@ internal class Program : Tools
         string htmlFilename = Path.Combine(dataFolder, "index.html");
 
         // get the page content from the url and save it to the file
-        //>>> uncomment >>>  string url = "https://www.kgz.hr/hr/knjiznice/bibliobusna-sluzba/raspored-bibliobusnih-stajalista/65960";
-        //>>> uncomment >>>  WebContent.GetWebContent(url, htmlFilename);  //Process.Start("NOTEPAD.EXE", htmlFilename);
+        string url = "https://www.kgz.hr/hr/knjiznice/bibliobusna-sluzba/raspored-bibliobusnih-stajalista/65960";
+        WebContent.GetWebContent(url, htmlFilename);  //Process.Start("NOTEPAD.EXE", htmlFilename);
 
         string pageContent = System.IO.File.ReadAllText(htmlFilename);
 
