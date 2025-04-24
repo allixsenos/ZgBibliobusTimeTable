@@ -239,3 +239,6 @@ atcb.js:5549  TypeError: Cannot read properties of undefined (reading 'replace')
     at window.atcb_action (atcb.js:1:116)
     at updateAddToCalendarWidget (ZgBibliobusTimeTable/:5362:17)
     at ZgBibliobusTimeTable/:5392:17"
+39. "the locations in the list view are not sorted by human readable time, the 9:00 is at the bottom after all the ones that are two digits
+
+in the calendar view I don't see the starting times at all any more but I can tell that they are sorted weirdly. please reintroduce starting times and ensure that they are ordered correctly."
