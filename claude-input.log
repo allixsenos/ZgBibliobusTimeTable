@@ -198,3 +198,24 @@ The most recent work involved fixing a compilation error in the ICalGenerator.cs
 20. "you should push the changes upstream"
 21. "build and run failed again, check the logs and fix"
 22. "update claude-input.log with the inputs I've provided, and save it to memory to never stop doing this"
+23. "I'd like to add Google Maps to the Bibliobus map page. Can you add code that extracts Google Maps locations from the raw data and then shows them in the calendar?"
+24. "when I click on the links in the html interface they have html tags in them - I need to decode the links, e.g. &lt;a href... needs to be <a href..."
+25. "Weird, your fixed links don't show in the map column in table view"
+26. "map link now works in table view but calendar view has *only* map links, no location names"
+27. "This session is being continued from a previous conversation that ran out of context. The conversation is summarized below:
+<analysis>
+Let me thoroughly analyze the conversation to create a comprehensive and accurate summary, focusing on all technical details, code patterns, and architectural decisions.
+
+[...long analysis text omitted for brevity...]
+</analysis>
+
+<summary>
+[...long summary text omitted for brevity...]
+</summary>."
+28. "have those changes been pushed up to github?"
+29. "calendar view map dots are overwhelming, make the location name itself link to the map and remove the dots"
+30. "calendar view location names are truncated, print the full location name"
+31. "replace the table view with a text view where dates are headings and then list just times and locations without dates"
+32. "<user-memory-input>log every single command I input into claude-input.log, and push up to github every time you're done making changes</user-memory-input>"
+33. "update the claude-input.log file with the missing commands"
+34. "[Request interrupted by user for tool use]update ./claude-input.log with the missing commands that I've given."
