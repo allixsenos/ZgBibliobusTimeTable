@@ -114,6 +114,9 @@
         // Initialize location tabs
         const locationTabsContainer = document.getElementById('location-tabs');
         
+        // Debug location options
+        console.log("All location options:", locationOptions);
+        
         // Add location options to the tabs (first one "Sve lokacije" is already there)
         locationOptions.slice(1).forEach(location => {
             const tab = document.createElement('div');
@@ -122,6 +125,8 @@
             tab.dataset.locationId = location.value;
             tab.dataset.calendarFile = location.calendarFile;
             locationTabsContainer.appendChild(tab);
+            
+            console.log(`Added location tab: name=${location.name}, id=${location.value}, calendar=${location.calendarFile}`);
         });
         
         // Make sure the "All locations" tab has the correct data attributes
@@ -140,6 +145,8 @@
                 const locationName = tab.textContent;
                 const isAllLocations = locationId === '';
                 
+                console.log(`Selected location: name=${locationName}, id=${locationId}, isAllLocations=${isAllLocations}`);
+                
                 // Update download links
                 document.getElementById('calendar-download').href = calendarFile;
                 document.getElementById('calendar-info-link').href = calendarFile;
@@ -150,6 +157,19 @@
                     downloadTextElement.textContent = 'Preuzmi iCalendar (sve lokacije)';
                 } else {
                     downloadTextElement.textContent = `Preuzmi iCalendar (${locationName})`;
+                }
+                
+                // Debug the location filter and session data
+                console.log(`Filtering data by location ID: ${locationId}`);
+                console.log(`Data contains ${scheduleData.length} total sessions`);
+                
+                // Sample session data to check structure
+                if (scheduleData.length > 0) {
+                    console.log('Sample session data:', scheduleData[0]);
+                    
+                    // Check all available locationId values in the data
+                    const allLocationIds = [...new Set(scheduleData.map(s => s.locationId))];
+                    console.log('All location IDs in data:', allLocationIds);
                 }
                 
                 // Update calendar and table views
@@ -294,9 +314,17 @@
                 
                 // Apply location filter if set
                 if (locationFilter) {
-                    dayEntries = dayEntries.filter(entry => 
-                        entry.locationId === locationFilter || entry.isNeradniDan
-                    );
+                    // Debug the filtering process
+                    console.log('Filtering by location ID:', locationFilter);
+                    console.log('Before filter, entries:', dayEntries.length);
+                    
+                    dayEntries = dayEntries.filter(entry => {
+                        const matches = entry.locationId === locationFilter || entry.isNeradniDan;
+                        console.log(`Entry locationId: ${entry.locationId}, matches filter: ${matches}`);
+                        return matches;
+                    });
+                    
+                    console.log('After filter, entries:', dayEntries.length);
                 }
                 
                 let dayClass = 'calendar-day';
@@ -329,7 +357,11 @@
                         // Create a sorted list of entries by start time
                         let allEntries = [];
                         
+                        console.log(`Day has ${locations.length} locations:`, locations);
+                        
                         locations.forEach(location => {
+                            console.log(`Processing location: ${location}, has ${entriesByLocation[location].length} entries`);
+                            
                             entriesByLocation[location].forEach(entry => {
                                 // Extract the start time from the time range
                                 let startTime = "";
@@ -338,6 +370,8 @@
                                 } else if (entry.vrijeme) {
                                     startTime = entry.vrijeme;
                                 }
+                                
+                                console.log(`Entry time: ${entry.vrijeme}, start time: ${startTime}, location: ${entry.lokacija}`);
                                 
                                 if (startTime) {
                                     allEntries.push({

@@ -131,17 +131,57 @@ internal class Tools
         while (cleanedText.Contains("  "))
             cleanedText = cleanedText.Replace("  ", " ");
         
-        // Look for Google Maps link
-        var linkNode = doc.DocumentNode.SelectSingleNode(".//a[contains(@href, 'google.com/maps')]");
+        // The HTML structure might be complex - try various link patterns that could be Google Maps
+        var linkNode = doc.DocumentNode.SelectSingleNode(
+            ".//a[contains(@href, 'google.com/maps') or contains(@href, 'goo.gl/maps') or contains(@href, 'maps.google.com')]");
+            
+        // Debugging: Log all links to help diagnose the issue
+        Console.WriteLine($"Processing location: {cleanedText}");
+        var allLinks = doc.DocumentNode.SelectNodes(".//a[@href]");
+        if (allLinks != null)
+        {
+            foreach (var link in allLinks)
+            {
+                string href = link.GetAttributeValue("href", "");
+                Console.WriteLine($"  Found link: {href}");
+                
+                // If we don't have a map link yet but this looks like one, use it
+                if (linkNode == null && 
+                    (href.Contains("maps") || href.Contains("goo.gl") || href.Contains("google")))
+                {
+                    linkNode = link;
+                    Console.WriteLine($"  Using this as map link");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("  No links found in this HTML");
+        }
+        
         if (linkNode != null)
         {
             mapUrl = linkNode.GetAttributeValue("href", "");
+            Console.WriteLine($"  Selected map URL: {mapUrl}");
             
             // Try to extract address from link text if different from location name
             string linkText = linkNode.InnerText.Trim();
+            
+            // Try to extract location name from inner elements (like from <strong> tags)
+            var strongNode = linkNode.SelectSingleNode(".//strong");
+            if (strongNode != null)
+            {
+                string strongText = strongNode.InnerText.Trim();
+                if (!string.IsNullOrWhiteSpace(strongText))
+                {
+                    linkText = strongText;
+                }
+            }
+            
             if (linkText != cleanedText && !string.IsNullOrWhiteSpace(linkText))
             {
                 address = linkText;
+                Console.WriteLine($"  Found address: {address}");
             }
             
             // Extract coordinates from URL
@@ -164,6 +204,7 @@ internal class Tools
                             endIndex = mapUrl.Length;
                         
                         coordinates = mapUrl.Substring(atIndex + 1, endIndex - atIndex - 1);
+                        Console.WriteLine($"  Extracted coordinates (@ format): {coordinates}");
                     }
                 }
             }
@@ -179,8 +220,19 @@ internal class Tools
                     
                     string encodedCoordinates = mapUrl.Substring(startIndex, endIndex - startIndex);
                     coordinates = Uri.UnescapeDataString(encodedCoordinates); // Handle %2C format
+                    Console.WriteLine($"  Extracted coordinates (ll format): {coordinates}");
                 }
             }
+            else if (mapUrl.Contains("goo.gl"))
+            {
+                // For shortened URLs, we can't extract coordinates directly
+                // But we'll store the URL for client-side use
+                Console.WriteLine($"  Found shortened URL, no coordinates extraction possible");
+            }
+        }
+        else
+        {
+            Console.WriteLine("  No map link found");
         }
 
         // Process the time part

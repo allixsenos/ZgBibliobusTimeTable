@@ -121,6 +121,9 @@ public static class WebsiteGenerator
             sb.AppendLine($"<td>{sesija.Vrijeme}</td>");
             sb.AppendLine($"<td>{sesija.Lokacija}</td>");
             
+            // Log for debugging
+            Console.WriteLine($"Map info for '{sesija.Lokacija}': URL={sesija.MapUrl}, Coords={sesija.Coordinates}, Address={sesija.Address}");
+            
             // Add map link if available
             if (!string.IsNullOrEmpty(sesija.MapUrl))
             {
@@ -213,9 +216,17 @@ public static class WebsiteGenerator
     {
         if (string.IsNullOrEmpty(input) || input.Contains("neradni dan"))
             return "";
+        
+        // Remove any HTML tags that might be in the location name
+        var doc = new HtmlAgilityPack.HtmlDocument();
+        doc.LoadHtml(input);
+        string cleanInput = doc.DocumentNode.InnerText.Trim();
+        
+        // Log the original and cleaned input
+        Console.WriteLine($"Sanitizing location ID. Original: '{input}', Cleaned: '{cleanInput}'");
             
         // Replace spaces, special characters, and diacritics
-        string result = input.ToLowerInvariant()
+        string result = cleanInput.ToLowerInvariant()
             .Replace(' ', '-')
             .Replace(',', '-')
             .Replace('.', '-')
@@ -237,6 +248,9 @@ public static class WebsiteGenerator
         while (result.Contains("--"))
             result = result.Replace("--", "-");
             
-        return result.Trim('-');
+        result = result.Trim('-');
+        
+        Console.WriteLine($"Final sanitized location ID: '{result}'");
+        return result;
     }
 }
