@@ -9,13 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Add to Calendar Button library -->
+    <script src="https://cdn.jsdelivr.net/npm/add-to-calendar-button@2" async defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/add-to-calendar-button@2/assets/css/atcb.min.css">
 </head>
 <body>
     <header>
         <div class="container">
             <h1><i class="fas fa-bus"></i> Zagreb Bibliobus</h1>
             <p>Raspored bibliobusnih stajališta</p>
-            <div class="updated">Ažurirano: 24.04.2025. 12:17</div>
+            <div class="updated">Ažurirano: 24.04.2025. 12:23</div>
         </div>
     </header>
 
@@ -58,10 +61,22 @@
                 <button id="next-month">Sljedeći mjesec &raquo;</button>
             </div>
             <div class="calendar-info">
-                <p>Za dodavanje u Google Calendar ili drugi kalendar, preuzmite <a id="calendar-info-link" href="bibliobus-calendar.ics" download>iCalendar datoteku</a>, 
-                a zatim je uvezite u vašu aplikaciju za kalendar.</p>
+                <div class="calendar-actions">
+                    <div class="calendar-download">
+                        <p>Preuzimanje kalendarske datoteke:</p>
+                        <a id="calendar-info-link" href="bibliobus-calendar.ics" download class="calendar-download-btn">
+                            <i class="fas fa-download"></i> Preuzmi iCalendar
+                        </a>
+                    </div>
+                    
+                    <div class="calendar-widget">
+                        <p>Direktno dodavanje u kalendar:</p>
+                        <div id="add-to-calendar-widget"></div>
+                    </div>
+                </div>
+                
                 <p class="location-specific-note"><strong>Važno:</strong> Kada odaberete lokaciju iznad (npr. "KAJZERICA"), 
-                gumb za preuzimanje kalendara će automatski preuzeti iCalendar <strong>samo za odabranu lokaciju</strong>.</p>
+                kalendarska datoteka i widget će sadržavati podatke <strong>samo za odabranu lokaciju</strong>.</p>
             </div>
             <div id="calendar-container">
                 <!-- Calendar will be rendered here -->
@@ -4811,6 +4826,9 @@
                     console.log('All location IDs in data:', allLocationIds);
                 }
                 
+                // Update the Add to Calendar Widget
+                updateAddToCalendarWidget(locationName, isAllLocations, calendarFile);
+                
                 // Update calendar and table views
                 filterScheduleByLocation(locationId);
                 if (calendarInitialized) {
@@ -4896,6 +4914,20 @@
             });
             
             console.log(`Found ${futureDates.length} future dates and ${pastDates.length} past dates`);
+            
+            // If there are past dates, add a button to show them at the top
+            if (pastDates.length > 0) {
+                const showPastButton = document.createElement('button');
+                showPastButton.className = 'past-dates-button';
+                showPastButton.textContent = 'Prikaži prethodni raspored';
+                showPastButton.addEventListener('click', function() {
+                    document.body.classList.toggle('show-past-dates');
+                    this.textContent = document.body.classList.contains('show-past-dates') 
+                        ? 'Sakrij prethodni raspored' 
+                        : 'Prikaži prethodni raspored';
+                });
+                container.appendChild(showPastButton);
+            }
             
             // Function to create date section - reused for both future and past dates
             function createDateSection(date, isPastDate = false) {
@@ -4988,20 +5020,8 @@
             // First display future dates
             futureDates.forEach(date => createDateSection(date, false));
             
-            // If there are past dates, add a button to show them
+            // Add past dates (initially hidden)
             if (pastDates.length > 0) {
-                const showPastButton = document.createElement('button');
-                showPastButton.className = 'past-dates-button';
-                showPastButton.textContent = 'Prikaži prethodni raspored';
-                showPastButton.addEventListener('click', function() {
-                    document.body.classList.toggle('show-past-dates');
-                    this.textContent = document.body.classList.contains('show-past-dates') 
-                        ? 'Sakrij prethodni raspored' 
-                        : 'Prikaži prethodni raspored';
-                });
-                container.appendChild(showPastButton);
-                
-                // Add past dates (initially hidden)
                 pastDates.forEach(date => createDateSection(date, true));
             }
             
@@ -5245,28 +5265,8 @@
             
             document.getElementById('calendar-container').innerHTML = calendarHTML;
             
-            // Add a toggle for past dates in the calendar if needed
-            const calendarContainer = document.getElementById('calendar-container');
-            const hasPastDates = document.querySelectorAll('.calendar-day.past-date.has-events').length > 0;
-            
-            // Remove any existing button before adding a new one
-            const existingButton = calendarContainer.querySelector('.past-dates-button');
-            if (existingButton) {
-                existingButton.remove();
-            }
-            
-            if (hasPastDates) {
-                const showPastButton = document.createElement('button');
-                showPastButton.className = 'past-dates-button';
-                showPastButton.textContent = 'Prikaži prethodni raspored';
-                showPastButton.addEventListener('click', function() {
-                    document.body.classList.toggle('show-past-dates');
-                    this.textContent = document.body.classList.contains('show-past-dates') 
-                        ? 'Sakrij prethodni raspored' 
-                        : 'Prikaži prethodni raspored';
-                });
-                calendarContainer.insertBefore(showPastButton, calendarContainer.firstChild);
-            }
+            // No toggle button in calendar view, but we'll keep the dimmed effect on past dates
+            // The calendar will reflect the show-past-dates state from the list view
             
             // No longer adding click events to days with events - we keep users in calendar view
             document.querySelectorAll('.calendar-day.has-events').forEach(day => {
@@ -5308,6 +5308,69 @@
             }, 1000);
         }
         
+        // Function to update the Add to Calendar Button widget
+        function updateAddToCalendarWidget(locationName, isAllLocations, calendarFile) {
+            const widgetContainer = document.getElementById('add-to-calendar-widget');
+            if (!widgetContainer) return;
+            
+            // Clear previous widget
+            widgetContainer.innerHTML = '';
+            
+            // Get the current date in ISO format for the widget start date
+            const today = new Date();
+            const startDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            
+            // Create a date 3 months from now for end date
+            const endDate = new Date(today);
+            endDate.setMonth(today.getMonth() + 3);
+            const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+            
+            // Create the widget element
+            const button = document.createElement('div');
+            button.className = 'atcb';
+            button.setAttribute('style', 'display:none;');
+            
+            // Set widget properties
+            const widgetTitle = isAllLocations ? 'Zagreb Bibliobus - Raspored' : `Zagreb Bibliobus - ${locationName}`;
+            const widgetDescription = isAllLocations 
+                ? 'Raspored bibliobusnih stajališta u Zagrebu' 
+                : `Raspored bibliobusa za lokaciju ${locationName}`;
+            
+            // Set the button properties
+            button.setAttribute('data-name', widgetTitle);
+            button.setAttribute('data-description', widgetDescription);
+            button.setAttribute('data-startDate', startDate);
+            button.setAttribute('data-endDate', endDateStr);
+            button.setAttribute('data-hideBackground', 'true');
+            button.setAttribute('data-hideCheckmark', 'true');
+            button.setAttribute('data-translations', '{ "hr": { "label": "Dodaj u kalendar", "button": "Odaberi kalendar", "Apple": "Apple Calendar", "AppleShort": "Apple", "Google": "Google Calendar", "GoogleShort": "Google", "Outlook": "Outlook", "OutlookShort": "Outlook", "ical": "iCal Datoteka", "icalShort": "iCal", "outlook.com": "Outlook.com"}}');
+            button.setAttribute('data-language', 'hr');
+            
+            // Use absolute URL for iCal file (assume we're on the same domain)
+            const host = window.location.origin;
+            const calPath = calendarFile || 'bibliobus-calendar.ics';
+            button.setAttribute('data-ical', `${host}/${calPath}`);
+            
+            // Set options
+            button.setAttribute('data-options', 'Apple, Google, Outlook, OutlookOnline');
+            
+            // Append to container
+            widgetContainer.appendChild(button);
+            
+            // Initialize the widget (if the library is loaded)
+            if (typeof atcb_action === 'function') {
+                atcb_action();
+            } else {
+                console.warn('Add to Calendar Button library not loaded yet');
+                // Try again after a short delay
+                setTimeout(() => {
+                    if (typeof atcb_action === 'function') {
+                        atcb_action();
+                    }
+                }, 1000);
+            }
+        }
+        
         // Initialize views when the page loads
         document.addEventListener('DOMContentLoaded', function() {
             // Generate list view immediately
@@ -5317,6 +5380,17 @@
             if (document.querySelector('.data-tab[data-tab="calendar"]').classList.contains('active')) {
                 initCalendar();
             }
+            
+            // Initialize the Add to Calendar widget
+            const activeTab = document.querySelector('.location-tab.active');
+            const locationName = activeTab ? activeTab.textContent : 'Sve lokacije';
+            const isAllLocations = !activeTab || activeTab.dataset.locationId === '';
+            const calendarFile = activeTab ? activeTab.dataset.calendarFile : 'bibliobus-calendar.ics';
+            
+            // Let the page load first, then initialize the widget
+            setTimeout(() => {
+                updateAddToCalendarWidget(locationName, isAllLocations, calendarFile);
+            }, 500);
         });
     </script>
 </body>
