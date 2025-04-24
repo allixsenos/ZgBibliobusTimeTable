@@ -39,9 +39,8 @@ internal class Program : Tools
         string websiteDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "website");
         WebsiteGenerator.GenerateWebsite(sesije, websiteDir);
         
-        // Generate iCalendar file
-        string icalPath = Path.Combine(websiteDir, "bibliobus-calendar.ics");
-        ICalGenerator.GenerateICalendar(sesije, icalPath);
+        // Generate all iCalendar files (main and per-location)
+        ICalGenerator.GenerateICalendars(sesije, websiteDir);
 
         Console.WriteLine("GOTOVO!");
     }

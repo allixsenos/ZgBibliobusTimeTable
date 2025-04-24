@@ -32,6 +32,9 @@
                 <option value="SUBOTA">Subota</option>
                 <option value="NEDJELJA">Nedjelja</option>
             </select>
+            <select id="filter-location">
+                <!-- Will be populated from JSON data -->
+            </select>
         </div>
 
         <div class="data-info">
@@ -39,7 +42,7 @@
             <div class="data-tab" data-tab="calendar">Kalendarski prikaz</div>
             <div class="data-download">
                 <a href="bibliobus-data.json" download><i class="fas fa-download"></i> Preuzmi JSON</a>
-                <a href="bibliobus-calendar.ics" download><i class="fas fa-calendar-alt"></i> Preuzmi iCalendar</a>
+                <a id="calendar-download" href="bibliobus-calendar.ics" download><i class="fas fa-calendar-alt"></i> Preuzmi iCalendar</a>
             </div>
         </div>
 
@@ -67,8 +70,9 @@
                 <button id="next-month">Sljedeći mjesec &raquo;</button>
             </div>
             <div class="calendar-info">
-                <p>Za dodavanje u Google Calendar ili drugi kalendar, preuzmite <a href="bibliobus-calendar.ics" download>iCalendar datoteku</a>, 
+                <p>Za dodavanje u Google Calendar ili drugi kalendar, preuzmite <a id="calendar-info-link" href="bibliobus-calendar.ics" download>iCalendar datoteku</a>, 
                 a zatim je uvezite u vašu aplikaciju za kalendar.</p>
+                <p>Možete preuzeti raspored samo za određenu lokaciju tako da je odaberete iz padajućeg izbornika.</p>
             </div>
             <div id="calendar-container">
                 <!-- Calendar will be rendered here -->
@@ -84,7 +88,9 @@
 
     <script>
         // Data loaded from JSON file
-        const scheduleData = {{JSON_DATA}};
+        const data = {{JSON_DATA}};
+        const scheduleData = data.sessions;
+        const locationOptions = data.locations;
         
         // Function to convert ISO date (yyyy-MM-dd) to Croatian date (dd.MM.yyyy.)
         function isoToCroatianDate(isoDate) {
@@ -104,13 +110,43 @@
             return `${parts[2]}-${parts[1]}-${parts[0]}`;
         }
         
+        // Initialize the location filter dropdown
+        const locationFilterSelect = document.getElementById('filter-location');
+        
+        // Add location options to the dropdown
+        locationOptions.forEach(location => {
+            const option = document.createElement('option');
+            option.value = location.value;
+            option.textContent = location.name;
+            option.dataset.calendarFile = location.calendarFile;
+            locationFilterSelect.appendChild(option);
+        });
+        
+        // Update calendar download links when location changes
+        locationFilterSelect.addEventListener('change', function() {
+            const selectedOption = locationFilterSelect.options[locationFilterSelect.selectedIndex];
+            const calendarFile = selectedOption.dataset.calendarFile;
+            
+            // Update download links
+            document.getElementById('calendar-download').href = calendarFile;
+            document.getElementById('calendar-info-link').href = calendarFile;
+            
+            // Update calendar and table views
+            filterSchedule();
+            if (calendarInitialized) {
+                renderCalendar(currentDate);
+            }
+        });
+        
         // Search functionality
         document.getElementById('search').addEventListener('input', filterSchedule);
         document.getElementById('filter-day').addEventListener('change', filterSchedule);
+        document.getElementById('filter-location').addEventListener('change', filterSchedule);
         
         function filterSchedule() {
             const searchText = document.getElementById('search').value.toLowerCase();
             const dayFilter = document.getElementById('filter-day').value;
+            const locationFilter = document.getElementById('filter-location').value;
             const rows = document.getElementById('schedule-data').getElementsByTagName('tr');
             
             for (let i = 0; i < rows.length; i++) {
@@ -118,6 +154,7 @@
                 const date = rows[i].cells[1].textContent;
                 const time = rows[i].cells[2].textContent;
                 const location = rows[i].cells[3].textContent;
+                const locationId = rows[i].dataset.locationId || '';
                 
                 const matchesSearch = 
                     day.toLowerCase().includes(searchText) ||
@@ -126,10 +163,28 @@
                     location.toLowerCase().includes(searchText);
                 
                 const matchesDay = dayFilter === '' || day.trim() === dayFilter;
+                const matchesLocation = locationFilter === '' || locationId === locationFilter || 
+                    (locationFilter === '' && location.includes("neradni dan"));
                 
-                rows[i].style.display = (matchesSearch && matchesDay) ? '' : 'none';
+                rows[i].style.display = (matchesSearch && matchesDay && matchesLocation) ? '' : 'none';
             }
         }
+        
+        // Add location ID data attributes to table rows
+        document.querySelectorAll('#schedule-data tr').forEach(row => {
+            const locationCell = row.cells[3];
+            if (locationCell) {
+                const locationName = locationCell.textContent;
+                const isNonWorkingDay = locationName.includes("neradni dan");
+                
+                if (!isNonWorkingDay) {
+                    const location = locationOptions.find(loc => loc.name === locationName);
+                    if (location) {
+                        row.dataset.locationId = location.value;
+                    }
+                }
+            }
+        });
         
         // Tab switching
         document.querySelectorAll('.data-tab').forEach(tab => {
@@ -177,6 +232,7 @@
             
             const year = date.getFullYear();
             const month = date.getMonth();
+            const locationFilter = document.getElementById('filter-location').value;
             
             document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
             
@@ -201,8 +257,15 @@
                 const isoDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const croatianDateString = `${String(day).padStart(2, '0')}.${String(month + 1).padStart(2, '0')}.${year}.`;
                 
-                // Find schedule entries for this day
-                const dayEntries = scheduleData.filter(entry => entry.datum === isoDateString);
+                // Find schedule entries for this day, filtered by selected location if any
+                let dayEntries = scheduleData.filter(entry => entry.datum === isoDateString);
+                
+                // Apply location filter if set
+                if (locationFilter) {
+                    dayEntries = dayEntries.filter(entry => 
+                        entry.locationId === locationFilter || entry.isNeradniDan
+                    );
+                }
                 
                 let dayClass = 'calendar-day';
                 if (dayEntries.length > 0) {

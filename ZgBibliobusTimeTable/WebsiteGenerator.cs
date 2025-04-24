@@ -136,16 +136,48 @@ public static class WebsiteGenerator
 
     private static string GenerateJsonData(List<PodaciZaSesiju> sesije)
     {
-        // Convert to a format that works well with our JavaScript
-        var jsonData = sesije.Select(s => new 
+        // Get all unique locations (excluding non-working days)
+        var allLocations = sesije
+            .Where(s => !s.Lokacija.Contains("neradni dan") && !string.IsNullOrEmpty(s.Vrijeme))
+            .Select(s => s.Lokacija)
+            .Distinct()
+            .OrderBy(loc => loc)
+            .ToList();
+            
+        // Create location info for dropdown
+        var locationOptions = allLocations.Select(loc => new
+        {
+            name = loc,
+            value = SanitizeLocationId(loc),
+            calendarFile = $"bibliobus-{SanitizeLocationId(loc)}.ics"
+        }).ToList();
+        
+        // Add the "All Locations" option
+        locationOptions.Insert(0, new 
+        { 
+            name = "Sve lokacije", 
+            value = "", 
+            calendarFile = "bibliobus-calendar.ics" 
+        });
+            
+        // Convert sessions to a format that works well with our JavaScript
+        var sessionsData = sesije.Select(s => new 
         {
             dan = s.Dan,
             datum = s.Datum,  // Keep ISO format for data consistency
             datumCroatian = ConvertDateFormat(s.Datum),  // Add Croatian format
             vrijeme = s.Vrijeme,
             lokacija = s.Lokacija,
+            locationId = SanitizeLocationId(s.Lokacija),
             isNeradniDan = s.Lokacija.Contains("neradni dan")
         });
+        
+        // Create the combined data object
+        var data = new
+        {
+            locations = locationOptions,
+            sessions = sessionsData
+        };
         
         var options = new JsonSerializerOptions
         {
@@ -153,6 +185,40 @@ public static class WebsiteGenerator
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        return JsonSerializer.Serialize(jsonData, options);
+        return JsonSerializer.Serialize(data, options);
+    }
+    
+    /// <summary>
+    /// Helper method to create a valid identifier from a location name
+    /// </summary>
+    private static string SanitizeLocationId(string input)
+    {
+        if (string.IsNullOrEmpty(input) || input.Contains("neradni dan"))
+            return "";
+            
+        // Replace spaces, special characters, and diacritics
+        string result = input.ToLowerInvariant()
+            .Replace(' ', '-')
+            .Replace(',', '-')
+            .Replace('.', '-')
+            .Replace('/', '-')
+            .Replace('\\', '-');
+            
+        // Transliterate Croatian characters
+        result = result
+            .Replace('č', 'c')
+            .Replace('ć', 'c')
+            .Replace('đ', 'd')
+            .Replace('š', 's')
+            .Replace('ž', 'z');
+            
+        // Remove any other non-alphanumeric characters
+        result = new string(result.Where(c => char.IsLetterOrDigit(c) || c == '-').ToArray());
+        
+        // Trim dashes from ends and collapse multiple dashes
+        while (result.Contains("--"))
+            result = result.Replace("--", "-");
+            
+        return result.Trim('-');
     }
 }

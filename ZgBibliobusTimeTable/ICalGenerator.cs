@@ -12,11 +12,103 @@ namespace ZgBibliobusTimeTable;
 public static class ICalGenerator
 {
     /// <summary>
+    /// Generates iCalendar files (all locations and per-location) from bibliobus schedule data
+    /// </summary>
+    /// <param name="sesije">The list of schedule sessions</param>
+    /// <param name="outputDir">The directory where to save the iCalendar files</param>
+    public static void GenerateICalendars(List<PodaciZaSesiju> sesije, string outputDir)
+    {
+        // Get all unique locations (excluding non-working days)
+        var allLocations = sesije
+            .Where(s => !s.Lokacija.Contains("neradni dan") && !string.IsNullOrEmpty(s.Vrijeme))
+            .Select(s => s.Lokacija)
+            .Distinct()
+            .OrderBy(loc => loc)
+            .ToList();
+            
+        // Generate the main calendar with all locations
+        string mainCalendarPath = Path.Combine(outputDir, "bibliobus-calendar.ics");
+        GenerateICalendar(sesije, mainCalendarPath);
+        
+        // Generate individual calendars for each location
+        foreach (var location in allLocations)
+        {
+            // Create a sanitized filename from the location
+            string safeLocation = SanitizeFilename(location);
+            string locationCalendarPath = Path.Combine(outputDir, $"bibliobus-{safeLocation}.ics");
+            
+            // Filter sessions for this location only
+            var locationSessions = sesije
+                .Where(s => s.Lokacija.Equals(location) || s.Lokacija.Contains("neradni dan"))
+                .ToList();
+                
+            GenerateICalendar(locationSessions, locationCalendarPath, location);
+            
+            Console.WriteLine($"Location calendar generated for '{location}' at {locationCalendarPath}");
+        }
+        
+        // Generate a JSON file containing location information for the UI
+        GenerateLocationInfo(allLocations, outputDir);
+    }
+    
+    private static void GenerateLocationInfo(List<string> locations, string outputDir)
+    {
+        var locationInfo = locations.Select(loc => new
+        {
+            name = loc,
+            value = SanitizeFilename(loc),
+            calendarFile = $"bibliobus-{SanitizeFilename(loc)}.ics"
+        });
+        
+        string json = System.Text.Json.JsonSerializer.Serialize(locationInfo, new System.Text.Json.JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+        });
+        
+        string locationInfoPath = Path.Combine(outputDir, "bibliobus-locations.json");
+        File.WriteAllText(locationInfoPath, json);
+        Console.WriteLine($"Location info generated at {locationInfoPath}");
+    }
+    
+    /// <summary>
+    /// Helper method to sanitize a location name for use in filenames
+    /// </summary>
+    private static string SanitizeFilename(string input)
+    {
+        // Replace spaces, special characters, and diacritics
+        string result = input.ToLowerInvariant()
+            .Replace(' ', '-')
+            .Replace(',', '-')
+            .Replace('.', '-')
+            .Replace('/', '-')
+            .Replace('\\', '-');
+            
+        // Transliterate Croatian characters
+        result = result
+            .Replace('č', 'c')
+            .Replace('ć', 'c')
+            .Replace('đ', 'd')
+            .Replace('š', 's')
+            .Replace('ž', 'z');
+            
+        // Remove any other non-alphanumeric characters
+        result = new string(result.Where(c => char.IsLetterOrDigit(c) || c == '-').ToArray());
+        
+        // Trim dashes from ends and collapse multiple dashes
+        while (result.Contains("--"))
+            result = result.Replace("--", "-");
+            
+        return result.Trim('-');
+    }
+
+    /// <summary>
     /// Generates an iCalendar file from bibliobus schedule data
     /// </summary>
     /// <param name="sesije">The list of schedule sessions</param>
     /// <param name="filePath">The path where to save the iCalendar file</param>
-    public static void GenerateICalendar(List<PodaciZaSesiju> sesije, string filePath)
+    /// <param name="locationName">Optional location name for single-location calendars</param>
+    public static void GenerateICalendar(List<PodaciZaSesiju> sesije, string filePath, string locationName = null)
     {
         var sb = new StringBuilder();
 
@@ -26,8 +118,19 @@ public static class ICalGenerator
         sb.AppendLine("PRODID:-//ZgBibliobusTimeTable//Zagreb Bibliobus Calendar//HR");
         sb.AppendLine("CALSCALE:GREGORIAN");
         sb.AppendLine("METHOD:PUBLISH");
-        sb.AppendLine($"X-WR-CALNAME:Zagreb Bibliobus");
-        sb.AppendLine("X-WR-CALDESC:Raspored zagrebačkog bibliobusa");
+        
+        // Set calendar name based on whether it's for a specific location
+        if (string.IsNullOrEmpty(locationName))
+        {
+            sb.AppendLine($"X-WR-CALNAME:Zagreb Bibliobus");
+            sb.AppendLine("X-WR-CALDESC:Raspored zagrebačkog bibliobusa");
+        }
+        else
+        {
+            sb.AppendLine($"X-WR-CALNAME:Zagreb Bibliobus - {locationName}");
+            sb.AppendLine($"X-WR-CALDESC:Raspored zagrebačkog bibliobusa za lokaciju {locationName}");
+        }
+        
         sb.AppendLine("X-WR-TIMEZONE:Europe/Zagreb");
         
         // Add all events
@@ -136,6 +239,9 @@ public static class ICalGenerator
         // Write to file
         File.WriteAllText(filePath, sb.ToString());
 
-        Console.WriteLine($"iCalendar file generated at {filePath} with {eventCount} events.");
+        if (string.IsNullOrEmpty(locationName))
+        {
+            Console.WriteLine($"iCalendar file generated at {filePath} with {eventCount} events.");
+        }
     }
 }
