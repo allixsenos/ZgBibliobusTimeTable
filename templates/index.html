@@ -22,7 +22,7 @@
     <main class="container">
         <div class="navigation-container">
             <div class="data-views">
-                <div class="data-tab active" data-tab="table">Tablični prikaz</div>
+                <div class="data-tab active" data-tab="table">Popis po datumima</div>
                 <div class="data-tab" data-tab="calendar">Kalendarski prikaz</div>
             </div>
             
@@ -46,21 +46,9 @@
         </div>
 
         <div id="table-view" class="data-view active">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Dan</th>
-                        <th>Datum</th>
-                        <th>Vrijeme</th>
-                        <th>Lokacija</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="schedule-data">
-                    <!-- Schedule data will be inserted here -->
-                    {{TABLE_DATA}}
-                </tbody>
-            </table>
+            <div id="list-view-container">
+                <!-- List data will be inserted here via JavaScript -->
+            </div>
         </div>
 
         <div id="calendar-view" class="data-view">
@@ -204,38 +192,125 @@
         window.addEventListener('load', updateScrollButtons);
         window.addEventListener('resize', updateScrollButtons);
         
-        // Filter functionality based on location
-        function filterScheduleByLocation(locationId) {
-            const rows = document.getElementById('schedule-data').getElementsByTagName('tr');
+        // Generate list view from the schedule data
+        function generateListView() {
+            const container = document.getElementById('list-view-container');
+            container.innerHTML = ''; // Clear previous content
             
-            for (let i = 0; i < rows.length; i++) {
-                const location = rows[i].cells[3].textContent;
-                const rowLocationId = rows[i].dataset.locationId || '';
+            // Get the current location filter
+            const activeTab = document.querySelector('.location-tab.active');
+            const locationFilter = activeTab ? activeTab.dataset.locationId : '';
+            
+            console.log(`Generating list view with location filter: ${locationFilter}`);
+            
+            // Group sessions by date
+            const sessionsByDate = {};
+            
+            // Filter sessions based on location
+            const filteredSessions = scheduleData.filter(session => {
+                const isNonWorkingDay = session.isNeradniDan;
+                return locationFilter === '' || 
+                    session.locationId === locationFilter || 
+                    (locationFilter === '' && isNonWorkingDay);
+            });
+            
+            // Group by date
+            filteredSessions.forEach(session => {
+                if (!sessionsByDate[session.datum]) {
+                    sessionsByDate[session.datum] = [];
+                }
+                sessionsByDate[session.datum].push(session);
+            });
+            
+            console.log(`Grouped into ${Object.keys(sessionsByDate).length} dates`);
+            
+            // Sort dates chronologically
+            const sortedDates = Object.keys(sessionsByDate).sort();
+            
+            // For each date, create a section
+            sortedDates.forEach(date => {
+                const sessions = sessionsByDate[date];
+                const isNonWorking = sessions.some(s => s.isNeradniDan);
                 
-                // Show all rows if no location filter, or if location matches, or if it's a non-working day
-                const matchesLocation = locationId === '' || 
-                    rowLocationId === locationId || 
-                    (locationId === '' && location.includes("neradni dan"));
+                // Get day name from the first session
+                const dayName = sessions.length > 0 ? sessions[0].dan : '';
                 
-                rows[i].style.display = matchesLocation ? '' : 'none';
+                // Create date heading
+                const heading = document.createElement('h2');
+                heading.className = 'date-heading';
+                
+                // Convert ISO date to Croatian format
+                const croatianDate = isoToCroatianDate(date);
+                
+                heading.innerHTML = `${croatianDate} <span class="day-name">${dayName}</span>`;
+                container.appendChild(heading);
+                
+                // Create entries container
+                const entriesDiv = document.createElement('div');
+                entriesDiv.className = 'schedule-entries';
+                
+                if (isNonWorking) {
+                    // Non-working day
+                    const entry = document.createElement('div');
+                    entry.className = 'schedule-entry non-working-date';
+                    entry.innerHTML = '<div class="schedule-entry-time"></div><div class="schedule-entry-location">Neradni dan</div>';
+                    entriesDiv.appendChild(entry);
+                } else {
+                    // Sort sessions by time
+                    sessions.sort((a, b) => a.vrijeme.localeCompare(b.vrijeme));
+                    
+                    // Add each session
+                    sessions.forEach(session => {
+                        const entry = document.createElement('div');
+                        entry.className = 'schedule-entry';
+                        
+                        // Create time element
+                        const timeDiv = document.createElement('div');
+                        timeDiv.className = 'schedule-entry-time';
+                        timeDiv.textContent = session.vrijeme;
+                        
+                        // Create location element with possible link
+                        const locationDiv = document.createElement('div');
+                        locationDiv.className = 'schedule-entry-location';
+                        
+                        if (session.mapUrl) {
+                            const link = document.createElement('a');
+                            link.href = session.mapUrl;
+                            link.className = 'location-link';
+                            link.textContent = session.lokacija;
+                            link.target = '_blank';
+                            link.title = session.address || session.lokacija;
+                            locationDiv.appendChild(link);
+                        } else {
+                            locationDiv.textContent = session.lokacija;
+                        }
+                        
+                        // Add time and location to entry
+                        entry.appendChild(timeDiv);
+                        entry.appendChild(locationDiv);
+                        
+                        // Add entry to container
+                        entriesDiv.appendChild(entry);
+                    });
+                }
+                
+                container.appendChild(entriesDiv);
+            });
+            
+            // If no entries, show a message
+            if (sortedDates.length === 0) {
+                const noData = document.createElement('p');
+                noData.className = 'no-data-message';
+                noData.textContent = 'Nema podataka za odabranu lokaciju.';
+                container.appendChild(noData);
             }
         }
         
-        // Add location ID data attributes to table rows
-        document.querySelectorAll('#schedule-data tr').forEach(row => {
-            const locationCell = row.cells[3];
-            if (locationCell) {
-                const locationName = locationCell.textContent;
-                const isNonWorkingDay = locationName.includes("neradni dan");
-                
-                if (!isNonWorkingDay) {
-                    const location = locationOptions.find(loc => loc.name === locationName);
-                    if (location) {
-                        row.dataset.locationId = location.value;
-                    }
-                }
-            }
-        });
+        // Filter functionality based on location
+        function filterScheduleByLocation(locationId) {
+            // Generate the list view with the new filter
+            generateListView();
+        }
         
         // Tab switching
         document.querySelectorAll('.data-tab').forEach(tab => {
@@ -493,8 +568,11 @@
             }, 1000);
         }
         
-        // Initialize the calendar view when the page loads
+        // Initialize views when the page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Generate list view immediately
+            generateListView();
+            
             // Auto-initialize calendar if that tab is active
             if (document.querySelector('.data-tab[data-tab="calendar"]').classList.contains('active')) {
                 initCalendar();
