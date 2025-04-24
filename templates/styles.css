@@ -452,10 +452,10 @@ tr.non-working-day {
 }
 
 .calendar-location {
-    padding: 3px 0;
+    padding: 1px 0;
     border-bottom: 1px solid #f0f0f0;
     line-height: 1.3;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 
 .calendar-location:last-child {
@@ -532,23 +532,22 @@ tr.non-working-day {
 
 /* Styles for the calendar location entry links */
 .location-entry-link {
-    display: flex;
-    align-items: flex-start;
+    display: inline-block;
+    width: 100%;
     padding: 3px;
-    color: inherit;
+    color: var(--primary-color);
     text-decoration: none;
     border-radius: 3px;
     transition: background-color 0.2s;
     cursor: pointer;
+    font-size: 0.8rem;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .location-entry-link:hover {
     background-color: #ddeeff;
     text-decoration: none;
-}
-
-.location-entry-link .location-name {
-    color: var(--primary-color);
 }
 
 /* Keep for backwards compatibility */

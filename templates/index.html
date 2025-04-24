@@ -641,23 +641,19 @@
                                 displayTime = '0' + displayTime;
                             }
                             
-                            // Simplify calendar entry and make whole entry a link if map URL is available
+                            // Ultra simplified calendar entry - just time and location as a single item
                             if (sessionData && sessionData.mapUrl) {
                                 // Create entry as a link to the map
                                 calendarHTML += `<div class="calendar-location">
                                     <a href="${sessionData.mapUrl}" target="_blank" class="location-entry-link" 
                                         title="${sessionData.address || sessionData.lokacija}">
-                                        <span class="location-time">${displayTime}</span>
-                                        <span class="location-name">${entry.location}</span>
+                                        ${displayTime} ${entry.location}
                                     </a>
                                 </div>`;
                             } else {
-                                // No map link, just display the location without link
+                                // No map link, just display the plain text
                                 calendarHTML += `<div class="calendar-location">
-                                    <div class="location-entry-container">
-                                        <span class="location-time">${displayTime}</span>
-                                        <span class="location-name">${entry.location}</span>
-                                    </div>
+                                    ${displayTime} ${entry.location}
                                 </div>`;
                             }
                         });
