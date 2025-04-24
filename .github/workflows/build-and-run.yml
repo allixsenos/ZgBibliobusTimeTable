@@ -17,6 +17,8 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
     - name: Checkout code
@@ -30,11 +32,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ZgBibliobusTimeTable.sln
       
-    - name: Create templates directory
-      run: |
-        mkdir -p templates
-        cp templates/index.html templates/
-        cp templates/styles.css templates/
+    # No need to create or copy template files as they already exist in the repository
       
     - name: Enable website fetching if selected
       if: ${{ inputs.fetch_website }}
@@ -54,12 +52,10 @@ jobs:
         
         # Find the output directory where the app is built
         APP_DIR=$(find ZgBibliobusTimeTable/bin -name "net9.0" -type d)
+        echo "Application directory: $APP_DIR"
         
         # Create templates directory in the build output dir
-        mkdir -p "$APP_DIR/templates"
-        
-        # Copy the template files
-        cp templates/* "$APP_DIR/templates/"
+        mkdir -p "$APP_DIR/../../../templates"
         
         # Create Data directory in the build output dir
         mkdir -p "$APP_DIR/Data"
@@ -77,42 +73,30 @@ jobs:
         path: |
           ZgBibliobusTimeTable/bin/Release/net9.0/website/
         
-    - name: Deploy to GitHub Pages
+    - name: Create README for GitHub Pages
       run: |
         # Create a temporary git repository
         WEBSITE_DIR=$(find ZgBibliobusTimeTable/bin -name "website" -type d)
         
         if [ -z "$WEBSITE_DIR" ]; then
           echo "Error: Website directory not found"
+          ls -la ZgBibliobusTimeTable/bin/
+          ls -la ZgBibliobusTimeTable/bin/Release/
+          ls -la ZgBibliobusTimeTable/bin/Release/net9.0/
           exit 1
         fi
         
-        echo "Deploying website from $WEBSITE_DIR"
-        
-        # Configure git
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        
-        # Create and checkout pages branch
-        git checkout --orphan pages
-        
-        # Remove everything
-        git rm -rf .
-        
-        # Copy website files
-        cp -r "$WEBSITE_DIR"/* .
+        echo "Preparing website from $WEBSITE_DIR"
         
         # Add README
-        echo "# Zagreb Bibliobus Timetable" > README.md
-        echo "This is an automatically generated website for the Zagreb Bibliobus (mobile library) timetable." >> README.md
-        echo "Data is sourced from the official website: https://www.kgz.hr/" >> README.md
-        echo "Last updated: $(date)" >> README.md
+        echo "# Zagreb Bibliobus Timetable" > "$WEBSITE_DIR/README.md"
+        echo "This is an automatically generated website for the Zagreb Bibliobus (mobile library) timetable." >> "$WEBSITE_DIR/README.md"
+        echo "Data is sourced from the official website: https://www.kgz.hr/" >> "$WEBSITE_DIR/README.md"
+        echo "Last updated: $(date)" >> "$WEBSITE_DIR/README.md"
         
-        # Add all files
-        git add .
-        
-        # Commit changes
-        git commit -m "Update website $(date)"
-        
-        # Push to GitHub
-        git push -f origin pages
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: ZgBibliobusTimeTable/bin/Release/net9.0/website
+        branch: pages
+        clean: true

@@ -26,16 +26,39 @@ public static class WebsiteGenerator
             Directory.CreateDirectory(outputDir);
         }
 
-        // Copy template files
+        // Try multiple possible template directories
         string templateDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "templates");
+        
+        // Add debug info
+        Console.WriteLine($"Trying template directory: {templateDir}");
+        
         if (!Directory.Exists(templateDir))
         {
-            Console.WriteLine($"Template directory not found: {templateDir}");
+            Console.WriteLine($"Template directory not found, trying alternate path");
             templateDir = Path.Combine(AppContext.BaseDirectory, "templates");
+            Console.WriteLine($"Trying alternate template directory: {templateDir}");
+            
             if (!Directory.Exists(templateDir))
             {
-                Console.WriteLine($"Alternate template directory not found: {templateDir}");
-                return;
+                Console.WriteLine($"Alternate template directory not found, trying repository root");
+                // Try at the repository root level
+                templateDir = "templates";
+                Console.WriteLine($"Trying repository root template directory: {templateDir}");
+                
+                if (!Directory.Exists(templateDir))
+                {
+                    Console.WriteLine($"All template directories not found, creating empty templates");
+                    Directory.CreateDirectory(templateDir);
+                    
+                    // Create basic templates
+                    File.WriteAllText(Path.Combine(templateDir, "index.html"), 
+                        "<!DOCTYPE html><html><head><title>Bibliobus Schedule</title><style>body{font-family:sans-serif;}</style></head>" +
+                        "<body><h1>Bibliobus Schedule</h1><div>{{TABLE_DATA}}</div><script>const data={{JSON_DATA}};</script></body></html>");
+                    
+                    File.WriteAllText(Path.Combine(templateDir, "styles.css"), 
+                        "body { font-family: sans-serif; } table { border-collapse: collapse; } " +
+                        "th, td { border: 1px solid #ddd; padding: 8px; }");
+                }
             }
         }
 
