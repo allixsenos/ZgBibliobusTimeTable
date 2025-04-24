@@ -1,4 +1,7 @@
-﻿namespace ZgBibliobusTimeTable;
+﻿using System.IO;
+using System.Text.Json;
+
+namespace ZgBibliobusTimeTable;
 
 internal class Program : Tools
 {
@@ -26,12 +29,16 @@ internal class Program : Tools
 
         List<PodaciZaSesiju> sesije = Tools.PretvoriUSesije(dani);
 
+        // Print schedule to console
         foreach (var sesija in sesije)
         {
             Console.WriteLine(sesija);
         }
 
+        // Generate website files
+        string websiteDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "website");
+        WebsiteGenerator.GenerateWebsite(sesije, websiteDir);
+
         Console.WriteLine("GOTOVO!");
-        Console.ReadLine();
     }
 }
