@@ -364,20 +364,28 @@
                             timeText = session.vrijeme;
                         }
                         
-                        // Ensure consistent display with leading zeros for single-digit hours
-                        if (timeText.match(/^\d:\d\d/) || (timeText.includes('-') && timeText.split('-')[0].trim().match(/^\d:\d\d/))) {
-                            // Add leading zero to the start time
-                            if (timeText.includes('-')) {
-                                const parts = timeText.split('-');
-                                const startTime = parts[0].trim();
-                                const endTime = parts[1].trim();
-                                
-                                if (startTime.match(/^\d:\d\d/)) {
-                                    timeText = '0' + startTime + ' - ' + endTime;
-                                }
-                            } else {
-                                timeText = '0' + timeText;
+                        // Ensure consistent display with leading zeros and standardized dash format
+                        if (timeText.includes('-')) {
+                            // Standardize the dash format to always be " - " with spaces
+                            let parts = timeText.split('-').map(part => part.trim());
+                            let startTime = parts[0];
+                            let endTime = parts[1];
+                            
+                            // Add leading zero if needed
+                            if (startTime.match(/^\d:\d\d/)) {
+                                startTime = '0' + startTime;
                             }
+                            
+                            // Add leading zero to end time if needed
+                            if (endTime.match(/^\d:\d\d/)) {
+                                endTime = '0' + endTime;
+                            }
+                            
+                            // Always use standardized format with spaces around dash
+                            timeText = `${startTime} - ${endTime}`;
+                        } else if (timeText.match(/^\d:\d\d/)) {
+                            // Just a single time without range
+                            timeText = '0' + timeText;
                         }
                         
                         timeDiv.textContent = timeText;
@@ -624,19 +632,6 @@
                                 s.vrijeme && s.vrijeme.startsWith(entry.startTime)
                             );
                             
-                            // Generate location name with map link if available
-                            let locationHtml = '';
-                            if (sessionData && sessionData.mapUrl) {
-                                // Make location name itself a link to the map
-                                locationHtml = `<a href="${sessionData.mapUrl}" target="_blank" class="location-link" 
-                                    title="${sessionData.address || sessionData.lokacija}">
-                                    ${entry.location}
-                                </a>`;
-                            } else {
-                                // No map link, just display the location name
-                                locationHtml = entry.location;
-                            }
-                            
                             // Add debug info
                             console.log(`Building entry HTML: time=${entry.startTime}, location="${entry.location}", hasMap=${sessionData && sessionData.mapUrl ? 'true' : 'false'}`);
                             
@@ -646,13 +641,25 @@
                                 displayTime = '0' + displayTime;
                             }
                             
-                            // Create calendar entry with updated structure for full location name display
-                            calendarHTML += `<div class="calendar-location">
-                                <div class="location-entry-container">
-                                    <span class="location-time">${displayTime}</span>
-                                    <span class="location-name">${locationHtml}</span>
-                                </div>
-                            </div>`;
+                            // Simplify calendar entry and make whole entry a link if map URL is available
+                            if (sessionData && sessionData.mapUrl) {
+                                // Create entry as a link to the map
+                                calendarHTML += `<div class="calendar-location">
+                                    <a href="${sessionData.mapUrl}" target="_blank" class="location-entry-link" 
+                                        title="${sessionData.address || sessionData.lokacija}">
+                                        <span class="location-time">${displayTime}</span>
+                                        <span class="location-name">${entry.location}</span>
+                                    </a>
+                                </div>`;
+                            } else {
+                                // No map link, just display the location without link
+                                calendarHTML += `<div class="calendar-location">
+                                    <div class="location-entry-container">
+                                        <span class="location-time">${displayTime}</span>
+                                        <span class="location-name">${entry.location}</span>
+                                    </div>
+                                </div>`;
+                            }
                         });
                     }
                     
@@ -682,17 +689,8 @@
             // No toggle button in calendar view, but we'll keep the dimmed effect on past dates
             // The calendar will reflect the show-past-dates state from the list view
             
-            // No longer adding click events to days with events - we keep users in calendar view
-            document.querySelectorAll('.calendar-day.has-events').forEach(day => {
-                // Make the day look clickable but don't add navigation behavior
-                day.title = "Kliknite za detaljne informacije";
-                day.style.cursor = "pointer";
-                
-                // Optional: You could add a click handler that expands the day's events if you want
-                // day.addEventListener('click', () => {
-                //     // Expand day events or show more details if needed in the future
-                // });
-            });
+            // No click events or clickable styling for calendar days
+            // Individual location entries will be clickable if they have map links
             
             // Debug: Examine the rendered calendar entries
             setTimeout(() => {
@@ -700,23 +698,28 @@
                 document.querySelectorAll('.calendar-location').forEach((el, idx) => {
                     console.log(`Entry ${idx}:`, el.innerHTML);
                     
-                    // Check location-name specifically
-                    const locationName = el.querySelector('.location-name');
-                    if (locationName) {
-                        console.log(`  Location name: "${locationName.textContent}"`);
-                        console.log(`  Location name style:`, window.getComputedStyle(locationName));
-                        console.log(`  Location name visibility:`, locationName.offsetWidth > 0 && locationName.offsetHeight > 0);
+                    // Check for entry link
+                    const entryLink = el.querySelector('.location-entry-link');
+                    if (entryLink) {
+                        console.log(`  Entry link: ${entryLink.getAttribute('href')}`);
+                        console.log(`  Entry link working: true`);
+                        
+                        // Check components of the link
+                        const locationTime = entryLink.querySelector('.location-time');
+                        const locationName = entryLink.querySelector('.location-name');
+                        
+                        console.log(`  Time displayed: ${locationTime ? locationTime.textContent : 'missing'}`);
+                        console.log(`  Location displayed: ${locationName ? locationName.textContent : 'missing'}`);
                     } else {
-                        console.log('  No location name element found');
-                    }
-                    
-                    // Check location-map
-                    const locationMap = el.querySelector('.location-map');
-                    if (locationMap) {
-                        console.log(`  Location map present`);
-                        console.log(`  Location map style:`, window.getComputedStyle(locationMap));
-                    } else {
-                        console.log('  No location map element found');
+                        // Check for regular entry
+                        const locationName = el.querySelector('.location-name');
+                        const locationTime = el.querySelector('.location-time');
+                        
+                        if (locationName && locationTime) {
+                            console.log(`  Regular entry - time: ${locationTime.textContent}, location: ${locationName.textContent}`);
+                        } else {
+                            console.log('  Entry structure not as expected');
+                        }
                     }
                 });
             }, 1000);
