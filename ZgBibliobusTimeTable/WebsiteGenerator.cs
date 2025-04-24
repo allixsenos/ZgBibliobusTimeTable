@@ -167,12 +167,23 @@ public static class WebsiteGenerator
             .OrderBy(loc => loc)
             .ToList();
             
-        // Create location info for dropdown
-        var locationOptions = allLocations.Select(loc => new
+        // Create location info for dropdown and include map URLs
+        var locationOptions = allLocations.Select(loc => 
         {
-            name = loc,
-            value = SanitizeLocationId(loc),
-            calendarFile = $"bibliobus-{SanitizeLocationId(loc)}.ics"
+            // Find the first non-empty map URL for this location
+            var mapData = sesije.FirstOrDefault(s => 
+                s.Lokacija == loc && 
+                !string.IsNullOrEmpty(s.MapUrl));
+            
+            return new
+            {
+                name = loc,
+                value = SanitizeLocationId(loc),
+                calendarFile = $"bibliobus-{SanitizeLocationId(loc)}.ics",
+                mapUrl = mapData?.MapUrl ?? "",
+                coordinates = mapData?.Coordinates ?? "",
+                address = mapData?.Address ?? ""
+            };
         }).ToList();
         
         // Add the "All Locations" option
@@ -180,7 +191,10 @@ public static class WebsiteGenerator
         { 
             name = "Sve lokacije", 
             value = "", 
-            calendarFile = "bibliobus-calendar.ics" 
+            calendarFile = "bibliobus-calendar.ics",
+            mapUrl = "",
+            coordinates = "",
+            address = ""
         });
             
         // Convert sessions to a format that works well with our JavaScript

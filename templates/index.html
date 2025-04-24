@@ -626,42 +626,9 @@
                         
                         // Display all entries in time-first format with map links
                         allEntries.forEach(entry => {
-                            // Find the data for this entry to get map URL
-                            // Normalize comparison by extracting the start time from s.vrijeme if it contains a range
-                            const sessionData = dayEntries.find(s => {
-                                // Match location name exactly
-                                if (s.lokacija !== entry.location) return false;
-                                
-                                // If we have a full time string, extract the start time for comparison
-                                if (s.vrijeme) {
-                                    // Handle time ranges like "9:00 - 11:00"
-                                    const sessionStartTime = s.vrijeme.includes('-') 
-                                        ? s.vrijeme.split('-')[0].trim() 
-                                        : s.vrijeme.trim();
-                                    
-                                    // Normalize the times for comparison by removing leading zeros
-                                    const normalizedSessionTime = sessionStartTime.replace(/^0/, '');
-                                    const normalizedEntryTime = entry.startTime.replace(/^0/, '');
-                                    
-                                    return normalizedSessionTime === normalizedEntryTime;
-                                }
-                                return false;
-                            });
-                            
-                            // Add debug info
-                            console.log(`Building entry HTML: time=${entry.startTime}, location="${entry.location}", hasMap=${sessionData && sessionData.mapUrl ? 'true' : 'false'}`);
-                            
-                            // Log when map URL isn't found to help debug
-                            if (!sessionData || !sessionData.mapUrl) {
-                                console.warn(`⚠️ No map URL found for ${entry.location} at ${entry.startTime}`);
-                                // Optional: Log all dayEntries for this location to see what's available
-                                const locationEntries = dayEntries.filter(s => s.lokacija === entry.location);
-                                if (locationEntries.length > 0) {
-                                    console.log(`Available entries for ${entry.location}:`, locationEntries);
-                                } else {
-                                    console.log(`No entries found for ${entry.location} in dayEntries`);
-                                }
-                            }
+                            // Look up location data from the locations array instead of sessions
+                            // This way we get consistent map URLs for locations regardless of date/time
+                            const locationData = data.locations.find(loc => loc.name === entry.location);
                             
                             // Make sure the time is padded with a leading zero if needed for consistency
                             let displayTime = entry.startTime;
@@ -669,12 +636,15 @@
                                 displayTime = '0' + displayTime;
                             }
                             
+                            // Add debug info
+                            console.log(`Building entry HTML: time=${displayTime}, location="${entry.location}", hasMap=${locationData && locationData.mapUrl ? 'true' : 'false'}`);
+                            
                             // Ultra simplified calendar entry - just time and location as a single item
-                            if (sessionData && sessionData.mapUrl) {
+                            if (locationData && locationData.mapUrl) {
                                 // Create entry as a link to the map
                                 calendarHTML += `<div class="calendar-location">
-                                    <a href="${sessionData.mapUrl}" target="_blank" class="location-entry-link" 
-                                        title="${sessionData.address || sessionData.lokacija}">
+                                    <a href="${locationData.mapUrl}" target="_blank" class="location-entry-link" 
+                                        title="${locationData.address || locationData.name}">
                                         ${displayTime} ${entry.location}
                                     </a>
                                 </div>`;
@@ -727,23 +697,10 @@
                     if (entryLink) {
                         console.log(`  Entry link: ${entryLink.getAttribute('href')}`);
                         console.log(`  Entry link working: true`);
-                        
-                        // Check components of the link
-                        const locationTime = entryLink.querySelector('.location-time');
-                        const locationName = entryLink.querySelector('.location-name');
-                        
-                        console.log(`  Time displayed: ${locationTime ? locationTime.textContent : 'missing'}`);
-                        console.log(`  Location displayed: ${locationName ? locationName.textContent : 'missing'}`);
+                        console.log(`  Content: ${entryLink.textContent.trim()}`);
                     } else {
-                        // Check for regular entry
-                        const locationName = el.querySelector('.location-name');
-                        const locationTime = el.querySelector('.location-time');
-                        
-                        if (locationName && locationTime) {
-                            console.log(`  Regular entry - time: ${locationTime.textContent}, location: ${locationName.textContent}`);
-                        } else {
-                            console.log('  Entry structure not as expected');
-                        }
+                        // Check for plain text entry
+                        console.log(`  Plain text entry: ${el.textContent.trim()}`);
                     }
                 });
             }, 1000);
