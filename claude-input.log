@@ -242,3 +242,6 @@ atcb.js:5549  TypeError: Cannot read properties of undefined (reading 'replace')
 39. "the locations in the list view are not sorted by human readable time, the 9:00 is at the bottom after all the ones that are two digits
 
 in the calendar view I don't see the starting times at all any more but I can tell that they are sorted weirdly. please reintroduce starting times and ensure that they are ordered correctly."
+40. "list view: sometimes the times have a \" - \" between them, sometimes it's just \"-\", make sure they always have a \" - \"
+
+calendar view: simplify the item layout within a single day. just write the starting time and the location, and make the whole thing a link to the map. currently the links don't work at all. currently the entire calendar day lights up when hovered and shows a clickable mouse cursor, and clicking does nothing. get rid of the hover effect and the click cursor on everything but individual locations that are links to the map."
