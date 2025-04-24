@@ -47,9 +47,9 @@ public static class ICalGenerator
                     string uid = $"zgbibliobus-{eventCount}@kgz.hr";
                     
                     // Parse the date
-                    if (DateTime.TryParse(sesija.Datum, out DateTime eventDate))
+                    if (DateTime.TryParse(sesija.Datum, out DateTime nonWorkingDate))
                     {
-                        string dateString = eventDate.ToString("yyyyMMdd");
+                        string dateString = nonWorkingDate.ToString("yyyyMMdd");
                         
                         sb.AppendLine("BEGIN:VEVENT");
                         sb.AppendLine($"UID:{uid}");
