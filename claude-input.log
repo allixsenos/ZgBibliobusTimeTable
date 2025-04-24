@@ -225,3 +225,8 @@ also, make the calendar view stop jumping to the list view
 
 also hide dates in the past from the default view, put them behind a little text button that says \"show past schedule\" in croatian"
 36. "<user-memory-input>log every single command I input into claude-input.log, and push up to github every time you're done making changes</user-memory-input>"
+37. "\"show past schedule\" doesn't make sense on the calendar view, remove it but keep the \"dimmed\" effect on past dates
+
+\"show past schedule\" on list view is great, just put it at the top of the list instead of at the bottom
+
+can you add an \"add to calendar\" widget that creates links for the most common calendars - google calendar, outlook.com, etc? I'm sure there's a js widget available for this."
