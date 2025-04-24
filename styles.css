@@ -420,12 +420,9 @@ tr.non-working-day {
 
 .calendar-day.has-events {
     background-color: #eef7ff;
-    cursor: pointer;
 }
 
-.calendar-day.has-events:hover {
-    background-color: #ddeeff;
-}
+/* Removed cursor: pointer and hover effect from calendar days */
 
 .calendar-day.past-date {
     opacity: 0.5;
@@ -531,6 +528,27 @@ tr.non-working-day {
 .location-link:hover {
     color: var(--accent-color);
     text-decoration: underline;
+}
+
+/* Styles for the calendar location entry links */
+.location-entry-link {
+    display: flex;
+    align-items: flex-start;
+    padding: 3px;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.location-entry-link:hover {
+    background-color: #ddeeff;
+    text-decoration: none;
+}
+
+.location-entry-link .location-name {
+    color: var(--primary-color);
 }
 
 /* Keep for backwards compatibility */
