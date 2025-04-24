@@ -9,16 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <!-- Add to Calendar Button library -->
-    <script src="https://cdn.jsdelivr.net/npm/add-to-calendar-button@2" async defer></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/add-to-calendar-button@2/assets/css/atcb.min.css">
+    <!-- Add to Calendar Button library (using stable version 1.5.5) -->
+    <script src="https://cdn.jsdelivr.net/npm/add-to-calendar-button@1.5.5/dist/atcb.min.js" async defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/add-to-calendar-button@1.5.5/dist/atcb.min.css">
 </head>
 <body>
     <header>
         <div class="container">
             <h1><i class="fas fa-bus"></i> Zagreb Bibliobus</h1>
             <p>Raspored bibliobusnih stajališta</p>
-            <div class="updated">Ažurirano: 24.04.2025. 12:23</div>
+            <div class="updated">Ažurirano: 24.04.2025. 12:26</div>
         </div>
     </header>
 
@@ -5325,50 +5325,47 @@
             endDate.setMonth(today.getMonth() + 3);
             const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
             
-            // Create the widget element
-            const button = document.createElement('div');
-            button.className = 'atcb';
-            button.setAttribute('style', 'display:none;');
+            // Using a simplified approach using direct initialization 
+            // with the global atcb_action function
             
             // Set widget properties
             const widgetTitle = isAllLocations ? 'Zagreb Bibliobus - Raspored' : `Zagreb Bibliobus - ${locationName}`;
             const widgetDescription = isAllLocations 
                 ? 'Raspored bibliobusnih stajališta u Zagrebu' 
                 : `Raspored bibliobusa za lokaciju ${locationName}`;
-            
-            // Set the button properties
-            button.setAttribute('data-name', widgetTitle);
-            button.setAttribute('data-description', widgetDescription);
-            button.setAttribute('data-startDate', startDate);
-            button.setAttribute('data-endDate', endDateStr);
-            button.setAttribute('data-hideBackground', 'true');
-            button.setAttribute('data-hideCheckmark', 'true');
-            button.setAttribute('data-translations', '{ "hr": { "label": "Dodaj u kalendar", "button": "Odaberi kalendar", "Apple": "Apple Calendar", "AppleShort": "Apple", "Google": "Google Calendar", "GoogleShort": "Google", "Outlook": "Outlook", "OutlookShort": "Outlook", "ical": "iCal Datoteka", "icalShort": "iCal", "outlook.com": "Outlook.com"}}');
-            button.setAttribute('data-language', 'hr');
-            
+                
             // Use absolute URL for iCal file (assume we're on the same domain)
             const host = window.location.origin;
             const calPath = calendarFile || 'bibliobus-calendar.ics';
-            button.setAttribute('data-ical', `${host}/${calPath}`);
             
-            // Set options
-            button.setAttribute('data-options', 'Apple, Google, Outlook, OutlookOnline');
+            // Create calendar button with simpler configuration
+            const buttonElement = document.createElement('button');
+            buttonElement.className = 'calendar-add-button';
+            buttonElement.textContent = 'Dodaj u kalendar';
+            buttonElement.onclick = function() {
+                if (typeof atcb_action === 'function') {
+                    atcb_action({
+                        name: widgetTitle,
+                        description: widgetDescription,
+                        startDate: startDate,
+                        endDate: endDateStr,
+                        options: ['Apple', 'Google', 'iCal', 'Microsoft365', 'Outlook.com', 'Yahoo'],
+                        timeZone: 'Europe/Zagreb',
+                        iCalFileName: calPath.split('/').pop(),
+                        listStyle: 'dropdown',
+                        trigger: 'click',
+                        buttonStyle: 'round',
+                        language: 'hr',
+                        ical: `${host}/${calPath}`
+                    });
+                } else {
+                    alert('Kalendarska komponenta nije učitana. Molimo koristite iCalendar datoteku.');
+                }
+                return false;
+            };
             
             // Append to container
-            widgetContainer.appendChild(button);
-            
-            // Initialize the widget (if the library is loaded)
-            if (typeof atcb_action === 'function') {
-                atcb_action();
-            } else {
-                console.warn('Add to Calendar Button library not loaded yet');
-                // Try again after a short delay
-                setTimeout(() => {
-                    if (typeof atcb_action === 'function') {
-                        atcb_action();
-                    }
-                }, 1000);
-            }
+            widgetContainer.appendChild(buttonElement);
         }
         
         // Initialize views when the page loads
