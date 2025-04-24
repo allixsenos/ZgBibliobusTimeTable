@@ -246,3 +246,5 @@ in the calendar view I don't see the starting times at all any more but I can te
 
 calendar view: simplify the item layout within a single day. just write the starting time and the location, and make the whole thing a link to the map. currently the links don't work at all. currently the entire calendar day lights up when hovered and shows a clickable mouse cursor, and clicking does nothing. get rid of the hover effect and the click cursor on everything but individual locations that are links to the map."2025-04-24 17:54:22 CEST
 Committing changes to implement toggle functionality for past dates, add calendar component fix, and language switching
+2025-04-24 17:58:51 CEST
+Updated CLAUDE.md with comprehensive project summary
