@@ -15,7 +15,7 @@
         <div class="container">
             <h1><i class="fas fa-bus"></i> Zagreb Bibliobus</h1>
             <p>Raspored bibliobusnih stajališta</p>
-            <div class="updated">Ažurirano: 24.04.2025. 12:02</div>
+            <div class="updated">Ažurirano: 24.04.2025. 12:06</div>
         </div>
     </header>
 
@@ -7641,11 +7641,11 @@
                             // Add debug info
                             console.log(`Building entry HTML: time=${entry.startTime}, location="${entry.location}", hasMap=${sessionData && sessionData.mapUrl ? 'true' : 'false'}`);
                             
-                            // Create calendar entry with updated structure
+                            // Create calendar entry with updated structure for full location name display
                             calendarHTML += `<div class="calendar-location">
                                 <div class="location-entry-container">
                                     <span class="location-time" style="font-weight:bold; color:#0066cc;">${entry.startTime}</span>
-                                    <span class="location-name" style="flex-grow:1; color:#555; display:inline-block;">${locationHtml}</span>
+                                    <span class="location-name" style="flex-grow:1; color:#555; display:inline-block; white-space:normal; overflow:visible; word-break:break-word;">${locationHtml}</span>
                                 </div>
                             </div>`;
                         });

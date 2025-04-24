@@ -340,7 +340,7 @@ tr.non-working-day {
     border-right: 1px solid var(--medium-gray);
     border-bottom: 1px solid var(--medium-gray);
     position: relative;
-    overflow: hidden;
+    overflow: auto;
 }
 
 .calendar-day:nth-child(7n) {
@@ -370,8 +370,9 @@ tr.non-working-day {
     color: var(--primary-color);
     margin-top: 2px;
     overflow-y: auto;
-    max-height: 120px; /* Increased height to fit more entries */
+    max-height: none; /* Allow full height */
     scrollbar-width: thin;
+    padding-right: 2px;
 }
 
 .more-locations {
@@ -384,24 +385,27 @@ tr.non-working-day {
 }
 
 .calendar-location {
-    padding: 2px 0;
+    padding: 3px 0;
     border-bottom: 1px solid #f0f0f0;
-    line-height: 1.2;
+    line-height: 1.3;
+    margin-bottom: 3px;
 }
 
 .calendar-location:last-child {
     border-bottom: none;
+    margin-bottom: 0;
 }
 
 /* New calendar location styling */
 .location-entry-container {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     font-size: 0.75rem;
-    overflow: hidden;
+    overflow: visible;
     gap: 3px;
-    padding: 2px 0;
+    padding: 3px 0;
+    flex-wrap: wrap;
 }
 
 .location-time {
@@ -414,13 +418,14 @@ tr.non-working-day {
 .location-name {
     color: var(--dark-gray);
     flex-grow: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow: visible;
+    white-space: normal;
     font-weight: normal;
     display: inline-block;
-    max-width: calc(100% - 30px);
     margin-right: 3px;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 .location-map {
@@ -435,6 +440,10 @@ tr.non-working-day {
     color: var(--primary-color);
     text-decoration: none;
     transition: color 0.2s;
+    display: inline;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.3;
 }
 
 .location-link:hover {
@@ -524,10 +533,30 @@ footer a {
     .calendar-day {
         min-height: 60px;
         padding: 5px;
+        overflow-y: auto;
     }
     
     .day-events {
         font-size: 0.7rem;
+        max-height: none;
+        overflow: visible;
+    }
+    
+    .calendar-location {
+        margin-bottom: 5px;
+    }
+    
+    .location-entry-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .location-time {
+        margin-bottom: 2px;
+    }
+    
+    .location-name {
+        width: 100%;
     }
     
     .calendar-nav h2 {
