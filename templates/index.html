@@ -81,6 +81,24 @@
         // Data loaded from JSON file
         const scheduleData = {{JSON_DATA}};
         
+        // Function to convert ISO date (yyyy-MM-dd) to Croatian date (dd.MM.yyyy.)
+        function isoToCroatianDate(isoDate) {
+            if (!isoDate) return '';
+            const parts = isoDate.split('-');
+            if (parts.length !== 3) return isoDate;
+            return `${parts[2]}.${parts[1]}.${parts[0]}.`;
+        }
+        
+        // Function to convert Croatian date (dd.MM.yyyy.) to ISO date (yyyy-MM-dd)
+        function croatianToIsoDate(croatianDate) {
+            if (!croatianDate) return '';
+            // Remove trailing dot if present
+            const cleanDate = croatianDate.endsWith('.') ? croatianDate.slice(0, -1) : croatianDate;
+            const parts = cleanDate.split('.');
+            if (parts.length < 3) return croatianDate;
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        
         // Search functionality
         document.getElementById('search').addEventListener('input', filterSchedule);
         document.getElementById('filter-day').addEventListener('change', filterSchedule);
@@ -128,19 +146,24 @@
         
         // Calendar functionality
         let currentDate = new Date();
+        let calendarInitialized = false;
         
         function initCalendar() {
-            renderCalendar(currentDate);
-            
-            document.getElementById('prev-month').addEventListener('click', () => {
-                currentDate.setMonth(currentDate.getMonth() - 1);
+            if (!calendarInitialized) {
                 renderCalendar(currentDate);
-            });
-            
-            document.getElementById('next-month').addEventListener('click', () => {
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                renderCalendar(currentDate);
-            });
+                
+                document.getElementById('prev-month').addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() - 1);
+                    renderCalendar(currentDate);
+                });
+                
+                document.getElementById('next-month').addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    renderCalendar(currentDate);
+                });
+                
+                calendarInitialized = true;
+            }
         }
         
         function renderCalendar(date) {
@@ -170,22 +193,23 @@
             // Fill in days
             for (let day = 1; day <= lastDay.getDate(); day++) {
                 const currentDay = new Date(year, month, day);
-                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isoDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const croatianDateString = `${String(day).padStart(2, '0')}.${String(month + 1).padStart(2, '0')}.${year}.`;
                 
                 // Find schedule entries for this day
-                const dayEntries = scheduleData.filter(entry => entry.Datum === dateString);
+                const dayEntries = scheduleData.filter(entry => entry.datum === isoDateString);
                 
                 let dayClass = 'calendar-day';
                 if (dayEntries.length > 0) {
                     dayClass += ' has-events';
                 }
                 
-                calendarHTML += `<div class="${dayClass}" data-date="${dateString}">`;
+                calendarHTML += `<div class="${dayClass}" data-date="${croatianDateString}">`;
                 calendarHTML += `<div class="day-number">${day}</div>`;
                 
                 if (dayEntries.length > 0) {
                     calendarHTML += '<div class="day-events">';
-                    const locationCount = new Set(dayEntries.map(entry => entry.Lokacija)).size;
+                    const locationCount = new Set(dayEntries.map(entry => entry.lokacija)).size;
                     calendarHTML += `<span>${locationCount} ${locationCount === 1 ? 'lokacija' : 'lokacije'}</span>`;
                     calendarHTML += '</div>';
                 }
@@ -224,6 +248,14 @@
                 });
             });
         }
+        
+        // Initialize the calendar view when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-initialize calendar if that tab is active
+            if (document.querySelector('.data-tab[data-tab="calendar"]').classList.contains('active')) {
+                initCalendar();
+            }
+        });
     </script>
 </body>
 </html>

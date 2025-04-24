@@ -109,10 +109,13 @@ public static class WebsiteGenerator
 
         foreach (var sesija in sesije)
         {
+            // Convert date from yyyy-MM-dd to dd.MM.yyyy
+            string formattedDate = ConvertDateFormat(sesija.Datum);
+            
             string rowClass = sesija.Lokacija.Contains("neradni dan") ? " class=\"non-working-day\"" : "";
             sb.AppendLine($"<tr{rowClass}>");
             sb.AppendLine($"<td>{sesija.Dan}</td>");
-            sb.AppendLine($"<td>{sesija.Datum}</td>");
+            sb.AppendLine($"<td>{formattedDate}</td>");
             sb.AppendLine($"<td>{sesija.Vrijeme}</td>");
             sb.AppendLine($"<td>{sesija.Lokacija}</td>");
             sb.AppendLine("</tr>");
@@ -120,15 +123,36 @@ public static class WebsiteGenerator
 
         return sb.ToString();
     }
+    
+    // Helper method to convert date from yyyy-MM-dd to dd.MM.yyyy
+    private static string ConvertDateFormat(string isoDate)
+    {
+        if (DateTime.TryParse(isoDate, out DateTime date))
+        {
+            return date.ToString("dd.MM.yyyy.");
+        }
+        return isoDate; // Return original if parsing fails
+    }
 
     private static string GenerateJsonData(List<PodaciZaSesiju> sesije)
     {
+        // Convert to a format that works well with our JavaScript
+        var jsonData = sesije.Select(s => new 
+        {
+            dan = s.Dan,
+            datum = s.Datum,  // Keep ISO format for data consistency
+            datumCroatian = ConvertDateFormat(s.Datum),  // Add Croatian format
+            vrijeme = s.Vrijeme,
+            lokacija = s.Lokacija,
+            isNeradniDan = s.Lokacija.Contains("neradni dan")
+        });
+        
         var options = new JsonSerializerOptions
         {
             WriteIndented = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        return JsonSerializer.Serialize(sesije, options);
+        return JsonSerializer.Serialize(jsonData, options);
     }
 }

@@ -24,3 +24,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 10. "check the run log to see the output of the program, analyze the output and tell me what you understand from it"
 11. "make the workflow publish the results to a branch called \"pages\", which will then be published using github pages. propose a nice layout for this structured information. also publish a structured json."
 12. "something failed on the latest run"
+13. "calendar view is empty, issues: 1. calendar view is empty 2. date format is yyyy-mm-dd, please use the croatian standard d.m.yyyy."
