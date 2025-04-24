@@ -219,3 +219,9 @@ Let me thoroughly analyze the conversation to create a comprehensive and accurat
 32. "<user-memory-input>log every single command I input into claude-input.log, and push up to github every time you're done making changes</user-memory-input>"
 33. "update the claude-input.log file with the missing commands"
 34. "[Request interrupted by user for tool use]update ./claude-input.log with the missing commands that I've given."
+35. "list view is showing raw HTML in the page - \"<divstyle=\"text-align:center;\"><strong>12:30-13:30</strong></div>\"
+
+also, make the calendar view stop jumping to the list view
+
+also hide dates in the past from the default view, put them behind a little text button that says \"show past schedule\" in croatian"
+36. "<user-memory-input>log every single command I input into claude-input.log, and push up to github every time you're done making changes</user-memory-input>"
