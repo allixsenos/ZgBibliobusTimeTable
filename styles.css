@@ -398,14 +398,36 @@ tr.non-working-day {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
+    display: inline-block;
+    max-width: calc(100% - 25px);
 }
 
-/* Style for the time portion */
-.location-entry::before {
-    content: attr(data-time);
-    font-weight: normal;
-    color: var(--dark-gray);
+/* Style for map links */
+.map-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    margin-left: 5px;
+    font-size: 0.7rem;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.map-link:hover {
+    background-color: var(--accent-color);
+    text-decoration: none;
+}
+
+/* Adjust map link in table */
+td .map-link {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
 }
 
 .calendar-location.non-working-day {
