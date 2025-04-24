@@ -248,3 +248,4 @@ calendar view: simplify the item layout within a single day. just write the star
 Committing changes to implement toggle functionality for past dates, add calendar component fix, and language switching
 2025-04-24 17:58:51 CEST
 Updated CLAUDE.md with comprehensive project summary
+2025-04-24 18:13:03 - Removed toggle from future dates and ensured full 7 days history is shown
