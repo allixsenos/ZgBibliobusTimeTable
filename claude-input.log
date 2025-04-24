@@ -18,3 +18,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 4. "use gh tool to create a fork of this repo under my username allixsenos/ and then push these changes there"
 5. "I'd like you to record every single input I give you in a separate file called claude-input.log, and track it in git"
 6. "I tried the workflow and it failed. can you get the github action log using `gh`?"
+7. "check for errors and fix them. also change the workflow to run on push automatically."

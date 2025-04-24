@@ -1,6 +1,11 @@
 name: Build and Run
 
 on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - '**.md'
+      - 'claude-input.log'
   workflow_dispatch:
     inputs:
       fetch_website:
@@ -33,6 +38,13 @@ jobs:
       run: |
         sed -i 's/\/\/>>> uncomment >>>//' ZgBibliobusTimeTable/Program.cs
       
+    - name: Prepare Data directory
+      run: |
+        mkdir -p ZgBibliobusTimeTable/Data
+        if [ ! -f ZgBibliobusTimeTable/Data/index.html ]; then
+          touch ZgBibliobusTimeTable/Data/index.html
+        fi
+        
     - name: Run application
       run: dotnet run --project ZgBibliobusTimeTable/ZgBibliobusTimeTable.csproj --configuration Release
       
