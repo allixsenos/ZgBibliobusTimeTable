@@ -40,9 +40,15 @@ jobs:
       
     - name: Prepare Data directory
       run: |
-        mkdir -p ZgBibliobusTimeTable/Data
-        if [ ! -f ZgBibliobusTimeTable/Data/index.html ]; then
-          touch ZgBibliobusTimeTable/Data/index.html
+        # Create Data directory at the repo root as expected by the code using ../../../Data/
+        mkdir -p Data
+        
+        # Copy the existing index.html if available, or create an empty one
+        if [ -f ZgBibliobusTimeTable/Data/index.html ]; then
+          cp ZgBibliobusTimeTable/Data/index.html Data/
+        else
+          # Download the actual content to avoid errors
+          wget -O Data/index.html "https://www.kgz.hr/hr/knjiznice/bibliobusna-sluzba/raspored-bibliobusnih-stajalista/65960"
         fi
         
     - name: Run application
@@ -52,4 +58,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: output-data
-        path: ZgBibliobusTimeTable/Data/
+        path: Data/
