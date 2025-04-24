@@ -627,13 +627,41 @@
                         // Display all entries in time-first format with map links
                         allEntries.forEach(entry => {
                             // Find the data for this entry to get map URL
-                            const sessionData = dayEntries.find(s => 
-                                s.lokacija === entry.location && 
-                                s.vrijeme && s.vrijeme.startsWith(entry.startTime)
-                            );
+                            // Normalize comparison by extracting the start time from s.vrijeme if it contains a range
+                            const sessionData = dayEntries.find(s => {
+                                // Match location name exactly
+                                if (s.lokacija !== entry.location) return false;
+                                
+                                // If we have a full time string, extract the start time for comparison
+                                if (s.vrijeme) {
+                                    // Handle time ranges like "9:00 - 11:00"
+                                    const sessionStartTime = s.vrijeme.includes('-') 
+                                        ? s.vrijeme.split('-')[0].trim() 
+                                        : s.vrijeme.trim();
+                                    
+                                    // Normalize the times for comparison by removing leading zeros
+                                    const normalizedSessionTime = sessionStartTime.replace(/^0/, '');
+                                    const normalizedEntryTime = entry.startTime.replace(/^0/, '');
+                                    
+                                    return normalizedSessionTime === normalizedEntryTime;
+                                }
+                                return false;
+                            });
                             
                             // Add debug info
                             console.log(`Building entry HTML: time=${entry.startTime}, location="${entry.location}", hasMap=${sessionData && sessionData.mapUrl ? 'true' : 'false'}`);
+                            
+                            // Log when map URL isn't found to help debug
+                            if (!sessionData || !sessionData.mapUrl) {
+                                console.warn(`⚠️ No map URL found for ${entry.location} at ${entry.startTime}`);
+                                // Optional: Log all dayEntries for this location to see what's available
+                                const locationEntries = dayEntries.filter(s => s.lokacija === entry.location);
+                                if (locationEntries.length > 0) {
+                                    console.log(`Available entries for ${entry.location}:`, locationEntries);
+                                } else {
+                                    console.log(`No entries found for ${entry.location} in dayEntries`);
+                                }
+                            }
                             
                             // Make sure the time is padded with a leading zero if needed for consistency
                             let displayTime = entry.startTime;
