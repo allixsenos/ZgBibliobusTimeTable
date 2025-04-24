@@ -20,3 +20,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 6. "I tried the workflow and it failed. can you get the github action log using `gh`?"
 7. "check for errors and fix them. also change the workflow to run on push automatically."
 8. "check the run log and address issues"
+9. "check logs, fix issues. I'd like to get rid of the \"parent directory\" path traversal completely, and use a data folder in the work directory."

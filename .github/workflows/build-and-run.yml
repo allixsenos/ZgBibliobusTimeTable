@@ -38,24 +38,42 @@ jobs:
       run: |
         sed -i 's/\/\/>>> uncomment >>>//' ZgBibliobusTimeTable/Program.cs
       
-    - name: Prepare Data directory
+    - name: Prepare sample data file
       run: |
-        # Create Data directory at the repo root as expected by the code using ../../../Data/
-        mkdir -p Data
-        
-        # Copy the existing index.html if available, or create an empty one
-        if [ -f ZgBibliobusTimeTable/Data/index.html ]; then
-          cp ZgBibliobusTimeTable/Data/index.html Data/
-        else
-          # Download the actual content to avoid errors
-          wget -O Data/index.html "https://www.kgz.hr/hr/knjiznice/bibliobusna-sluzba/raspored-bibliobusnih-stajalista/65960"
-        fi
+        # Download sample content for testing
+        # We don't need to create directories as our updated code handles this
+        wget -O sample_data.html "https://www.kgz.hr/hr/knjiznice/bibliobusna-sluzba/raspored-bibliobusnih-stajalista/65960"
         
     - name: Run application
-      run: dotnet run --project ZgBibliobusTimeTable/ZgBibliobusTimeTable.csproj --configuration Release
+      run: |
+        # Build the application first
+        dotnet build ZgBibliobusTimeTable/ZgBibliobusTimeTable.csproj --configuration Release
+        
+        # Find the output directory where the app is built
+        APP_DIR=$(find ZgBibliobusTimeTable/bin -name "net9.0" -type d)
+        
+        # Create Data directory in the build output dir
+        mkdir -p "$APP_DIR/Data"
+        
+        # Copy the sample data
+        cp sample_data.html "$APP_DIR/Data/index.html"
+        
+        # Run the application
+        dotnet run --project ZgBibliobusTimeTable/ZgBibliobusTimeTable.csproj --configuration Release --no-build
       
     - name: Upload results
-      uses: actions/upload-artifact@v4
+      run: |
+        # Find the output directory where the app is built
+        APP_DIR=$(find ZgBibliobusTimeTable/bin -name "net9.0" -type d)
+        
+        # Create a results directory for artifacts
+        mkdir -p results
+        
+        # Copy the data directory and any output files
+        cp -r "$APP_DIR/Data" results/
+        
+      # Upload as artifact
+    - uses: actions/upload-artifact@v4
       with:
         name: output-data
-        path: Data/
+        path: results/
