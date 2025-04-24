@@ -466,6 +466,15 @@ tr.non-working-day {
     margin-bottom: 0;
 }
 
+/* Highlight time in calendar view for better visibility */
+.calendar-day .calendar-location .location-time {
+    background-color: #f0f7ff;
+    border-radius: 2px;
+    padding: 0 3px;
+    line-height: 1.5;
+    border-left: 2px solid var(--primary-color);
+}
+
 /* New calendar location styling */
 .location-entry-container {
     display: flex;
@@ -481,8 +490,11 @@ tr.non-working-day {
 .location-time {
     font-weight: bold;
     color: var(--primary-color);
-    margin-right: 5px;
+    margin-right: 8px;
     white-space: nowrap;
+    min-width: 45px;
+    display: inline-block;
+    font-size: 0.85rem;
 }
 
 .location-name {
@@ -581,8 +593,10 @@ tr.non-working-day {
 .schedule-entry-time {
     font-weight: 600;
     color: var(--primary-color);
-    min-width: 70px;
+    min-width: 90px;
     margin-right: 15px;
+    display: inline-block;
+    font-family: 'Roboto', sans-serif;
 }
 
 .schedule-entry-location {

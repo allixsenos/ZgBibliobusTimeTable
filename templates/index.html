@@ -114,6 +114,39 @@
             return `${parts[2]}-${parts[1]}-${parts[0]}`;
         }
         
+        // Function to normalize time for proper sorting
+        function normalizeTimeForSorting(timeStr) {
+            if (!timeStr) return '';
+            
+            // First extract text content if HTML is present
+            let cleanTime = timeStr;
+            if (timeStr.includes('<') && timeStr.includes('>')) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = timeStr;
+                cleanTime = tempDiv.textContent.trim();
+            }
+            
+            // Extract first time if it's a range
+            if (cleanTime.includes('-')) {
+                cleanTime = cleanTime.split('-')[0].trim();
+            }
+            
+            // Normalize format to ensure double-digit hours
+            if (cleanTime.match(/^\d:\d\d$/)) {
+                cleanTime = '0' + cleanTime; // Add leading zero
+            }
+            
+            return cleanTime;
+        }
+        
+        // Function to compare two times for sorting
+        function compareTimeStrings(timeA, timeB) {
+            const normalizedA = normalizeTimeForSorting(timeA);
+            const normalizedB = normalizeTimeForSorting(timeB);
+            
+            return normalizedA.localeCompare(normalizedB);
+        }
+        
         // Initialize location tabs
         const locationTabsContainer = document.getElementById('location-tabs');
         
@@ -307,8 +340,8 @@
                     entry.innerHTML = '<div class="schedule-entry-time"></div><div class="schedule-entry-location">Neradni dan</div>';
                     entriesDiv.appendChild(entry);
                 } else {
-                    // Sort sessions by time
-                    sessions.sort((a, b) => a.vrijeme.localeCompare(b.vrijeme));
+                    // Sort sessions by time using our custom time sorting function
+                    sessions.sort((a, b) => compareTimeStrings(a.vrijeme, b.vrijeme));
                     
                     // Add each session
                     sessions.forEach(session => {
@@ -319,15 +352,35 @@
                         const timeDiv = document.createElement('div');
                         timeDiv.className = 'schedule-entry-time';
                         
-                        // Handle raw HTML in time field
+                        // Handle raw HTML in time field and normalize
+                        let timeText = "";
+                        
                         if (session.vrijeme.includes('<') && session.vrijeme.includes('>')) {
                             // Extract text content from HTML 
                             const tempDiv = document.createElement('div');
                             tempDiv.innerHTML = session.vrijeme;
-                            timeDiv.textContent = tempDiv.textContent.trim();
+                            timeText = tempDiv.textContent.trim();
                         } else {
-                            timeDiv.textContent = session.vrijeme;
+                            timeText = session.vrijeme;
                         }
+                        
+                        // Ensure consistent display with leading zeros for single-digit hours
+                        if (timeText.match(/^\d:\d\d/) || (timeText.includes('-') && timeText.split('-')[0].trim().match(/^\d:\d\d/))) {
+                            // Add leading zero to the start time
+                            if (timeText.includes('-')) {
+                                const parts = timeText.split('-');
+                                const startTime = parts[0].trim();
+                                const endTime = parts[1].trim();
+                                
+                                if (startTime.match(/^\d:\d\d/)) {
+                                    timeText = '0' + startTime + ' - ' + endTime;
+                                }
+                            } else {
+                                timeText = '0' + timeText;
+                            }
+                        }
+                        
+                        timeDiv.textContent = timeText;
                         
                         // Create location element with possible link
                         const locationDiv = document.createElement('div');
@@ -530,12 +583,22 @@
                             console.log(`Processing location: ${location}, has ${entriesByLocation[location].length} entries`);
                             
                             entriesByLocation[location].forEach(entry => {
-                                // Extract the start time from the time range
+                                // Extract and normalize the start time from the time range
                                 let startTime = "";
-                                if (entry.vrijeme && entry.vrijeme.includes('-')) {
-                                    startTime = entry.vrijeme.split('-')[0].trim();
-                                } else if (entry.vrijeme) {
-                                    startTime = entry.vrijeme;
+                                let rawTime = entry.vrijeme;
+                                
+                                // Handle HTML in time
+                                if (rawTime && rawTime.includes('<') && rawTime.includes('>')) {
+                                    const tempDiv = document.createElement('div');
+                                    tempDiv.innerHTML = rawTime;
+                                    rawTime = tempDiv.textContent.trim();
+                                }
+                                
+                                // Extract start time from range
+                                if (rawTime && rawTime.includes('-')) {
+                                    startTime = rawTime.split('-')[0].trim();
+                                } else if (rawTime) {
+                                    startTime = rawTime;
                                 }
                                 
                                 console.log(`Entry time: ${entry.vrijeme}, start time: ${startTime}, location: ${entry.lokacija}`);
@@ -550,12 +613,8 @@
                             });
                         });
                         
-                        // Sort entries by start time
-                        allEntries.sort((a, b) => {
-                            if (a.startTime < b.startTime) return -1;
-                            if (a.startTime > b.startTime) return 1;
-                            return 0;
-                        });
+                        // Sort entries by start time using our custom time sorting function
+                        allEntries.sort((a, b) => compareTimeStrings(a.startTime, b.startTime));
                         
                         // Display all entries in time-first format with map links
                         allEntries.forEach(entry => {
@@ -581,11 +640,17 @@
                             // Add debug info
                             console.log(`Building entry HTML: time=${entry.startTime}, location="${entry.location}", hasMap=${sessionData && sessionData.mapUrl ? 'true' : 'false'}`);
                             
+                            // Make sure the time is padded with a leading zero if needed for consistency
+                            let displayTime = entry.startTime;
+                            if (displayTime.match(/^\d:\d\d$/)) {
+                                displayTime = '0' + displayTime;
+                            }
+                            
                             // Create calendar entry with updated structure for full location name display
                             calendarHTML += `<div class="calendar-location">
                                 <div class="location-entry-container">
-                                    <span class="location-time" style="font-weight:bold; color:#0066cc;">${entry.startTime}</span>
-                                    <span class="location-name" style="flex-grow:1; color:#555; display:inline-block; white-space:normal; overflow:visible; word-break:break-word;">${locationHtml}</span>
+                                    <span class="location-time">${displayTime}</span>
+                                    <span class="location-name">${locationHtml}</span>
                                 </div>
                             </div>`;
                         });
