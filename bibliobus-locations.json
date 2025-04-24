@@ -1,0 +1,227 @@
+[
+  {
+    "name": "BOROVJE",
+    "value": "borovje",
+    "calendarFile": "bibliobus-borovje.ics"
+  },
+  {
+    "name": "BOTINEC",
+    "value": "botinec",
+    "calendarFile": "bibliobus-botinec.ics"
+  },
+  {
+    "name": "BRATINA",
+    "value": "bratina",
+    "calendarFile": "bibliobus-bratina.ics"
+  },
+  {
+    "name": "CVJETNO NASELJE",
+    "value": "cvjetno-naselje",
+    "calendarFile": "bibliobus-cvjetno-naselje.ics"
+  },
+  {
+    "name": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+    "value": "dragonozec-dv-potocic",
+    "calendarFile": "bibliobus-dragonozec-dv-potocic.ics"
+  },
+  {
+    "name": "DRAGONO\u017DEC P\u0160",
+    "value": "dragonozec-ps",
+    "calendarFile": "bibliobus-dragonozec-ps.ics"
+  },
+  {
+    "name": "DV POTO\u010CI\u0106",
+    "value": "dv-potocic",
+    "calendarFile": "bibliobus-dv-potocic.ics"
+  },
+  {
+    "name": "GORNJA KUSTO\u0160IJA",
+    "value": "gornja-kustosija",
+    "calendarFile": "bibliobus-gornja-kustosija.ics"
+  },
+  {
+    "name": "HORVATI (RAKOV POTOK)",
+    "value": "horvati-rakov-potok",
+    "calendarFile": "bibliobus-horvati-rakov-potok.ics"
+  },
+  {
+    "name": "HRVATSKI LESKOVAC",
+    "value": "hrvatski-leskovac",
+    "calendarFile": "bibliobus-hrvatski-leskovac.ics"
+  },
+  {
+    "name": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+    "value": "institut-ruder-boskovic-okretiste-srebrnjak",
+    "calendarFile": "bibliobus-institut-ruder-boskovic-okretiste-srebrnjak.ics"
+  },
+  {
+    "name": "IVER",
+    "value": "iver",
+    "calendarFile": "bibliobus-iver.ics"
+  },
+  {
+    "name": "JAKOVLJE",
+    "value": "jakovlje",
+    "calendarFile": "bibliobus-jakovlje.ics"
+  },
+  {
+    "name": "KAJZERICA",
+    "value": "kajzerica",
+    "calendarFile": "bibliobus-kajzerica.ics"
+  },
+  {
+    "name": "KRALJEVEC",
+    "value": "kraljevec",
+    "calendarFile": "bibliobus-kraljevec.ics"
+  },
+  {
+    "name": "KUP\u010CINA",
+    "value": "kupcina",
+    "calendarFile": "bibliobus-kupcina.ics"
+  },
+  {
+    "name": "KUPINE\u010CKI KRALJEVEC",
+    "value": "kupinecki-kraljevec",
+    "calendarFile": "bibliobus-kupinecki-kraljevec.ics"
+  },
+  {
+    "name": "KUPLJENOVO",
+    "value": "kupljenovo",
+    "calendarFile": "bibliobus-kupljenovo.ics"
+  },
+  {
+    "name": "LUKA",
+    "value": "luka",
+    "calendarFile": "bibliobus-luka.ics"
+  },
+  {
+    "name": "MARKU\u0160EVEC",
+    "value": "markusevec",
+    "calendarFile": "bibliobus-markusevec.ics"
+  },
+  {
+    "name": "MLINOVI",
+    "value": "mlinovi",
+    "calendarFile": "bibliobus-mlinovi.ics"
+  },
+  {
+    "name": "ODRA",
+    "value": "odra",
+    "calendarFile": "bibliobus-odra.ics"
+  },
+  {
+    "name": "PAVU\u010CNJAK",
+    "value": "pavucnjak",
+    "calendarFile": "bibliobus-pavucnjak.ics"
+  },
+  {
+    "name": "PISAROVINA",
+    "value": "pisarovina",
+    "calendarFile": "bibliobus-pisarovina.ics"
+  },
+  {
+    "name": "POGLAVARSTVO",
+    "value": "poglavarstvo",
+    "calendarFile": "bibliobus-poglavarstvo.ics"
+  },
+  {
+    "name": "POJATNO",
+    "value": "pojatno",
+    "calendarFile": "bibliobus-pojatno.ics"
+  },
+  {
+    "name": "POPOVEC",
+    "value": "popovec",
+    "calendarFile": "bibliobus-popovec.ics"
+  },
+  {
+    "name": "PRIGORJE",
+    "value": "prigorje",
+    "calendarFile": "bibliobus-prigorje.ics"
+  },
+  {
+    "name": "P\u0160 KERESTINEC",
+    "value": "ps-kerestinec",
+    "calendarFile": "bibliobus-ps-kerestinec.ics"
+  },
+  {
+    "name": "P\u0160 RESNIK",
+    "value": "ps-resnik",
+    "calendarFile": "bibliobus-ps-resnik.ics"
+  },
+  {
+    "name": "REMETE",
+    "value": "remete",
+    "calendarFile": "bibliobus-remete.ics"
+  },
+  {
+    "name": "REMETINE\u010CKI GAJ",
+    "value": "remetinecki-gaj",
+    "calendarFile": "bibliobus-remetinecki-gaj.ics"
+  },
+  {
+    "name": "RETKOVEC",
+    "value": "retkovec",
+    "calendarFile": "bibliobus-retkovec.ics"
+  },
+  {
+    "name": "RUDE\u0160",
+    "value": "rudes",
+    "calendarFile": "bibliobus-rudes.ics"
+  },
+  {
+    "name": "\u0160ENKOVEC",
+    "value": "senkovec",
+    "calendarFile": "bibliobus-senkovec.ics"
+  },
+  {
+    "name": "SESVETSKA SELA",
+    "value": "sesvetska-sela",
+    "calendarFile": "bibliobus-sesvetska-sela.ics"
+  },
+  {
+    "name": "SIGET",
+    "value": "siget",
+    "calendarFile": "bibliobus-siget.ics"
+  },
+  {
+    "name": "SOBLINEC",
+    "value": "soblinec",
+    "calendarFile": "bibliobus-soblinec.ics"
+  },
+  {
+    "name": "SOPOT",
+    "value": "sopot",
+    "calendarFile": "bibliobus-sopot.ics"
+  },
+  {
+    "name": "SREDI\u0160\u0106E",
+    "value": "sredisce",
+    "calendarFile": "bibliobus-sredisce.ics"
+  },
+  {
+    "name": "SREDNJACI",
+    "value": "srednjaci",
+    "calendarFile": "bibliobus-srednjaci.ics"
+  },
+  {
+    "name": "STRMEC",
+    "value": "strmec",
+    "calendarFile": "bibliobus-strmec.ics"
+  },
+  {
+    "name": "STUDENTSKI GRAD",
+    "value": "studentski-grad",
+    "calendarFile": "bibliobus-studentski-grad.ics"
+  },
+  {
+    "name": "STUPNIK",
+    "value": "stupnik",
+    "calendarFile": "bibliobus-stupnik.ics"
+  },
+  {
+    "name": "VELIKA MLAKA",
+    "value": "velika-mlaka",
+    "calendarFile": "bibliobus-velika-mlaka.ics"
+  }
+]

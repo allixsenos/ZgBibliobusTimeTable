@@ -81,12 +81,13 @@ header p {
     font-size: 1rem;
 }
 
-#filter-day {
+#filter-day, #filter-location {
     padding: 10px 15px;
     border: 1px solid var(--medium-gray);
     border-radius: 4px;
     font-size: 1rem;
     background-color: white;
+    min-width: 150px;
 }
 
 /* Data info and tabs */
@@ -344,6 +345,11 @@ footer a {
 @media (max-width: 768px) {
     .search-container {
         flex-direction: column;
+        gap: 10px;
+    }
+    
+    #filter-day, #filter-location {
+        width: 100%;
     }
     
     .calendar-day {

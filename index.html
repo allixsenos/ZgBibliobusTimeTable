@@ -15,7 +15,7 @@
         <div class="container">
             <h1><i class="fas fa-bus"></i> Zagreb Bibliobus</h1>
             <p>Raspored bibliobusnih stajališta</p>
-            <div class="updated">Ažurirano: 24.04.2025. 10:42</div>
+            <div class="updated">Ažurirano: 24.04.2025. 10:55</div>
         </div>
     </header>
 
@@ -32,6 +32,9 @@
                 <option value="SUBOTA">Subota</option>
                 <option value="NEDJELJA">Nedjelja</option>
             </select>
+            <select id="filter-location">
+                <!-- Will be populated from JSON data -->
+            </select>
         </div>
 
         <div class="data-info">
@@ -39,7 +42,7 @@
             <div class="data-tab" data-tab="calendar">Kalendarski prikaz</div>
             <div class="data-download">
                 <a href="bibliobus-data.json" download><i class="fas fa-download"></i> Preuzmi JSON</a>
-                <a href="bibliobus-calendar.ics" download><i class="fas fa-calendar-alt"></i> Preuzmi iCalendar</a>
+                <a id="calendar-download" href="bibliobus-calendar.ics" download><i class="fas fa-calendar-alt"></i> Preuzmi iCalendar</a>
             </div>
         </div>
 
@@ -2275,8 +2278,9 @@
                 <button id="next-month">Sljedeći mjesec &raquo;</button>
             </div>
             <div class="calendar-info">
-                <p>Za dodavanje u Google Calendar ili drugi kalendar, preuzmite <a href="bibliobus-calendar.ics" download>iCalendar datoteku</a>, 
+                <p>Za dodavanje u Google Calendar ili drugi kalendar, preuzmite <a id="calendar-info-link" href="bibliobus-calendar.ics" download>iCalendar datoteku</a>, 
                 a zatim je uvezite u vašu aplikaciju za kalendar.</p>
+                <p>Možete preuzeti raspored samo za određenu lokaciju tako da je odaberete iz padajućeg izbornika.</p>
             </div>
             <div id="calendar-container">
                 <!-- Calendar will be rendered here -->
@@ -2292,2952 +2296,3556 @@
 
     <script>
         // Data loaded from JSON file
-        const scheduleData = [
-  {
-    "dan": "UTORAK",
-    "datum": "2025-03-18",
-    "datumCroatian": "18.03.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-03-18",
-    "datumCroatian": "18.03.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-03-18",
-    "datumCroatian": "18.03.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-03-18",
-    "datumCroatian": "18.03.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-19",
-    "datumCroatian": "19.03.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-19",
-    "datumCroatian": "19.03.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-19",
-    "datumCroatian": "19.03.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-19",
-    "datumCroatian": "19.03.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-19",
-    "datumCroatian": "19.03.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-20",
-    "datumCroatian": "20.03.2025.",
-    "vrijeme": "09:00-09:45",
-    "lokacija": "BRATINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-20",
-    "datumCroatian": "20.03.2025.",
-    "vrijeme": "09:50-10:15",
-    "lokacija": "DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-20",
-    "datumCroatian": "20.03.2025.",
-    "vrijeme": "10:30-11:15",
-    "lokacija": "PISAROVINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-20",
-    "datumCroatian": "20.03.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "KUP\u010CINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-20",
-    "datumCroatian": "20.03.2025.",
-    "vrijeme": "15:00-16:15",
-    "lokacija": "REMETE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-20",
-    "datumCroatian": "20.03.2025.",
-    "vrijeme": "17:30-19:00",
-    "lokacija": "RETKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-21",
-    "datumCroatian": "21.03.2025.",
-    "vrijeme": "08:45-10:15",
-    "lokacija": "KUPINE\u010CKI KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-21",
-    "datumCroatian": "21.03.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "DRAGONO\u017DEC P\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-21",
-    "datumCroatian": "21.03.2025.",
-    "vrijeme": "11.00-11:30",
-    "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-21",
-    "datumCroatian": "21.03.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "JAKOVLJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-21",
-    "datumCroatian": "21.03.2025.",
-    "vrijeme": "16:30-17:15",
-    "lokacija": "\u0160ENKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-21",
-    "datumCroatian": "21.03.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "PRIGORJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-03-22",
-    "datumCroatian": "22.03.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "VELIKA MLAKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-03-22",
-    "datumCroatian": "22.03.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "BOTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-03-25",
-    "datumCroatian": "25.03.2025.",
-    "vrijeme": "09:00-10:15",
-    "lokacija": "ODRA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-03-25",
-    "datumCroatian": "25.03.2025.",
-    "vrijeme": "11:30-13:30",
-    "lokacija": "RUDE\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-03-25",
-    "datumCroatian": "25.03.2025.",
-    "vrijeme": "14:30-16:00",
-    "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-03-25",
-    "datumCroatian": "25.03.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "MARKU\u0160EVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-26",
-    "datumCroatian": "26.03.2025.",
-    "vrijeme": "08:30-09:30",
-    "lokacija": "STUPNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-26",
-    "datumCroatian": "26.03.2025.",
-    "vrijeme": "10:15-11:00",
-    "lokacija": "P\u0160 KERESTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-26",
-    "datumCroatian": "26.03.2025.",
-    "vrijeme": "11:30-13:15",
-    "lokacija": "STRMEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-26",
-    "datumCroatian": "26.03.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "MLINOVI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-26",
-    "datumCroatian": "26.03.2025.",
-    "vrijeme": "16:00-17:00",
-    "lokacija": "KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-03-26",
-    "datumCroatian": "26.03.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "GORNJA KUSTO\u0160IJA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-27",
-    "datumCroatian": "27.03.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "POJATNO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-27",
-    "datumCroatian": "27.03.2025.",
-    "vrijeme": "10:30-11:00",
-    "lokacija": "KUPLJENOVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-27",
-    "datumCroatian": "27.03.2025.",
-    "vrijeme": "12:00-13:15",
-    "lokacija": "LUKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-27",
-    "datumCroatian": "27.03.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "SIGET",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-03-27",
-    "datumCroatian": "27.03.2025.",
-    "vrijeme": "16:45-19:00",
-    "lokacija": "SREDI\u0160\u0106E",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-28",
-    "datumCroatian": "28.03.2025.",
-    "vrijeme": "08:45-10:00",
-    "lokacija": "SOBLINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-28",
-    "datumCroatian": "28.03.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "SESVETSKA SELA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-28",
-    "datumCroatian": "28.03.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "P\u0160 RESNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-28",
-    "datumCroatian": "28.03.2025.",
-    "vrijeme": "14:30-15:30",
-    "lokacija": "CVJETNO NASELJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-03-28",
-    "datumCroatian": "28.03.2025.",
-    "vrijeme": "16:30-19:00",
-    "lokacija": "SREDNJACI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-03-29",
-    "datumCroatian": "29.03.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "POPOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-03-29",
-    "datumCroatian": "29.03.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "STUDENTSKI GRAD",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-01",
-    "datumCroatian": "01.04.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-01",
-    "datumCroatian": "01.04.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-01",
-    "datumCroatian": "01.04.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-01",
-    "datumCroatian": "01.04.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-02",
-    "datumCroatian": "02.04.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-02",
-    "datumCroatian": "02.04.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-02",
-    "datumCroatian": "02.04.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-02",
-    "datumCroatian": "02.04.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-02",
-    "datumCroatian": "02.04.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-03",
-    "datumCroatian": "03.04.2025.",
-    "vrijeme": "09:00-09:45",
-    "lokacija": "BRATINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-03",
-    "datumCroatian": "03.04.2025.",
-    "vrijeme": "09:50-10:15",
-    "lokacija": "DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-03",
-    "datumCroatian": "03.04.2025.",
-    "vrijeme": "10:30-11:15",
-    "lokacija": "PISAROVINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-03",
-    "datumCroatian": "03.04.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "KUP\u010CINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-03",
-    "datumCroatian": "03.04.2025.",
-    "vrijeme": "15:00-16:15",
-    "lokacija": "REMETE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-03",
-    "datumCroatian": "03.04.2025.",
-    "vrijeme": "17:30-19:00",
-    "lokacija": "RETKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-04",
-    "datumCroatian": "04.04.2025.",
-    "vrijeme": "08:45-10:15",
-    "lokacija": "KUPINE\u010CKI KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-04",
-    "datumCroatian": "04.04.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "DRAGONO\u017DEC P\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-04",
-    "datumCroatian": "04.04.2025.",
-    "vrijeme": "11.00-11:30",
-    "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-04",
-    "datumCroatian": "04.04.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "JAKOVLJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-04",
-    "datumCroatian": "04.04.2025.",
-    "vrijeme": "16:30-17:15",
-    "lokacija": "\u0160ENKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-04",
-    "datumCroatian": "04.04.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "PRIGORJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-04-05",
-    "datumCroatian": "05.04.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "VELIKA MLAKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-04-05",
-    "datumCroatian": "05.04.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "BOTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-08",
-    "datumCroatian": "08.04.2025.",
-    "vrijeme": "09:00-10:15",
-    "lokacija": "ODRA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-08",
-    "datumCroatian": "08.04.2025.",
-    "vrijeme": "11:30-13:30",
-    "lokacija": "RUDE\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-08",
-    "datumCroatian": "08.04.2025.",
-    "vrijeme": "14:30-16:00",
-    "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-08",
-    "datumCroatian": "08.04.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "MARKU\u0160EVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-09",
-    "datumCroatian": "09.04.2025.",
-    "vrijeme": "08:30-09:30",
-    "lokacija": "STUPNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-09",
-    "datumCroatian": "09.04.2025.",
-    "vrijeme": "10:15-11:00",
-    "lokacija": "P\u0160 KERESTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-09",
-    "datumCroatian": "09.04.2025.",
-    "vrijeme": "11:30-13:15",
-    "lokacija": "STRMEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-09",
-    "datumCroatian": "09.04.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "MLINOVI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-09",
-    "datumCroatian": "09.04.2025.",
-    "vrijeme": "16:00-17:00",
-    "lokacija": "KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-09",
-    "datumCroatian": "09.04.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "GORNJA KUSTO\u0160IJA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-10",
-    "datumCroatian": "10.04.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "POJATNO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-10",
-    "datumCroatian": "10.04.2025.",
-    "vrijeme": "10:30-11:00",
-    "lokacija": "KUPLJENOVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-10",
-    "datumCroatian": "10.04.2025.",
-    "vrijeme": "12:00-13:15",
-    "lokacija": "LUKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-10",
-    "datumCroatian": "10.04.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "SIGET",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-10",
-    "datumCroatian": "10.04.2025.",
-    "vrijeme": "16:45-19:00",
-    "lokacija": "SREDI\u0160\u0106E",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-11",
-    "datumCroatian": "11.04.2025.",
-    "vrijeme": "08:45-10:00",
-    "lokacija": "SOBLINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-11",
-    "datumCroatian": "11.04.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "SESVETSKA SELA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-11",
-    "datumCroatian": "11.04.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "P\u0160 RESNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-11",
-    "datumCroatian": "11.04.2025.",
-    "vrijeme": "14:30-15:30",
-    "lokacija": "CVJETNO NASELJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-11",
-    "datumCroatian": "11.04.2025.",
-    "vrijeme": "16:30-19:00",
-    "lokacija": "SREDNJACI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-04-12",
-    "datumCroatian": "12.04.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "POPOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-04-12",
-    "datumCroatian": "12.04.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "STUDENTSKI GRAD",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-15",
-    "datumCroatian": "15.04.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-15",
-    "datumCroatian": "15.04.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-15",
-    "datumCroatian": "15.04.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-15",
-    "datumCroatian": "15.04.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-16",
-    "datumCroatian": "16.04.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-16",
-    "datumCroatian": "16.04.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-16",
-    "datumCroatian": "16.04.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-16",
-    "datumCroatian": "16.04.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-16",
-    "datumCroatian": "16.04.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-17",
-    "datumCroatian": "17.04.2025.",
-    "vrijeme": "09:00-09:45",
-    "lokacija": "BRATINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-17",
-    "datumCroatian": "17.04.2025.",
-    "vrijeme": "09:50-10:15",
-    "lokacija": "DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-17",
-    "datumCroatian": "17.04.2025.",
-    "vrijeme": "10:30-11:15",
-    "lokacija": "PISAROVINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-17",
-    "datumCroatian": "17.04.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "KUP\u010CINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-17",
-    "datumCroatian": "17.04.2025.",
-    "vrijeme": "15:00-16:15",
-    "lokacija": "REMETE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-17",
-    "datumCroatian": "17.04.2025.",
-    "vrijeme": "17:30-19:00",
-    "lokacija": "RETKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-18",
-    "datumCroatian": "18.04.2025.",
-    "vrijeme": "08:45-10:15",
-    "lokacija": "KUPINE\u010CKI KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-18",
-    "datumCroatian": "18.04.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "DRAGONO\u017DEC P\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-18",
-    "datumCroatian": "18.04.2025.",
-    "vrijeme": "11.00-11:30",
-    "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-18",
-    "datumCroatian": "18.04.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "JAKOVLJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-18",
-    "datumCroatian": "18.04.2025.",
-    "vrijeme": "16:30-17:15",
-    "lokacija": "\u0160ENKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-18",
-    "datumCroatian": "18.04.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "PRIGORJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-04-19",
-    "datumCroatian": "19.04.2025.",
-    "vrijeme": "",
-    "lokacija": "=== neradni dan ===",
-    "isNeradniDan": true
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-22",
-    "datumCroatian": "22.04.2025.",
-    "vrijeme": "09:00-10:15",
-    "lokacija": "ODRA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-22",
-    "datumCroatian": "22.04.2025.",
-    "vrijeme": "11:30-13:30",
-    "lokacija": "RUDE\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-22",
-    "datumCroatian": "22.04.2025.",
-    "vrijeme": "14:30-16:00",
-    "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-22",
-    "datumCroatian": "22.04.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "MARKU\u0160EVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-23",
-    "datumCroatian": "23.04.2025.",
-    "vrijeme": "08:30-09:30",
-    "lokacija": "STUPNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-23",
-    "datumCroatian": "23.04.2025.",
-    "vrijeme": "10:15-11:00",
-    "lokacija": "P\u0160 KERESTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-23",
-    "datumCroatian": "23.04.2025.",
-    "vrijeme": "11:30-13:15",
-    "lokacija": "STRMEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-23",
-    "datumCroatian": "23.04.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "MLINOVI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-23",
-    "datumCroatian": "23.04.2025.",
-    "vrijeme": "16:00-17:00",
-    "lokacija": "KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-23",
-    "datumCroatian": "23.04.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "GORNJA KUSTO\u0160IJA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-24",
-    "datumCroatian": "24.04.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "POJATNO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-24",
-    "datumCroatian": "24.04.2025.",
-    "vrijeme": "10:30-11:00",
-    "lokacija": "KUPLJENOVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-24",
-    "datumCroatian": "24.04.2025.",
-    "vrijeme": "12:00-13:15",
-    "lokacija": "LUKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-24",
-    "datumCroatian": "24.04.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "SIGET",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-04-24",
-    "datumCroatian": "24.04.2025.",
-    "vrijeme": "16:45-19:00",
-    "lokacija": "SREDI\u0160\u0106E",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-25",
-    "datumCroatian": "25.04.2025.",
-    "vrijeme": "08:45-10:00",
-    "lokacija": "SOBLINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-25",
-    "datumCroatian": "25.04.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "SESVETSKA SELA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-25",
-    "datumCroatian": "25.04.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "P\u0160 RESNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-25",
-    "datumCroatian": "25.04.2025.",
-    "vrijeme": "14:30-15:30",
-    "lokacija": "CVJETNO NASELJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-04-25",
-    "datumCroatian": "25.04.2025.",
-    "vrijeme": "16:30-19:00",
-    "lokacija": "SREDNJACI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-04-26",
-    "datumCroatian": "26.04.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "POPOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-04-26",
-    "datumCroatian": "26.04.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "STUDENTSKI GRAD",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-29",
-    "datumCroatian": "29.04.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-29",
-    "datumCroatian": "29.04.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-29",
-    "datumCroatian": "29.04.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-04-29",
-    "datumCroatian": "29.04.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-30",
-    "datumCroatian": "30.04.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-30",
-    "datumCroatian": "30.04.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-30",
-    "datumCroatian": "30.04.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-30",
-    "datumCroatian": "30.04.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-04-30",
-    "datumCroatian": "30.04.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-01",
-    "datumCroatian": "01.05.2025.",
-    "vrijeme": "",
-    "lokacija": "=== neradni dan ===",
-    "isNeradniDan": true
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-02",
-    "datumCroatian": "02.05.2025.",
-    "vrijeme": "08:45-10:15",
-    "lokacija": "KUPINE\u010CKI KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-02",
-    "datumCroatian": "02.05.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "DRAGONO\u017DEC P\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-02",
-    "datumCroatian": "02.05.2025.",
-    "vrijeme": "11.00-11:30",
-    "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-02",
-    "datumCroatian": "02.05.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "JAKOVLJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-02",
-    "datumCroatian": "02.05.2025.",
-    "vrijeme": "16:30-17:15",
-    "lokacija": "\u0160ENKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-02",
-    "datumCroatian": "02.05.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "PRIGORJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-03",
-    "datumCroatian": "03.05.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "VELIKA MLAKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-03",
-    "datumCroatian": "03.05.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "BOTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-06",
-    "datumCroatian": "06.05.2025.",
-    "vrijeme": "09:00-10:15",
-    "lokacija": "ODRA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-06",
-    "datumCroatian": "06.05.2025.",
-    "vrijeme": "11:30-13:30",
-    "lokacija": "RUDE\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-06",
-    "datumCroatian": "06.05.2025.",
-    "vrijeme": "14:30-16:00",
-    "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-06",
-    "datumCroatian": "06.05.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "MARKU\u0160EVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-07",
-    "datumCroatian": "07.05.2025.",
-    "vrijeme": "08:30-09:30",
-    "lokacija": "STUPNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-07",
-    "datumCroatian": "07.05.2025.",
-    "vrijeme": "10:15-11:00",
-    "lokacija": "P\u0160 KERESTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-07",
-    "datumCroatian": "07.05.2025.",
-    "vrijeme": "11:30-13:15",
-    "lokacija": "STRMEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-07",
-    "datumCroatian": "07.05.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "MLINOVI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-07",
-    "datumCroatian": "07.05.2025.",
-    "vrijeme": "16:00-17:00",
-    "lokacija": "KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-07",
-    "datumCroatian": "07.05.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "GORNJA KUSTO\u0160IJA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-08",
-    "datumCroatian": "08.05.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "POJATNO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-08",
-    "datumCroatian": "08.05.2025.",
-    "vrijeme": "10:30-11:00",
-    "lokacija": "KUPLJENOVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-08",
-    "datumCroatian": "08.05.2025.",
-    "vrijeme": "12:00-13:15",
-    "lokacija": "LUKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-08",
-    "datumCroatian": "08.05.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "SIGET",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-08",
-    "datumCroatian": "08.05.2025.",
-    "vrijeme": "16:45-19:00",
-    "lokacija": "SREDI\u0160\u0106E",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-09",
-    "datumCroatian": "09.05.2025.",
-    "vrijeme": "08:45-10:00",
-    "lokacija": "SOBLINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-09",
-    "datumCroatian": "09.05.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "SESVETSKA SELA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-09",
-    "datumCroatian": "09.05.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "P\u0160 RESNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-09",
-    "datumCroatian": "09.05.2025.",
-    "vrijeme": "14:30-15:30",
-    "lokacija": "CVJETNO NASELJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-09",
-    "datumCroatian": "09.05.2025.",
-    "vrijeme": "16:30-19:00",
-    "lokacija": "SREDNJACI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-10",
-    "datumCroatian": "10.05.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "POPOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-10",
-    "datumCroatian": "10.05.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "STUDENTSKI GRAD",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-13",
-    "datumCroatian": "13.05.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-13",
-    "datumCroatian": "13.05.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-13",
-    "datumCroatian": "13.05.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-13",
-    "datumCroatian": "13.05.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-14",
-    "datumCroatian": "14.05.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-14",
-    "datumCroatian": "14.05.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-14",
-    "datumCroatian": "14.05.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-14",
-    "datumCroatian": "14.05.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-14",
-    "datumCroatian": "14.05.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-15",
-    "datumCroatian": "15.05.2025.",
-    "vrijeme": "09:00-09:45",
-    "lokacija": "BRATINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-15",
-    "datumCroatian": "15.05.2025.",
-    "vrijeme": "09:50-10:15",
-    "lokacija": "DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-15",
-    "datumCroatian": "15.05.2025.",
-    "vrijeme": "10:30-11:15",
-    "lokacija": "PISAROVINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-15",
-    "datumCroatian": "15.05.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "KUP\u010CINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-15",
-    "datumCroatian": "15.05.2025.",
-    "vrijeme": "15:00-16:15",
-    "lokacija": "REMETE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-15",
-    "datumCroatian": "15.05.2025.",
-    "vrijeme": "17:30-19:00",
-    "lokacija": "RETKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-16",
-    "datumCroatian": "16.05.2025.",
-    "vrijeme": "08:45-10:15",
-    "lokacija": "KUPINE\u010CKI KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-16",
-    "datumCroatian": "16.05.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "DRAGONO\u017DEC P\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-16",
-    "datumCroatian": "16.05.2025.",
-    "vrijeme": "11.00-11:30",
-    "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-16",
-    "datumCroatian": "16.05.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "JAKOVLJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-16",
-    "datumCroatian": "16.05.2025.",
-    "vrijeme": "16:30-17:15",
-    "lokacija": "\u0160ENKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-16",
-    "datumCroatian": "16.05.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "PRIGORJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-17",
-    "datumCroatian": "17.05.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "VELIKA MLAKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-17",
-    "datumCroatian": "17.05.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "BOTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-20",
-    "datumCroatian": "20.05.2025.",
-    "vrijeme": "09:00-10:15",
-    "lokacija": "ODRA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-20",
-    "datumCroatian": "20.05.2025.",
-    "vrijeme": "11:30-13:30",
-    "lokacija": "RUDE\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-20",
-    "datumCroatian": "20.05.2025.",
-    "vrijeme": "14:30-16:00",
-    "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-20",
-    "datumCroatian": "20.05.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "MARKU\u0160EVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-21",
-    "datumCroatian": "21.05.2025.",
-    "vrijeme": "08:30-09:30",
-    "lokacija": "STUPNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-21",
-    "datumCroatian": "21.05.2025.",
-    "vrijeme": "10:15-11:00",
-    "lokacija": "P\u0160 KERESTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-21",
-    "datumCroatian": "21.05.2025.",
-    "vrijeme": "11:30-13:15",
-    "lokacija": "STRMEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-21",
-    "datumCroatian": "21.05.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "MLINOVI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-21",
-    "datumCroatian": "21.05.2025.",
-    "vrijeme": "16:00-17:00",
-    "lokacija": "KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-21",
-    "datumCroatian": "21.05.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "GORNJA KUSTO\u0160IJA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-22",
-    "datumCroatian": "22.05.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "POJATNO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-22",
-    "datumCroatian": "22.05.2025.",
-    "vrijeme": "10:30-11:00",
-    "lokacija": "KUPLJENOVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-22",
-    "datumCroatian": "22.05.2025.",
-    "vrijeme": "12:00-13:15",
-    "lokacija": "LUKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-22",
-    "datumCroatian": "22.05.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "SIGET",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-22",
-    "datumCroatian": "22.05.2025.",
-    "vrijeme": "16:45-19:00",
-    "lokacija": "SREDI\u0160\u0106E",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-23",
-    "datumCroatian": "23.05.2025.",
-    "vrijeme": "08:45-10:00",
-    "lokacija": "SOBLINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-23",
-    "datumCroatian": "23.05.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "SESVETSKA SELA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-23",
-    "datumCroatian": "23.05.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "P\u0160 RESNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-23",
-    "datumCroatian": "23.05.2025.",
-    "vrijeme": "14:30-15:30",
-    "lokacija": "CVJETNO NASELJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-23",
-    "datumCroatian": "23.05.2025.",
-    "vrijeme": "16:30-19:00",
-    "lokacija": "SREDNJACI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-24",
-    "datumCroatian": "24.05.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "POPOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-24",
-    "datumCroatian": "24.05.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "STUDENTSKI GRAD",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-27",
-    "datumCroatian": "27.05.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-27",
-    "datumCroatian": "27.05.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-27",
-    "datumCroatian": "27.05.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-05-27",
-    "datumCroatian": "27.05.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-28",
-    "datumCroatian": "28.05.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-28",
-    "datumCroatian": "28.05.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-28",
-    "datumCroatian": "28.05.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-28",
-    "datumCroatian": "28.05.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-05-28",
-    "datumCroatian": "28.05.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-29",
-    "datumCroatian": "29.05.2025.",
-    "vrijeme": "09:00-09:45",
-    "lokacija": "BRATINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-29",
-    "datumCroatian": "29.05.2025.",
-    "vrijeme": "09:50-10:15",
-    "lokacija": "DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-29",
-    "datumCroatian": "29.05.2025.",
-    "vrijeme": "10:30-11:15",
-    "lokacija": "PISAROVINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-29",
-    "datumCroatian": "29.05.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "KUP\u010CINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-29",
-    "datumCroatian": "29.05.2025.",
-    "vrijeme": "15:00-16:15",
-    "lokacija": "REMETE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-05-29",
-    "datumCroatian": "29.05.2025.",
-    "vrijeme": "17:30-19:00",
-    "lokacija": "RETKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-05-30",
-    "datumCroatian": "30.05.2025.",
-    "vrijeme": "",
-    "lokacija": "=== neradni dan ===",
-    "isNeradniDan": true
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-31",
-    "datumCroatian": "31.05.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "VELIKA MLAKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-05-31",
-    "datumCroatian": "31.05.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "BOTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-03",
-    "datumCroatian": "03.06.2025.",
-    "vrijeme": "09:00-10:15",
-    "lokacija": "ODRA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-03",
-    "datumCroatian": "03.06.2025.",
-    "vrijeme": "11:30-13:30",
-    "lokacija": "RUDE\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-03",
-    "datumCroatian": "03.06.2025.",
-    "vrijeme": "14:30-16:00",
-    "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-03",
-    "datumCroatian": "03.06.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "MARKU\u0160EVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-04",
-    "datumCroatian": "04.06.2025.",
-    "vrijeme": "08:30-09:30",
-    "lokacija": "STUPNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-04",
-    "datumCroatian": "04.06.2025.",
-    "vrijeme": "10:15-11:00",
-    "lokacija": "P\u0160 KERESTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-04",
-    "datumCroatian": "04.06.2025.",
-    "vrijeme": "11:30-13:15",
-    "lokacija": "STRMEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-04",
-    "datumCroatian": "04.06.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "MLINOVI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-04",
-    "datumCroatian": "04.06.2025.",
-    "vrijeme": "16:00-17:00",
-    "lokacija": "KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-04",
-    "datumCroatian": "04.06.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "GORNJA KUSTO\u0160IJA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-05",
-    "datumCroatian": "05.06.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "POJATNO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-05",
-    "datumCroatian": "05.06.2025.",
-    "vrijeme": "10:30-11:00",
-    "lokacija": "KUPLJENOVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-05",
-    "datumCroatian": "05.06.2025.",
-    "vrijeme": "12:00-13:15",
-    "lokacija": "LUKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-05",
-    "datumCroatian": "05.06.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "SIGET",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-05",
-    "datumCroatian": "05.06.2025.",
-    "vrijeme": "16:45-19:00",
-    "lokacija": "SREDI\u0160\u0106E",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-06",
-    "datumCroatian": "06.06.2025.",
-    "vrijeme": "08:45-10:00",
-    "lokacija": "SOBLINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-06",
-    "datumCroatian": "06.06.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "SESVETSKA SELA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-06",
-    "datumCroatian": "06.06.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "P\u0160 RESNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-06",
-    "datumCroatian": "06.06.2025.",
-    "vrijeme": "14:30-15:30",
-    "lokacija": "CVJETNO NASELJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-06",
-    "datumCroatian": "06.06.2025.",
-    "vrijeme": "16:30-19:00",
-    "lokacija": "SREDNJACI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-06-07",
-    "datumCroatian": "07.06.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "POPOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-06-07",
-    "datumCroatian": "07.06.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "STUDENTSKI GRAD",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-10",
-    "datumCroatian": "10.06.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-10",
-    "datumCroatian": "10.06.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-10",
-    "datumCroatian": "10.06.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-10",
-    "datumCroatian": "10.06.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-11",
-    "datumCroatian": "11.06.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-11",
-    "datumCroatian": "11.06.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-11",
-    "datumCroatian": "11.06.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-11",
-    "datumCroatian": "11.06.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-11",
-    "datumCroatian": "11.06.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-12",
-    "datumCroatian": "12.06.2025.",
-    "vrijeme": "09:00-09:45",
-    "lokacija": "BRATINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-12",
-    "datumCroatian": "12.06.2025.",
-    "vrijeme": "09:50-10:15",
-    "lokacija": "DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-12",
-    "datumCroatian": "12.06.2025.",
-    "vrijeme": "10:30-11:15",
-    "lokacija": "PISAROVINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-12",
-    "datumCroatian": "12.06.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "KUP\u010CINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-12",
-    "datumCroatian": "12.06.2025.",
-    "vrijeme": "15:00-16:15",
-    "lokacija": "REMETE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-12",
-    "datumCroatian": "12.06.2025.",
-    "vrijeme": "17:30-19:00",
-    "lokacija": "RETKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-13",
-    "datumCroatian": "13.06.2025.",
-    "vrijeme": "08:45-10:15",
-    "lokacija": "KUPINE\u010CKI KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-13",
-    "datumCroatian": "13.06.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "DRAGONO\u017DEC P\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-13",
-    "datumCroatian": "13.06.2025.",
-    "vrijeme": "11.00-11:30",
-    "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-13",
-    "datumCroatian": "13.06.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "JAKOVLJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-13",
-    "datumCroatian": "13.06.2025.",
-    "vrijeme": "16:30-17:15",
-    "lokacija": "\u0160ENKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-13",
-    "datumCroatian": "13.06.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "PRIGORJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-06-14",
-    "datumCroatian": "14.06.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "VELIKA MLAKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-06-14",
-    "datumCroatian": "14.06.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "BOTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-17",
-    "datumCroatian": "17.06.2025.",
-    "vrijeme": "09:00-10:15",
-    "lokacija": "ODRA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-17",
-    "datumCroatian": "17.06.2025.",
-    "vrijeme": "11:30-13:30",
-    "lokacija": "RUDE\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-17",
-    "datumCroatian": "17.06.2025.",
-    "vrijeme": "14:30-16:00",
-    "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-17",
-    "datumCroatian": "17.06.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "MARKU\u0160EVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-18",
-    "datumCroatian": "18.06.2025.",
-    "vrijeme": "08:30-09:30",
-    "lokacija": "STUPNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-18",
-    "datumCroatian": "18.06.2025.",
-    "vrijeme": "10:15-11:00",
-    "lokacija": "P\u0160 KERESTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-18",
-    "datumCroatian": "18.06.2025.",
-    "vrijeme": "11:30-13:15",
-    "lokacija": "STRMEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-18",
-    "datumCroatian": "18.06.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "MLINOVI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-18",
-    "datumCroatian": "18.06.2025.",
-    "vrijeme": "16:00-17:00",
-    "lokacija": "KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-18",
-    "datumCroatian": "18.06.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "GORNJA KUSTO\u0160IJA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-19",
-    "datumCroatian": "19.06.2025.",
-    "vrijeme": "",
-    "lokacija": "=== neradni dan ===",
-    "isNeradniDan": true
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-20",
-    "datumCroatian": "20.06.2025.",
-    "vrijeme": "08:45-10:00",
-    "lokacija": "SOBLINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-20",
-    "datumCroatian": "20.06.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "SESVETSKA SELA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-20",
-    "datumCroatian": "20.06.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "P\u0160 RESNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-20",
-    "datumCroatian": "20.06.2025.",
-    "vrijeme": "14:30-15:30",
-    "lokacija": "CVJETNO NASELJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-20",
-    "datumCroatian": "20.06.2025.",
-    "vrijeme": "16:30-19:00",
-    "lokacija": "SREDNJACI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-06-21",
-    "datumCroatian": "21.06.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "POPOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-06-21",
-    "datumCroatian": "21.06.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "STUDENTSKI GRAD",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-24",
-    "datumCroatian": "24.06.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-24",
-    "datumCroatian": "24.06.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-24",
-    "datumCroatian": "24.06.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-06-24",
-    "datumCroatian": "24.06.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-25",
-    "datumCroatian": "25.06.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-25",
-    "datumCroatian": "25.06.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-25",
-    "datumCroatian": "25.06.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-25",
-    "datumCroatian": "25.06.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-06-25",
-    "datumCroatian": "25.06.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-26",
-    "datumCroatian": "26.06.2025.",
-    "vrijeme": "09:00-09:45",
-    "lokacija": "BRATINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-26",
-    "datumCroatian": "26.06.2025.",
-    "vrijeme": "09:50-10:15",
-    "lokacija": "DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-26",
-    "datumCroatian": "26.06.2025.",
-    "vrijeme": "10:30-11:15",
-    "lokacija": "PISAROVINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-26",
-    "datumCroatian": "26.06.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "KUP\u010CINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-26",
-    "datumCroatian": "26.06.2025.",
-    "vrijeme": "15:00-16:15",
-    "lokacija": "REMETE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-06-26",
-    "datumCroatian": "26.06.2025.",
-    "vrijeme": "17:30-19:00",
-    "lokacija": "RETKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-27",
-    "datumCroatian": "27.06.2025.",
-    "vrijeme": "08:45-10:15",
-    "lokacija": "KUPINE\u010CKI KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-27",
-    "datumCroatian": "27.06.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "DRAGONO\u017DEC P\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-27",
-    "datumCroatian": "27.06.2025.",
-    "vrijeme": "11.00-11:30",
-    "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-27",
-    "datumCroatian": "27.06.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "JAKOVLJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-27",
-    "datumCroatian": "27.06.2025.",
-    "vrijeme": "16:30-17:15",
-    "lokacija": "\u0160ENKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-06-27",
-    "datumCroatian": "27.06.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "PRIGORJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-06-28",
-    "datumCroatian": "28.06.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "VELIKA MLAKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-06-28",
-    "datumCroatian": "28.06.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "BOTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-07-01",
-    "datumCroatian": "01.07.2025.",
-    "vrijeme": "09:00-10:15",
-    "lokacija": "ODRA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-07-01",
-    "datumCroatian": "01.07.2025.",
-    "vrijeme": "11:30-13:30",
-    "lokacija": "RUDE\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-07-01",
-    "datumCroatian": "01.07.2025.",
-    "vrijeme": "14:30-16:00",
-    "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-07-01",
-    "datumCroatian": "01.07.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "MARKU\u0160EVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-02",
-    "datumCroatian": "02.07.2025.",
-    "vrijeme": "08:30-09:30",
-    "lokacija": "STUPNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-02",
-    "datumCroatian": "02.07.2025.",
-    "vrijeme": "10:15-11:00",
-    "lokacija": "P\u0160 KERESTINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-02",
-    "datumCroatian": "02.07.2025.",
-    "vrijeme": "11:30-13:15",
-    "lokacija": "STRMEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-02",
-    "datumCroatian": "02.07.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "MLINOVI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-02",
-    "datumCroatian": "02.07.2025.",
-    "vrijeme": "16:00-17:00",
-    "lokacija": "KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-02",
-    "datumCroatian": "02.07.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "GORNJA KUSTO\u0160IJA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-03",
-    "datumCroatian": "03.07.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "POJATNO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-03",
-    "datumCroatian": "03.07.2025.",
-    "vrijeme": "10:30-11:00",
-    "lokacija": "KUPLJENOVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-03",
-    "datumCroatian": "03.07.2025.",
-    "vrijeme": "12:00-13:15",
-    "lokacija": "LUKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-03",
-    "datumCroatian": "03.07.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "SIGET",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-03",
-    "datumCroatian": "03.07.2025.",
-    "vrijeme": "16:45-19:00",
-    "lokacija": "SREDI\u0160\u0106E",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-04",
-    "datumCroatian": "04.07.2025.",
-    "vrijeme": "08:45-10:00",
-    "lokacija": "SOBLINEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-04",
-    "datumCroatian": "04.07.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "SESVETSKA SELA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-04",
-    "datumCroatian": "04.07.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "P\u0160 RESNIK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-04",
-    "datumCroatian": "04.07.2025.",
-    "vrijeme": "14:30-15:30",
-    "lokacija": "CVJETNO NASELJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-04",
-    "datumCroatian": "04.07.2025.",
-    "vrijeme": "16:30-19:00",
-    "lokacija": "SREDNJACI",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-07-05",
-    "datumCroatian": "05.07.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "POPOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-07-05",
-    "datumCroatian": "05.07.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "STUDENTSKI GRAD",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-07-08",
-    "datumCroatian": "08.07.2025.",
-    "vrijeme": "09:00-11:15",
-    "lokacija": "IVER",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-07-08",
-    "datumCroatian": "08.07.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "POGLAVARSTVO",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-07-08",
-    "datumCroatian": "08.07.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "REMETINE\u010CKI GAJ",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "UTORAK",
-    "datum": "2025-07-08",
-    "datumCroatian": "08.07.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "KAJZERICA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-09",
-    "datumCroatian": "09.07.2025.",
-    "vrijeme": "09:00-10:00",
-    "lokacija": "PAVU\u010CNJAK",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-09",
-    "datumCroatian": "09.07.2025.",
-    "vrijeme": "10:15-11:15",
-    "lokacija": "HORVATI (RAKOV POTOK)",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-09",
-    "datumCroatian": "09.07.2025.",
-    "vrijeme": "12:30-13:30",
-    "lokacija": "HRVATSKI LESKOVAC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-09",
-    "datumCroatian": "09.07.2025.",
-    "vrijeme": "15:00-16:00",
-    "lokacija": "BOROVJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SRIJEDA",
-    "datum": "2025-07-09",
-    "datumCroatian": "09.07.2025.",
-    "vrijeme": "17:00-19:00",
-    "lokacija": "SOPOT",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-10",
-    "datumCroatian": "10.07.2025.",
-    "vrijeme": "09:00-09:45",
-    "lokacija": "BRATINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-10",
-    "datumCroatian": "10.07.2025.",
-    "vrijeme": "09:50-10:15",
-    "lokacija": "DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-10",
-    "datumCroatian": "10.07.2025.",
-    "vrijeme": "10:30-11:15",
-    "lokacija": "PISAROVINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-10",
-    "datumCroatian": "10.07.2025.",
-    "vrijeme": "12:15-13:00",
-    "lokacija": "KUP\u010CINA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-10",
-    "datumCroatian": "10.07.2025.",
-    "vrijeme": "15:00-16:15",
-    "lokacija": "REMETE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "\u010CETVRTAK",
-    "datum": "2025-07-10",
-    "datumCroatian": "10.07.2025.",
-    "vrijeme": "17:30-19:00",
-    "lokacija": "RETKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-11",
-    "datumCroatian": "11.07.2025.",
-    "vrijeme": "08:45-10:15",
-    "lokacija": "KUPINE\u010CKI KRALJEVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-11",
-    "datumCroatian": "11.07.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "DRAGONO\u017DEC P\u0160",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-11",
-    "datumCroatian": "11.07.2025.",
-    "vrijeme": "11.00-11:30",
-    "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-11",
-    "datumCroatian": "11.07.2025.",
-    "vrijeme": "14:45-15:45",
-    "lokacija": "JAKOVLJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-11",
-    "datumCroatian": "11.07.2025.",
-    "vrijeme": "16:30-17:15",
-    "lokacija": "\u0160ENKOVEC",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "PETAK",
-    "datum": "2025-07-11",
-    "datumCroatian": "11.07.2025.",
-    "vrijeme": "18:00-19:00",
-    "lokacija": "PRIGORJE",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-07-12",
-    "datumCroatian": "12.07.2025.",
-    "vrijeme": "09:00-10:30",
-    "lokacija": "VELIKA MLAKA",
-    "isNeradniDan": false
-  },
-  {
-    "dan": "SUBOTA",
-    "datum": "2025-07-12",
-    "datumCroatian": "12.07.2025.",
-    "vrijeme": "11:45-13:00",
-    "lokacija": "BOTINEC",
-    "isNeradniDan": false
-  }
-];
+        const data = {
+  "locations": [
+    {
+      "name": "Sve lokacije",
+      "value": "",
+      "calendarFile": "bibliobus-calendar.ics"
+    },
+    {
+      "name": "BOROVJE",
+      "value": "borovje",
+      "calendarFile": "bibliobus-borovje.ics"
+    },
+    {
+      "name": "BOTINEC",
+      "value": "botinec",
+      "calendarFile": "bibliobus-botinec.ics"
+    },
+    {
+      "name": "BRATINA",
+      "value": "bratina",
+      "calendarFile": "bibliobus-bratina.ics"
+    },
+    {
+      "name": "CVJETNO NASELJE",
+      "value": "cvjetno-naselje",
+      "calendarFile": "bibliobus-cvjetno-naselje.ics"
+    },
+    {
+      "name": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "value": "dragonozec-dv-potocic",
+      "calendarFile": "bibliobus-dragonozec-dv-potocic.ics"
+    },
+    {
+      "name": "DRAGONO\u017DEC P\u0160",
+      "value": "dragonozec-ps",
+      "calendarFile": "bibliobus-dragonozec-ps.ics"
+    },
+    {
+      "name": "DV POTO\u010CI\u0106",
+      "value": "dv-potocic",
+      "calendarFile": "bibliobus-dv-potocic.ics"
+    },
+    {
+      "name": "GORNJA KUSTO\u0160IJA",
+      "value": "gornja-kustosija",
+      "calendarFile": "bibliobus-gornja-kustosija.ics"
+    },
+    {
+      "name": "HORVATI (RAKOV POTOK)",
+      "value": "horvati-rakov-potok",
+      "calendarFile": "bibliobus-horvati-rakov-potok.ics"
+    },
+    {
+      "name": "HRVATSKI LESKOVAC",
+      "value": "hrvatski-leskovac",
+      "calendarFile": "bibliobus-hrvatski-leskovac.ics"
+    },
+    {
+      "name": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "value": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "calendarFile": "bibliobus-institut-ruder-boskovic-okretiste-srebrnjak.ics"
+    },
+    {
+      "name": "IVER",
+      "value": "iver",
+      "calendarFile": "bibliobus-iver.ics"
+    },
+    {
+      "name": "JAKOVLJE",
+      "value": "jakovlje",
+      "calendarFile": "bibliobus-jakovlje.ics"
+    },
+    {
+      "name": "KAJZERICA",
+      "value": "kajzerica",
+      "calendarFile": "bibliobus-kajzerica.ics"
+    },
+    {
+      "name": "KRALJEVEC",
+      "value": "kraljevec",
+      "calendarFile": "bibliobus-kraljevec.ics"
+    },
+    {
+      "name": "KUP\u010CINA",
+      "value": "kupcina",
+      "calendarFile": "bibliobus-kupcina.ics"
+    },
+    {
+      "name": "KUPINE\u010CKI KRALJEVEC",
+      "value": "kupinecki-kraljevec",
+      "calendarFile": "bibliobus-kupinecki-kraljevec.ics"
+    },
+    {
+      "name": "KUPLJENOVO",
+      "value": "kupljenovo",
+      "calendarFile": "bibliobus-kupljenovo.ics"
+    },
+    {
+      "name": "LUKA",
+      "value": "luka",
+      "calendarFile": "bibliobus-luka.ics"
+    },
+    {
+      "name": "MARKU\u0160EVEC",
+      "value": "markusevec",
+      "calendarFile": "bibliobus-markusevec.ics"
+    },
+    {
+      "name": "MLINOVI",
+      "value": "mlinovi",
+      "calendarFile": "bibliobus-mlinovi.ics"
+    },
+    {
+      "name": "ODRA",
+      "value": "odra",
+      "calendarFile": "bibliobus-odra.ics"
+    },
+    {
+      "name": "PAVU\u010CNJAK",
+      "value": "pavucnjak",
+      "calendarFile": "bibliobus-pavucnjak.ics"
+    },
+    {
+      "name": "PISAROVINA",
+      "value": "pisarovina",
+      "calendarFile": "bibliobus-pisarovina.ics"
+    },
+    {
+      "name": "POGLAVARSTVO",
+      "value": "poglavarstvo",
+      "calendarFile": "bibliobus-poglavarstvo.ics"
+    },
+    {
+      "name": "POJATNO",
+      "value": "pojatno",
+      "calendarFile": "bibliobus-pojatno.ics"
+    },
+    {
+      "name": "POPOVEC",
+      "value": "popovec",
+      "calendarFile": "bibliobus-popovec.ics"
+    },
+    {
+      "name": "PRIGORJE",
+      "value": "prigorje",
+      "calendarFile": "bibliobus-prigorje.ics"
+    },
+    {
+      "name": "P\u0160 KERESTINEC",
+      "value": "ps-kerestinec",
+      "calendarFile": "bibliobus-ps-kerestinec.ics"
+    },
+    {
+      "name": "P\u0160 RESNIK",
+      "value": "ps-resnik",
+      "calendarFile": "bibliobus-ps-resnik.ics"
+    },
+    {
+      "name": "REMETE",
+      "value": "remete",
+      "calendarFile": "bibliobus-remete.ics"
+    },
+    {
+      "name": "REMETINE\u010CKI GAJ",
+      "value": "remetinecki-gaj",
+      "calendarFile": "bibliobus-remetinecki-gaj.ics"
+    },
+    {
+      "name": "RETKOVEC",
+      "value": "retkovec",
+      "calendarFile": "bibliobus-retkovec.ics"
+    },
+    {
+      "name": "RUDE\u0160",
+      "value": "rudes",
+      "calendarFile": "bibliobus-rudes.ics"
+    },
+    {
+      "name": "\u0160ENKOVEC",
+      "value": "senkovec",
+      "calendarFile": "bibliobus-senkovec.ics"
+    },
+    {
+      "name": "SESVETSKA SELA",
+      "value": "sesvetska-sela",
+      "calendarFile": "bibliobus-sesvetska-sela.ics"
+    },
+    {
+      "name": "SIGET",
+      "value": "siget",
+      "calendarFile": "bibliobus-siget.ics"
+    },
+    {
+      "name": "SOBLINEC",
+      "value": "soblinec",
+      "calendarFile": "bibliobus-soblinec.ics"
+    },
+    {
+      "name": "SOPOT",
+      "value": "sopot",
+      "calendarFile": "bibliobus-sopot.ics"
+    },
+    {
+      "name": "SREDI\u0160\u0106E",
+      "value": "sredisce",
+      "calendarFile": "bibliobus-sredisce.ics"
+    },
+    {
+      "name": "SREDNJACI",
+      "value": "srednjaci",
+      "calendarFile": "bibliobus-srednjaci.ics"
+    },
+    {
+      "name": "STRMEC",
+      "value": "strmec",
+      "calendarFile": "bibliobus-strmec.ics"
+    },
+    {
+      "name": "STUDENTSKI GRAD",
+      "value": "studentski-grad",
+      "calendarFile": "bibliobus-studentski-grad.ics"
+    },
+    {
+      "name": "STUPNIK",
+      "value": "stupnik",
+      "calendarFile": "bibliobus-stupnik.ics"
+    },
+    {
+      "name": "VELIKA MLAKA",
+      "value": "velika-mlaka",
+      "calendarFile": "bibliobus-velika-mlaka.ics"
+    }
+  ],
+  "sessions": [
+    {
+      "dan": "UTORAK",
+      "datum": "2025-03-18",
+      "datumCroatian": "18.03.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-03-18",
+      "datumCroatian": "18.03.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-03-18",
+      "datumCroatian": "18.03.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-03-18",
+      "datumCroatian": "18.03.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-19",
+      "datumCroatian": "19.03.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-19",
+      "datumCroatian": "19.03.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-19",
+      "datumCroatian": "19.03.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-19",
+      "datumCroatian": "19.03.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-19",
+      "datumCroatian": "19.03.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-20",
+      "datumCroatian": "20.03.2025.",
+      "vrijeme": "09:00-09:45",
+      "lokacija": "BRATINA",
+      "locationId": "bratina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-20",
+      "datumCroatian": "20.03.2025.",
+      "vrijeme": "09:50-10:15",
+      "lokacija": "DV POTO\u010CI\u0106",
+      "locationId": "dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-20",
+      "datumCroatian": "20.03.2025.",
+      "vrijeme": "10:30-11:15",
+      "lokacija": "PISAROVINA",
+      "locationId": "pisarovina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-20",
+      "datumCroatian": "20.03.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "KUP\u010CINA",
+      "locationId": "kupcina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-20",
+      "datumCroatian": "20.03.2025.",
+      "vrijeme": "15:00-16:15",
+      "lokacija": "REMETE",
+      "locationId": "remete",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-20",
+      "datumCroatian": "20.03.2025.",
+      "vrijeme": "17:30-19:00",
+      "lokacija": "RETKOVEC",
+      "locationId": "retkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-21",
+      "datumCroatian": "21.03.2025.",
+      "vrijeme": "08:45-10:15",
+      "lokacija": "KUPINE\u010CKI KRALJEVEC",
+      "locationId": "kupinecki-kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-21",
+      "datumCroatian": "21.03.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "DRAGONO\u017DEC P\u0160",
+      "locationId": "dragonozec-ps",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-21",
+      "datumCroatian": "21.03.2025.",
+      "vrijeme": "11.00-11:30",
+      "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "locationId": "dragonozec-dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-21",
+      "datumCroatian": "21.03.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "JAKOVLJE",
+      "locationId": "jakovlje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-21",
+      "datumCroatian": "21.03.2025.",
+      "vrijeme": "16:30-17:15",
+      "lokacija": "\u0160ENKOVEC",
+      "locationId": "senkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-21",
+      "datumCroatian": "21.03.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "PRIGORJE",
+      "locationId": "prigorje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-03-22",
+      "datumCroatian": "22.03.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "VELIKA MLAKA",
+      "locationId": "velika-mlaka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-03-22",
+      "datumCroatian": "22.03.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "BOTINEC",
+      "locationId": "botinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-03-25",
+      "datumCroatian": "25.03.2025.",
+      "vrijeme": "09:00-10:15",
+      "lokacija": "ODRA",
+      "locationId": "odra",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-03-25",
+      "datumCroatian": "25.03.2025.",
+      "vrijeme": "11:30-13:30",
+      "lokacija": "RUDE\u0160",
+      "locationId": "rudes",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-03-25",
+      "datumCroatian": "25.03.2025.",
+      "vrijeme": "14:30-16:00",
+      "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "locationId": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-03-25",
+      "datumCroatian": "25.03.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "MARKU\u0160EVEC",
+      "locationId": "markusevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-26",
+      "datumCroatian": "26.03.2025.",
+      "vrijeme": "08:30-09:30",
+      "lokacija": "STUPNIK",
+      "locationId": "stupnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-26",
+      "datumCroatian": "26.03.2025.",
+      "vrijeme": "10:15-11:00",
+      "lokacija": "P\u0160 KERESTINEC",
+      "locationId": "ps-kerestinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-26",
+      "datumCroatian": "26.03.2025.",
+      "vrijeme": "11:30-13:15",
+      "lokacija": "STRMEC",
+      "locationId": "strmec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-26",
+      "datumCroatian": "26.03.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "MLINOVI",
+      "locationId": "mlinovi",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-26",
+      "datumCroatian": "26.03.2025.",
+      "vrijeme": "16:00-17:00",
+      "lokacija": "KRALJEVEC",
+      "locationId": "kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-03-26",
+      "datumCroatian": "26.03.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "GORNJA KUSTO\u0160IJA",
+      "locationId": "gornja-kustosija",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-27",
+      "datumCroatian": "27.03.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "POJATNO",
+      "locationId": "pojatno",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-27",
+      "datumCroatian": "27.03.2025.",
+      "vrijeme": "10:30-11:00",
+      "lokacija": "KUPLJENOVO",
+      "locationId": "kupljenovo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-27",
+      "datumCroatian": "27.03.2025.",
+      "vrijeme": "12:00-13:15",
+      "lokacija": "LUKA",
+      "locationId": "luka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-27",
+      "datumCroatian": "27.03.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "SIGET",
+      "locationId": "siget",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-03-27",
+      "datumCroatian": "27.03.2025.",
+      "vrijeme": "16:45-19:00",
+      "lokacija": "SREDI\u0160\u0106E",
+      "locationId": "sredisce",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-28",
+      "datumCroatian": "28.03.2025.",
+      "vrijeme": "08:45-10:00",
+      "lokacija": "SOBLINEC",
+      "locationId": "soblinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-28",
+      "datumCroatian": "28.03.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "SESVETSKA SELA",
+      "locationId": "sesvetska-sela",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-28",
+      "datumCroatian": "28.03.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "P\u0160 RESNIK",
+      "locationId": "ps-resnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-28",
+      "datumCroatian": "28.03.2025.",
+      "vrijeme": "14:30-15:30",
+      "lokacija": "CVJETNO NASELJE",
+      "locationId": "cvjetno-naselje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-03-28",
+      "datumCroatian": "28.03.2025.",
+      "vrijeme": "16:30-19:00",
+      "lokacija": "SREDNJACI",
+      "locationId": "srednjaci",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-03-29",
+      "datumCroatian": "29.03.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "POPOVEC",
+      "locationId": "popovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-03-29",
+      "datumCroatian": "29.03.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "STUDENTSKI GRAD",
+      "locationId": "studentski-grad",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-01",
+      "datumCroatian": "01.04.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-01",
+      "datumCroatian": "01.04.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-01",
+      "datumCroatian": "01.04.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-01",
+      "datumCroatian": "01.04.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-02",
+      "datumCroatian": "02.04.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-02",
+      "datumCroatian": "02.04.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-02",
+      "datumCroatian": "02.04.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-02",
+      "datumCroatian": "02.04.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-02",
+      "datumCroatian": "02.04.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-03",
+      "datumCroatian": "03.04.2025.",
+      "vrijeme": "09:00-09:45",
+      "lokacija": "BRATINA",
+      "locationId": "bratina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-03",
+      "datumCroatian": "03.04.2025.",
+      "vrijeme": "09:50-10:15",
+      "lokacija": "DV POTO\u010CI\u0106",
+      "locationId": "dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-03",
+      "datumCroatian": "03.04.2025.",
+      "vrijeme": "10:30-11:15",
+      "lokacija": "PISAROVINA",
+      "locationId": "pisarovina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-03",
+      "datumCroatian": "03.04.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "KUP\u010CINA",
+      "locationId": "kupcina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-03",
+      "datumCroatian": "03.04.2025.",
+      "vrijeme": "15:00-16:15",
+      "lokacija": "REMETE",
+      "locationId": "remete",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-03",
+      "datumCroatian": "03.04.2025.",
+      "vrijeme": "17:30-19:00",
+      "lokacija": "RETKOVEC",
+      "locationId": "retkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-04",
+      "datumCroatian": "04.04.2025.",
+      "vrijeme": "08:45-10:15",
+      "lokacija": "KUPINE\u010CKI KRALJEVEC",
+      "locationId": "kupinecki-kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-04",
+      "datumCroatian": "04.04.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "DRAGONO\u017DEC P\u0160",
+      "locationId": "dragonozec-ps",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-04",
+      "datumCroatian": "04.04.2025.",
+      "vrijeme": "11.00-11:30",
+      "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "locationId": "dragonozec-dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-04",
+      "datumCroatian": "04.04.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "JAKOVLJE",
+      "locationId": "jakovlje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-04",
+      "datumCroatian": "04.04.2025.",
+      "vrijeme": "16:30-17:15",
+      "lokacija": "\u0160ENKOVEC",
+      "locationId": "senkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-04",
+      "datumCroatian": "04.04.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "PRIGORJE",
+      "locationId": "prigorje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-04-05",
+      "datumCroatian": "05.04.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "VELIKA MLAKA",
+      "locationId": "velika-mlaka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-04-05",
+      "datumCroatian": "05.04.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "BOTINEC",
+      "locationId": "botinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-08",
+      "datumCroatian": "08.04.2025.",
+      "vrijeme": "09:00-10:15",
+      "lokacija": "ODRA",
+      "locationId": "odra",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-08",
+      "datumCroatian": "08.04.2025.",
+      "vrijeme": "11:30-13:30",
+      "lokacija": "RUDE\u0160",
+      "locationId": "rudes",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-08",
+      "datumCroatian": "08.04.2025.",
+      "vrijeme": "14:30-16:00",
+      "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "locationId": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-08",
+      "datumCroatian": "08.04.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "MARKU\u0160EVEC",
+      "locationId": "markusevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-09",
+      "datumCroatian": "09.04.2025.",
+      "vrijeme": "08:30-09:30",
+      "lokacija": "STUPNIK",
+      "locationId": "stupnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-09",
+      "datumCroatian": "09.04.2025.",
+      "vrijeme": "10:15-11:00",
+      "lokacija": "P\u0160 KERESTINEC",
+      "locationId": "ps-kerestinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-09",
+      "datumCroatian": "09.04.2025.",
+      "vrijeme": "11:30-13:15",
+      "lokacija": "STRMEC",
+      "locationId": "strmec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-09",
+      "datumCroatian": "09.04.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "MLINOVI",
+      "locationId": "mlinovi",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-09",
+      "datumCroatian": "09.04.2025.",
+      "vrijeme": "16:00-17:00",
+      "lokacija": "KRALJEVEC",
+      "locationId": "kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-09",
+      "datumCroatian": "09.04.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "GORNJA KUSTO\u0160IJA",
+      "locationId": "gornja-kustosija",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-10",
+      "datumCroatian": "10.04.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "POJATNO",
+      "locationId": "pojatno",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-10",
+      "datumCroatian": "10.04.2025.",
+      "vrijeme": "10:30-11:00",
+      "lokacija": "KUPLJENOVO",
+      "locationId": "kupljenovo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-10",
+      "datumCroatian": "10.04.2025.",
+      "vrijeme": "12:00-13:15",
+      "lokacija": "LUKA",
+      "locationId": "luka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-10",
+      "datumCroatian": "10.04.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "SIGET",
+      "locationId": "siget",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-10",
+      "datumCroatian": "10.04.2025.",
+      "vrijeme": "16:45-19:00",
+      "lokacija": "SREDI\u0160\u0106E",
+      "locationId": "sredisce",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-11",
+      "datumCroatian": "11.04.2025.",
+      "vrijeme": "08:45-10:00",
+      "lokacija": "SOBLINEC",
+      "locationId": "soblinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-11",
+      "datumCroatian": "11.04.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "SESVETSKA SELA",
+      "locationId": "sesvetska-sela",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-11",
+      "datumCroatian": "11.04.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "P\u0160 RESNIK",
+      "locationId": "ps-resnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-11",
+      "datumCroatian": "11.04.2025.",
+      "vrijeme": "14:30-15:30",
+      "lokacija": "CVJETNO NASELJE",
+      "locationId": "cvjetno-naselje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-11",
+      "datumCroatian": "11.04.2025.",
+      "vrijeme": "16:30-19:00",
+      "lokacija": "SREDNJACI",
+      "locationId": "srednjaci",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-04-12",
+      "datumCroatian": "12.04.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "POPOVEC",
+      "locationId": "popovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-04-12",
+      "datumCroatian": "12.04.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "STUDENTSKI GRAD",
+      "locationId": "studentski-grad",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-15",
+      "datumCroatian": "15.04.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-15",
+      "datumCroatian": "15.04.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-15",
+      "datumCroatian": "15.04.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-15",
+      "datumCroatian": "15.04.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-16",
+      "datumCroatian": "16.04.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-16",
+      "datumCroatian": "16.04.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-16",
+      "datumCroatian": "16.04.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-16",
+      "datumCroatian": "16.04.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-16",
+      "datumCroatian": "16.04.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-17",
+      "datumCroatian": "17.04.2025.",
+      "vrijeme": "09:00-09:45",
+      "lokacija": "BRATINA",
+      "locationId": "bratina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-17",
+      "datumCroatian": "17.04.2025.",
+      "vrijeme": "09:50-10:15",
+      "lokacija": "DV POTO\u010CI\u0106",
+      "locationId": "dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-17",
+      "datumCroatian": "17.04.2025.",
+      "vrijeme": "10:30-11:15",
+      "lokacija": "PISAROVINA",
+      "locationId": "pisarovina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-17",
+      "datumCroatian": "17.04.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "KUP\u010CINA",
+      "locationId": "kupcina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-17",
+      "datumCroatian": "17.04.2025.",
+      "vrijeme": "15:00-16:15",
+      "lokacija": "REMETE",
+      "locationId": "remete",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-17",
+      "datumCroatian": "17.04.2025.",
+      "vrijeme": "17:30-19:00",
+      "lokacija": "RETKOVEC",
+      "locationId": "retkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-18",
+      "datumCroatian": "18.04.2025.",
+      "vrijeme": "08:45-10:15",
+      "lokacija": "KUPINE\u010CKI KRALJEVEC",
+      "locationId": "kupinecki-kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-18",
+      "datumCroatian": "18.04.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "DRAGONO\u017DEC P\u0160",
+      "locationId": "dragonozec-ps",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-18",
+      "datumCroatian": "18.04.2025.",
+      "vrijeme": "11.00-11:30",
+      "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "locationId": "dragonozec-dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-18",
+      "datumCroatian": "18.04.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "JAKOVLJE",
+      "locationId": "jakovlje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-18",
+      "datumCroatian": "18.04.2025.",
+      "vrijeme": "16:30-17:15",
+      "lokacija": "\u0160ENKOVEC",
+      "locationId": "senkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-18",
+      "datumCroatian": "18.04.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "PRIGORJE",
+      "locationId": "prigorje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-04-19",
+      "datumCroatian": "19.04.2025.",
+      "vrijeme": "",
+      "lokacija": "=== neradni dan ===",
+      "locationId": "",
+      "isNeradniDan": true
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-22",
+      "datumCroatian": "22.04.2025.",
+      "vrijeme": "09:00-10:15",
+      "lokacija": "ODRA",
+      "locationId": "odra",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-22",
+      "datumCroatian": "22.04.2025.",
+      "vrijeme": "11:30-13:30",
+      "lokacija": "RUDE\u0160",
+      "locationId": "rudes",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-22",
+      "datumCroatian": "22.04.2025.",
+      "vrijeme": "14:30-16:00",
+      "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "locationId": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-22",
+      "datumCroatian": "22.04.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "MARKU\u0160EVEC",
+      "locationId": "markusevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-23",
+      "datumCroatian": "23.04.2025.",
+      "vrijeme": "08:30-09:30",
+      "lokacija": "STUPNIK",
+      "locationId": "stupnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-23",
+      "datumCroatian": "23.04.2025.",
+      "vrijeme": "10:15-11:00",
+      "lokacija": "P\u0160 KERESTINEC",
+      "locationId": "ps-kerestinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-23",
+      "datumCroatian": "23.04.2025.",
+      "vrijeme": "11:30-13:15",
+      "lokacija": "STRMEC",
+      "locationId": "strmec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-23",
+      "datumCroatian": "23.04.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "MLINOVI",
+      "locationId": "mlinovi",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-23",
+      "datumCroatian": "23.04.2025.",
+      "vrijeme": "16:00-17:00",
+      "lokacija": "KRALJEVEC",
+      "locationId": "kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-23",
+      "datumCroatian": "23.04.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "GORNJA KUSTO\u0160IJA",
+      "locationId": "gornja-kustosija",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-24",
+      "datumCroatian": "24.04.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "POJATNO",
+      "locationId": "pojatno",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-24",
+      "datumCroatian": "24.04.2025.",
+      "vrijeme": "10:30-11:00",
+      "lokacija": "KUPLJENOVO",
+      "locationId": "kupljenovo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-24",
+      "datumCroatian": "24.04.2025.",
+      "vrijeme": "12:00-13:15",
+      "lokacija": "LUKA",
+      "locationId": "luka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-24",
+      "datumCroatian": "24.04.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "SIGET",
+      "locationId": "siget",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-04-24",
+      "datumCroatian": "24.04.2025.",
+      "vrijeme": "16:45-19:00",
+      "lokacija": "SREDI\u0160\u0106E",
+      "locationId": "sredisce",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-25",
+      "datumCroatian": "25.04.2025.",
+      "vrijeme": "08:45-10:00",
+      "lokacija": "SOBLINEC",
+      "locationId": "soblinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-25",
+      "datumCroatian": "25.04.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "SESVETSKA SELA",
+      "locationId": "sesvetska-sela",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-25",
+      "datumCroatian": "25.04.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "P\u0160 RESNIK",
+      "locationId": "ps-resnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-25",
+      "datumCroatian": "25.04.2025.",
+      "vrijeme": "14:30-15:30",
+      "lokacija": "CVJETNO NASELJE",
+      "locationId": "cvjetno-naselje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-04-25",
+      "datumCroatian": "25.04.2025.",
+      "vrijeme": "16:30-19:00",
+      "lokacija": "SREDNJACI",
+      "locationId": "srednjaci",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-04-26",
+      "datumCroatian": "26.04.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "POPOVEC",
+      "locationId": "popovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-04-26",
+      "datumCroatian": "26.04.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "STUDENTSKI GRAD",
+      "locationId": "studentski-grad",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-29",
+      "datumCroatian": "29.04.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-29",
+      "datumCroatian": "29.04.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-29",
+      "datumCroatian": "29.04.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-04-29",
+      "datumCroatian": "29.04.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-30",
+      "datumCroatian": "30.04.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-30",
+      "datumCroatian": "30.04.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-30",
+      "datumCroatian": "30.04.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-30",
+      "datumCroatian": "30.04.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-04-30",
+      "datumCroatian": "30.04.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-01",
+      "datumCroatian": "01.05.2025.",
+      "vrijeme": "",
+      "lokacija": "=== neradni dan ===",
+      "locationId": "",
+      "isNeradniDan": true
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-02",
+      "datumCroatian": "02.05.2025.",
+      "vrijeme": "08:45-10:15",
+      "lokacija": "KUPINE\u010CKI KRALJEVEC",
+      "locationId": "kupinecki-kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-02",
+      "datumCroatian": "02.05.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "DRAGONO\u017DEC P\u0160",
+      "locationId": "dragonozec-ps",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-02",
+      "datumCroatian": "02.05.2025.",
+      "vrijeme": "11.00-11:30",
+      "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "locationId": "dragonozec-dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-02",
+      "datumCroatian": "02.05.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "JAKOVLJE",
+      "locationId": "jakovlje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-02",
+      "datumCroatian": "02.05.2025.",
+      "vrijeme": "16:30-17:15",
+      "lokacija": "\u0160ENKOVEC",
+      "locationId": "senkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-02",
+      "datumCroatian": "02.05.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "PRIGORJE",
+      "locationId": "prigorje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-03",
+      "datumCroatian": "03.05.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "VELIKA MLAKA",
+      "locationId": "velika-mlaka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-03",
+      "datumCroatian": "03.05.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "BOTINEC",
+      "locationId": "botinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-06",
+      "datumCroatian": "06.05.2025.",
+      "vrijeme": "09:00-10:15",
+      "lokacija": "ODRA",
+      "locationId": "odra",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-06",
+      "datumCroatian": "06.05.2025.",
+      "vrijeme": "11:30-13:30",
+      "lokacija": "RUDE\u0160",
+      "locationId": "rudes",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-06",
+      "datumCroatian": "06.05.2025.",
+      "vrijeme": "14:30-16:00",
+      "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "locationId": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-06",
+      "datumCroatian": "06.05.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "MARKU\u0160EVEC",
+      "locationId": "markusevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-07",
+      "datumCroatian": "07.05.2025.",
+      "vrijeme": "08:30-09:30",
+      "lokacija": "STUPNIK",
+      "locationId": "stupnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-07",
+      "datumCroatian": "07.05.2025.",
+      "vrijeme": "10:15-11:00",
+      "lokacija": "P\u0160 KERESTINEC",
+      "locationId": "ps-kerestinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-07",
+      "datumCroatian": "07.05.2025.",
+      "vrijeme": "11:30-13:15",
+      "lokacija": "STRMEC",
+      "locationId": "strmec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-07",
+      "datumCroatian": "07.05.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "MLINOVI",
+      "locationId": "mlinovi",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-07",
+      "datumCroatian": "07.05.2025.",
+      "vrijeme": "16:00-17:00",
+      "lokacija": "KRALJEVEC",
+      "locationId": "kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-07",
+      "datumCroatian": "07.05.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "GORNJA KUSTO\u0160IJA",
+      "locationId": "gornja-kustosija",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-08",
+      "datumCroatian": "08.05.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "POJATNO",
+      "locationId": "pojatno",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-08",
+      "datumCroatian": "08.05.2025.",
+      "vrijeme": "10:30-11:00",
+      "lokacija": "KUPLJENOVO",
+      "locationId": "kupljenovo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-08",
+      "datumCroatian": "08.05.2025.",
+      "vrijeme": "12:00-13:15",
+      "lokacija": "LUKA",
+      "locationId": "luka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-08",
+      "datumCroatian": "08.05.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "SIGET",
+      "locationId": "siget",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-08",
+      "datumCroatian": "08.05.2025.",
+      "vrijeme": "16:45-19:00",
+      "lokacija": "SREDI\u0160\u0106E",
+      "locationId": "sredisce",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-09",
+      "datumCroatian": "09.05.2025.",
+      "vrijeme": "08:45-10:00",
+      "lokacija": "SOBLINEC",
+      "locationId": "soblinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-09",
+      "datumCroatian": "09.05.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "SESVETSKA SELA",
+      "locationId": "sesvetska-sela",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-09",
+      "datumCroatian": "09.05.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "P\u0160 RESNIK",
+      "locationId": "ps-resnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-09",
+      "datumCroatian": "09.05.2025.",
+      "vrijeme": "14:30-15:30",
+      "lokacija": "CVJETNO NASELJE",
+      "locationId": "cvjetno-naselje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-09",
+      "datumCroatian": "09.05.2025.",
+      "vrijeme": "16:30-19:00",
+      "lokacija": "SREDNJACI",
+      "locationId": "srednjaci",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-10",
+      "datumCroatian": "10.05.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "POPOVEC",
+      "locationId": "popovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-10",
+      "datumCroatian": "10.05.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "STUDENTSKI GRAD",
+      "locationId": "studentski-grad",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-13",
+      "datumCroatian": "13.05.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-13",
+      "datumCroatian": "13.05.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-13",
+      "datumCroatian": "13.05.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-13",
+      "datumCroatian": "13.05.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-14",
+      "datumCroatian": "14.05.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-14",
+      "datumCroatian": "14.05.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-14",
+      "datumCroatian": "14.05.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-14",
+      "datumCroatian": "14.05.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-14",
+      "datumCroatian": "14.05.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-15",
+      "datumCroatian": "15.05.2025.",
+      "vrijeme": "09:00-09:45",
+      "lokacija": "BRATINA",
+      "locationId": "bratina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-15",
+      "datumCroatian": "15.05.2025.",
+      "vrijeme": "09:50-10:15",
+      "lokacija": "DV POTO\u010CI\u0106",
+      "locationId": "dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-15",
+      "datumCroatian": "15.05.2025.",
+      "vrijeme": "10:30-11:15",
+      "lokacija": "PISAROVINA",
+      "locationId": "pisarovina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-15",
+      "datumCroatian": "15.05.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "KUP\u010CINA",
+      "locationId": "kupcina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-15",
+      "datumCroatian": "15.05.2025.",
+      "vrijeme": "15:00-16:15",
+      "lokacija": "REMETE",
+      "locationId": "remete",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-15",
+      "datumCroatian": "15.05.2025.",
+      "vrijeme": "17:30-19:00",
+      "lokacija": "RETKOVEC",
+      "locationId": "retkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-16",
+      "datumCroatian": "16.05.2025.",
+      "vrijeme": "08:45-10:15",
+      "lokacija": "KUPINE\u010CKI KRALJEVEC",
+      "locationId": "kupinecki-kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-16",
+      "datumCroatian": "16.05.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "DRAGONO\u017DEC P\u0160",
+      "locationId": "dragonozec-ps",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-16",
+      "datumCroatian": "16.05.2025.",
+      "vrijeme": "11.00-11:30",
+      "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "locationId": "dragonozec-dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-16",
+      "datumCroatian": "16.05.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "JAKOVLJE",
+      "locationId": "jakovlje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-16",
+      "datumCroatian": "16.05.2025.",
+      "vrijeme": "16:30-17:15",
+      "lokacija": "\u0160ENKOVEC",
+      "locationId": "senkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-16",
+      "datumCroatian": "16.05.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "PRIGORJE",
+      "locationId": "prigorje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-17",
+      "datumCroatian": "17.05.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "VELIKA MLAKA",
+      "locationId": "velika-mlaka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-17",
+      "datumCroatian": "17.05.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "BOTINEC",
+      "locationId": "botinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-20",
+      "datumCroatian": "20.05.2025.",
+      "vrijeme": "09:00-10:15",
+      "lokacija": "ODRA",
+      "locationId": "odra",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-20",
+      "datumCroatian": "20.05.2025.",
+      "vrijeme": "11:30-13:30",
+      "lokacija": "RUDE\u0160",
+      "locationId": "rudes",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-20",
+      "datumCroatian": "20.05.2025.",
+      "vrijeme": "14:30-16:00",
+      "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "locationId": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-20",
+      "datumCroatian": "20.05.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "MARKU\u0160EVEC",
+      "locationId": "markusevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-21",
+      "datumCroatian": "21.05.2025.",
+      "vrijeme": "08:30-09:30",
+      "lokacija": "STUPNIK",
+      "locationId": "stupnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-21",
+      "datumCroatian": "21.05.2025.",
+      "vrijeme": "10:15-11:00",
+      "lokacija": "P\u0160 KERESTINEC",
+      "locationId": "ps-kerestinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-21",
+      "datumCroatian": "21.05.2025.",
+      "vrijeme": "11:30-13:15",
+      "lokacija": "STRMEC",
+      "locationId": "strmec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-21",
+      "datumCroatian": "21.05.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "MLINOVI",
+      "locationId": "mlinovi",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-21",
+      "datumCroatian": "21.05.2025.",
+      "vrijeme": "16:00-17:00",
+      "lokacija": "KRALJEVEC",
+      "locationId": "kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-21",
+      "datumCroatian": "21.05.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "GORNJA KUSTO\u0160IJA",
+      "locationId": "gornja-kustosija",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-22",
+      "datumCroatian": "22.05.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "POJATNO",
+      "locationId": "pojatno",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-22",
+      "datumCroatian": "22.05.2025.",
+      "vrijeme": "10:30-11:00",
+      "lokacija": "KUPLJENOVO",
+      "locationId": "kupljenovo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-22",
+      "datumCroatian": "22.05.2025.",
+      "vrijeme": "12:00-13:15",
+      "lokacija": "LUKA",
+      "locationId": "luka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-22",
+      "datumCroatian": "22.05.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "SIGET",
+      "locationId": "siget",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-22",
+      "datumCroatian": "22.05.2025.",
+      "vrijeme": "16:45-19:00",
+      "lokacija": "SREDI\u0160\u0106E",
+      "locationId": "sredisce",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-23",
+      "datumCroatian": "23.05.2025.",
+      "vrijeme": "08:45-10:00",
+      "lokacija": "SOBLINEC",
+      "locationId": "soblinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-23",
+      "datumCroatian": "23.05.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "SESVETSKA SELA",
+      "locationId": "sesvetska-sela",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-23",
+      "datumCroatian": "23.05.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "P\u0160 RESNIK",
+      "locationId": "ps-resnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-23",
+      "datumCroatian": "23.05.2025.",
+      "vrijeme": "14:30-15:30",
+      "lokacija": "CVJETNO NASELJE",
+      "locationId": "cvjetno-naselje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-23",
+      "datumCroatian": "23.05.2025.",
+      "vrijeme": "16:30-19:00",
+      "lokacija": "SREDNJACI",
+      "locationId": "srednjaci",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-24",
+      "datumCroatian": "24.05.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "POPOVEC",
+      "locationId": "popovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-24",
+      "datumCroatian": "24.05.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "STUDENTSKI GRAD",
+      "locationId": "studentski-grad",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-27",
+      "datumCroatian": "27.05.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-27",
+      "datumCroatian": "27.05.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-27",
+      "datumCroatian": "27.05.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-05-27",
+      "datumCroatian": "27.05.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-28",
+      "datumCroatian": "28.05.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-28",
+      "datumCroatian": "28.05.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-28",
+      "datumCroatian": "28.05.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-28",
+      "datumCroatian": "28.05.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-05-28",
+      "datumCroatian": "28.05.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-29",
+      "datumCroatian": "29.05.2025.",
+      "vrijeme": "09:00-09:45",
+      "lokacija": "BRATINA",
+      "locationId": "bratina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-29",
+      "datumCroatian": "29.05.2025.",
+      "vrijeme": "09:50-10:15",
+      "lokacija": "DV POTO\u010CI\u0106",
+      "locationId": "dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-29",
+      "datumCroatian": "29.05.2025.",
+      "vrijeme": "10:30-11:15",
+      "lokacija": "PISAROVINA",
+      "locationId": "pisarovina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-29",
+      "datumCroatian": "29.05.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "KUP\u010CINA",
+      "locationId": "kupcina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-29",
+      "datumCroatian": "29.05.2025.",
+      "vrijeme": "15:00-16:15",
+      "lokacija": "REMETE",
+      "locationId": "remete",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-05-29",
+      "datumCroatian": "29.05.2025.",
+      "vrijeme": "17:30-19:00",
+      "lokacija": "RETKOVEC",
+      "locationId": "retkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-05-30",
+      "datumCroatian": "30.05.2025.",
+      "vrijeme": "",
+      "lokacija": "=== neradni dan ===",
+      "locationId": "",
+      "isNeradniDan": true
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-31",
+      "datumCroatian": "31.05.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "VELIKA MLAKA",
+      "locationId": "velika-mlaka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-05-31",
+      "datumCroatian": "31.05.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "BOTINEC",
+      "locationId": "botinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-03",
+      "datumCroatian": "03.06.2025.",
+      "vrijeme": "09:00-10:15",
+      "lokacija": "ODRA",
+      "locationId": "odra",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-03",
+      "datumCroatian": "03.06.2025.",
+      "vrijeme": "11:30-13:30",
+      "lokacija": "RUDE\u0160",
+      "locationId": "rudes",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-03",
+      "datumCroatian": "03.06.2025.",
+      "vrijeme": "14:30-16:00",
+      "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "locationId": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-03",
+      "datumCroatian": "03.06.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "MARKU\u0160EVEC",
+      "locationId": "markusevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-04",
+      "datumCroatian": "04.06.2025.",
+      "vrijeme": "08:30-09:30",
+      "lokacija": "STUPNIK",
+      "locationId": "stupnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-04",
+      "datumCroatian": "04.06.2025.",
+      "vrijeme": "10:15-11:00",
+      "lokacija": "P\u0160 KERESTINEC",
+      "locationId": "ps-kerestinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-04",
+      "datumCroatian": "04.06.2025.",
+      "vrijeme": "11:30-13:15",
+      "lokacija": "STRMEC",
+      "locationId": "strmec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-04",
+      "datumCroatian": "04.06.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "MLINOVI",
+      "locationId": "mlinovi",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-04",
+      "datumCroatian": "04.06.2025.",
+      "vrijeme": "16:00-17:00",
+      "lokacija": "KRALJEVEC",
+      "locationId": "kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-04",
+      "datumCroatian": "04.06.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "GORNJA KUSTO\u0160IJA",
+      "locationId": "gornja-kustosija",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-05",
+      "datumCroatian": "05.06.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "POJATNO",
+      "locationId": "pojatno",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-05",
+      "datumCroatian": "05.06.2025.",
+      "vrijeme": "10:30-11:00",
+      "lokacija": "KUPLJENOVO",
+      "locationId": "kupljenovo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-05",
+      "datumCroatian": "05.06.2025.",
+      "vrijeme": "12:00-13:15",
+      "lokacija": "LUKA",
+      "locationId": "luka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-05",
+      "datumCroatian": "05.06.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "SIGET",
+      "locationId": "siget",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-05",
+      "datumCroatian": "05.06.2025.",
+      "vrijeme": "16:45-19:00",
+      "lokacija": "SREDI\u0160\u0106E",
+      "locationId": "sredisce",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-06",
+      "datumCroatian": "06.06.2025.",
+      "vrijeme": "08:45-10:00",
+      "lokacija": "SOBLINEC",
+      "locationId": "soblinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-06",
+      "datumCroatian": "06.06.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "SESVETSKA SELA",
+      "locationId": "sesvetska-sela",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-06",
+      "datumCroatian": "06.06.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "P\u0160 RESNIK",
+      "locationId": "ps-resnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-06",
+      "datumCroatian": "06.06.2025.",
+      "vrijeme": "14:30-15:30",
+      "lokacija": "CVJETNO NASELJE",
+      "locationId": "cvjetno-naselje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-06",
+      "datumCroatian": "06.06.2025.",
+      "vrijeme": "16:30-19:00",
+      "lokacija": "SREDNJACI",
+      "locationId": "srednjaci",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-06-07",
+      "datumCroatian": "07.06.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "POPOVEC",
+      "locationId": "popovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-06-07",
+      "datumCroatian": "07.06.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "STUDENTSKI GRAD",
+      "locationId": "studentski-grad",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-10",
+      "datumCroatian": "10.06.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-10",
+      "datumCroatian": "10.06.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-10",
+      "datumCroatian": "10.06.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-10",
+      "datumCroatian": "10.06.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-11",
+      "datumCroatian": "11.06.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-11",
+      "datumCroatian": "11.06.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-11",
+      "datumCroatian": "11.06.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-11",
+      "datumCroatian": "11.06.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-11",
+      "datumCroatian": "11.06.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-12",
+      "datumCroatian": "12.06.2025.",
+      "vrijeme": "09:00-09:45",
+      "lokacija": "BRATINA",
+      "locationId": "bratina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-12",
+      "datumCroatian": "12.06.2025.",
+      "vrijeme": "09:50-10:15",
+      "lokacija": "DV POTO\u010CI\u0106",
+      "locationId": "dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-12",
+      "datumCroatian": "12.06.2025.",
+      "vrijeme": "10:30-11:15",
+      "lokacija": "PISAROVINA",
+      "locationId": "pisarovina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-12",
+      "datumCroatian": "12.06.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "KUP\u010CINA",
+      "locationId": "kupcina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-12",
+      "datumCroatian": "12.06.2025.",
+      "vrijeme": "15:00-16:15",
+      "lokacija": "REMETE",
+      "locationId": "remete",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-12",
+      "datumCroatian": "12.06.2025.",
+      "vrijeme": "17:30-19:00",
+      "lokacija": "RETKOVEC",
+      "locationId": "retkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-13",
+      "datumCroatian": "13.06.2025.",
+      "vrijeme": "08:45-10:15",
+      "lokacija": "KUPINE\u010CKI KRALJEVEC",
+      "locationId": "kupinecki-kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-13",
+      "datumCroatian": "13.06.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "DRAGONO\u017DEC P\u0160",
+      "locationId": "dragonozec-ps",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-13",
+      "datumCroatian": "13.06.2025.",
+      "vrijeme": "11.00-11:30",
+      "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "locationId": "dragonozec-dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-13",
+      "datumCroatian": "13.06.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "JAKOVLJE",
+      "locationId": "jakovlje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-13",
+      "datumCroatian": "13.06.2025.",
+      "vrijeme": "16:30-17:15",
+      "lokacija": "\u0160ENKOVEC",
+      "locationId": "senkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-13",
+      "datumCroatian": "13.06.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "PRIGORJE",
+      "locationId": "prigorje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-06-14",
+      "datumCroatian": "14.06.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "VELIKA MLAKA",
+      "locationId": "velika-mlaka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-06-14",
+      "datumCroatian": "14.06.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "BOTINEC",
+      "locationId": "botinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-17",
+      "datumCroatian": "17.06.2025.",
+      "vrijeme": "09:00-10:15",
+      "lokacija": "ODRA",
+      "locationId": "odra",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-17",
+      "datumCroatian": "17.06.2025.",
+      "vrijeme": "11:30-13:30",
+      "lokacija": "RUDE\u0160",
+      "locationId": "rudes",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-17",
+      "datumCroatian": "17.06.2025.",
+      "vrijeme": "14:30-16:00",
+      "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "locationId": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-17",
+      "datumCroatian": "17.06.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "MARKU\u0160EVEC",
+      "locationId": "markusevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-18",
+      "datumCroatian": "18.06.2025.",
+      "vrijeme": "08:30-09:30",
+      "lokacija": "STUPNIK",
+      "locationId": "stupnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-18",
+      "datumCroatian": "18.06.2025.",
+      "vrijeme": "10:15-11:00",
+      "lokacija": "P\u0160 KERESTINEC",
+      "locationId": "ps-kerestinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-18",
+      "datumCroatian": "18.06.2025.",
+      "vrijeme": "11:30-13:15",
+      "lokacija": "STRMEC",
+      "locationId": "strmec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-18",
+      "datumCroatian": "18.06.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "MLINOVI",
+      "locationId": "mlinovi",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-18",
+      "datumCroatian": "18.06.2025.",
+      "vrijeme": "16:00-17:00",
+      "lokacija": "KRALJEVEC",
+      "locationId": "kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-18",
+      "datumCroatian": "18.06.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "GORNJA KUSTO\u0160IJA",
+      "locationId": "gornja-kustosija",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-19",
+      "datumCroatian": "19.06.2025.",
+      "vrijeme": "",
+      "lokacija": "=== neradni dan ===",
+      "locationId": "",
+      "isNeradniDan": true
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-20",
+      "datumCroatian": "20.06.2025.",
+      "vrijeme": "08:45-10:00",
+      "lokacija": "SOBLINEC",
+      "locationId": "soblinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-20",
+      "datumCroatian": "20.06.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "SESVETSKA SELA",
+      "locationId": "sesvetska-sela",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-20",
+      "datumCroatian": "20.06.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "P\u0160 RESNIK",
+      "locationId": "ps-resnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-20",
+      "datumCroatian": "20.06.2025.",
+      "vrijeme": "14:30-15:30",
+      "lokacija": "CVJETNO NASELJE",
+      "locationId": "cvjetno-naselje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-20",
+      "datumCroatian": "20.06.2025.",
+      "vrijeme": "16:30-19:00",
+      "lokacija": "SREDNJACI",
+      "locationId": "srednjaci",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-06-21",
+      "datumCroatian": "21.06.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "POPOVEC",
+      "locationId": "popovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-06-21",
+      "datumCroatian": "21.06.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "STUDENTSKI GRAD",
+      "locationId": "studentski-grad",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-24",
+      "datumCroatian": "24.06.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-24",
+      "datumCroatian": "24.06.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-24",
+      "datumCroatian": "24.06.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-06-24",
+      "datumCroatian": "24.06.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-25",
+      "datumCroatian": "25.06.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-25",
+      "datumCroatian": "25.06.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-25",
+      "datumCroatian": "25.06.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-25",
+      "datumCroatian": "25.06.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-06-25",
+      "datumCroatian": "25.06.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-26",
+      "datumCroatian": "26.06.2025.",
+      "vrijeme": "09:00-09:45",
+      "lokacija": "BRATINA",
+      "locationId": "bratina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-26",
+      "datumCroatian": "26.06.2025.",
+      "vrijeme": "09:50-10:15",
+      "lokacija": "DV POTO\u010CI\u0106",
+      "locationId": "dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-26",
+      "datumCroatian": "26.06.2025.",
+      "vrijeme": "10:30-11:15",
+      "lokacija": "PISAROVINA",
+      "locationId": "pisarovina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-26",
+      "datumCroatian": "26.06.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "KUP\u010CINA",
+      "locationId": "kupcina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-26",
+      "datumCroatian": "26.06.2025.",
+      "vrijeme": "15:00-16:15",
+      "lokacija": "REMETE",
+      "locationId": "remete",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-06-26",
+      "datumCroatian": "26.06.2025.",
+      "vrijeme": "17:30-19:00",
+      "lokacija": "RETKOVEC",
+      "locationId": "retkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-27",
+      "datumCroatian": "27.06.2025.",
+      "vrijeme": "08:45-10:15",
+      "lokacija": "KUPINE\u010CKI KRALJEVEC",
+      "locationId": "kupinecki-kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-27",
+      "datumCroatian": "27.06.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "DRAGONO\u017DEC P\u0160",
+      "locationId": "dragonozec-ps",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-27",
+      "datumCroatian": "27.06.2025.",
+      "vrijeme": "11.00-11:30",
+      "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "locationId": "dragonozec-dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-27",
+      "datumCroatian": "27.06.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "JAKOVLJE",
+      "locationId": "jakovlje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-27",
+      "datumCroatian": "27.06.2025.",
+      "vrijeme": "16:30-17:15",
+      "lokacija": "\u0160ENKOVEC",
+      "locationId": "senkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-06-27",
+      "datumCroatian": "27.06.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "PRIGORJE",
+      "locationId": "prigorje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-06-28",
+      "datumCroatian": "28.06.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "VELIKA MLAKA",
+      "locationId": "velika-mlaka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-06-28",
+      "datumCroatian": "28.06.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "BOTINEC",
+      "locationId": "botinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-07-01",
+      "datumCroatian": "01.07.2025.",
+      "vrijeme": "09:00-10:15",
+      "lokacija": "ODRA",
+      "locationId": "odra",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-07-01",
+      "datumCroatian": "01.07.2025.",
+      "vrijeme": "11:30-13:30",
+      "lokacija": "RUDE\u0160",
+      "locationId": "rudes",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-07-01",
+      "datumCroatian": "01.07.2025.",
+      "vrijeme": "14:30-16:00",
+      "lokacija": "INSTITUT RU\u0110ER BO\u0160KOVI\u0106 (okreti\u0161te Srebrnjak)",
+      "locationId": "institut-ruder-boskovic-okretiste-srebrnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-07-01",
+      "datumCroatian": "01.07.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "MARKU\u0160EVEC",
+      "locationId": "markusevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-02",
+      "datumCroatian": "02.07.2025.",
+      "vrijeme": "08:30-09:30",
+      "lokacija": "STUPNIK",
+      "locationId": "stupnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-02",
+      "datumCroatian": "02.07.2025.",
+      "vrijeme": "10:15-11:00",
+      "lokacija": "P\u0160 KERESTINEC",
+      "locationId": "ps-kerestinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-02",
+      "datumCroatian": "02.07.2025.",
+      "vrijeme": "11:30-13:15",
+      "lokacija": "STRMEC",
+      "locationId": "strmec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-02",
+      "datumCroatian": "02.07.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "MLINOVI",
+      "locationId": "mlinovi",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-02",
+      "datumCroatian": "02.07.2025.",
+      "vrijeme": "16:00-17:00",
+      "lokacija": "KRALJEVEC",
+      "locationId": "kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-02",
+      "datumCroatian": "02.07.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "GORNJA KUSTO\u0160IJA",
+      "locationId": "gornja-kustosija",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-03",
+      "datumCroatian": "03.07.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "POJATNO",
+      "locationId": "pojatno",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-03",
+      "datumCroatian": "03.07.2025.",
+      "vrijeme": "10:30-11:00",
+      "lokacija": "KUPLJENOVO",
+      "locationId": "kupljenovo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-03",
+      "datumCroatian": "03.07.2025.",
+      "vrijeme": "12:00-13:15",
+      "lokacija": "LUKA",
+      "locationId": "luka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-03",
+      "datumCroatian": "03.07.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "SIGET",
+      "locationId": "siget",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-03",
+      "datumCroatian": "03.07.2025.",
+      "vrijeme": "16:45-19:00",
+      "lokacija": "SREDI\u0160\u0106E",
+      "locationId": "sredisce",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-04",
+      "datumCroatian": "04.07.2025.",
+      "vrijeme": "08:45-10:00",
+      "lokacija": "SOBLINEC",
+      "locationId": "soblinec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-04",
+      "datumCroatian": "04.07.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "SESVETSKA SELA",
+      "locationId": "sesvetska-sela",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-04",
+      "datumCroatian": "04.07.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "P\u0160 RESNIK",
+      "locationId": "ps-resnik",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-04",
+      "datumCroatian": "04.07.2025.",
+      "vrijeme": "14:30-15:30",
+      "lokacija": "CVJETNO NASELJE",
+      "locationId": "cvjetno-naselje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-04",
+      "datumCroatian": "04.07.2025.",
+      "vrijeme": "16:30-19:00",
+      "lokacija": "SREDNJACI",
+      "locationId": "srednjaci",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-07-05",
+      "datumCroatian": "05.07.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "POPOVEC",
+      "locationId": "popovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-07-05",
+      "datumCroatian": "05.07.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "STUDENTSKI GRAD",
+      "locationId": "studentski-grad",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-07-08",
+      "datumCroatian": "08.07.2025.",
+      "vrijeme": "09:00-11:15",
+      "lokacija": "IVER",
+      "locationId": "iver",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-07-08",
+      "datumCroatian": "08.07.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "POGLAVARSTVO",
+      "locationId": "poglavarstvo",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-07-08",
+      "datumCroatian": "08.07.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "REMETINE\u010CKI GAJ",
+      "locationId": "remetinecki-gaj",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "UTORAK",
+      "datum": "2025-07-08",
+      "datumCroatian": "08.07.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "KAJZERICA",
+      "locationId": "kajzerica",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-09",
+      "datumCroatian": "09.07.2025.",
+      "vrijeme": "09:00-10:00",
+      "lokacija": "PAVU\u010CNJAK",
+      "locationId": "pavucnjak",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-09",
+      "datumCroatian": "09.07.2025.",
+      "vrijeme": "10:15-11:15",
+      "lokacija": "HORVATI (RAKOV POTOK)",
+      "locationId": "horvati-rakov-potok",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-09",
+      "datumCroatian": "09.07.2025.",
+      "vrijeme": "12:30-13:30",
+      "lokacija": "HRVATSKI LESKOVAC",
+      "locationId": "hrvatski-leskovac",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-09",
+      "datumCroatian": "09.07.2025.",
+      "vrijeme": "15:00-16:00",
+      "lokacija": "BOROVJE",
+      "locationId": "borovje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SRIJEDA",
+      "datum": "2025-07-09",
+      "datumCroatian": "09.07.2025.",
+      "vrijeme": "17:00-19:00",
+      "lokacija": "SOPOT",
+      "locationId": "sopot",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-10",
+      "datumCroatian": "10.07.2025.",
+      "vrijeme": "09:00-09:45",
+      "lokacija": "BRATINA",
+      "locationId": "bratina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-10",
+      "datumCroatian": "10.07.2025.",
+      "vrijeme": "09:50-10:15",
+      "lokacija": "DV POTO\u010CI\u0106",
+      "locationId": "dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-10",
+      "datumCroatian": "10.07.2025.",
+      "vrijeme": "10:30-11:15",
+      "lokacija": "PISAROVINA",
+      "locationId": "pisarovina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-10",
+      "datumCroatian": "10.07.2025.",
+      "vrijeme": "12:15-13:00",
+      "lokacija": "KUP\u010CINA",
+      "locationId": "kupcina",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-10",
+      "datumCroatian": "10.07.2025.",
+      "vrijeme": "15:00-16:15",
+      "lokacija": "REMETE",
+      "locationId": "remete",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "\u010CETVRTAK",
+      "datum": "2025-07-10",
+      "datumCroatian": "10.07.2025.",
+      "vrijeme": "17:30-19:00",
+      "lokacija": "RETKOVEC",
+      "locationId": "retkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-11",
+      "datumCroatian": "11.07.2025.",
+      "vrijeme": "08:45-10:15",
+      "lokacija": "KUPINE\u010CKI KRALJEVEC",
+      "locationId": "kupinecki-kraljevec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-11",
+      "datumCroatian": "11.07.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "DRAGONO\u017DEC P\u0160",
+      "locationId": "dragonozec-ps",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-11",
+      "datumCroatian": "11.07.2025.",
+      "vrijeme": "11.00-11:30",
+      "lokacija": "DRAGONO\u017DEC DV POTO\u010CI\u0106",
+      "locationId": "dragonozec-dv-potocic",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-11",
+      "datumCroatian": "11.07.2025.",
+      "vrijeme": "14:45-15:45",
+      "lokacija": "JAKOVLJE",
+      "locationId": "jakovlje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-11",
+      "datumCroatian": "11.07.2025.",
+      "vrijeme": "16:30-17:15",
+      "lokacija": "\u0160ENKOVEC",
+      "locationId": "senkovec",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "PETAK",
+      "datum": "2025-07-11",
+      "datumCroatian": "11.07.2025.",
+      "vrijeme": "18:00-19:00",
+      "lokacija": "PRIGORJE",
+      "locationId": "prigorje",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-07-12",
+      "datumCroatian": "12.07.2025.",
+      "vrijeme": "09:00-10:30",
+      "lokacija": "VELIKA MLAKA",
+      "locationId": "velika-mlaka",
+      "isNeradniDan": false
+    },
+    {
+      "dan": "SUBOTA",
+      "datum": "2025-07-12",
+      "datumCroatian": "12.07.2025.",
+      "vrijeme": "11:45-13:00",
+      "lokacija": "BOTINEC",
+      "locationId": "botinec",
+      "isNeradniDan": false
+    }
+  ]
+};
+        const scheduleData = data.sessions;
+        const locationOptions = data.locations;
         
         // Function to convert ISO date (yyyy-MM-dd) to Croatian date (dd.MM.yyyy.)
         function isoToCroatianDate(isoDate) {
@@ -5257,13 +5865,43 @@
             return `${parts[2]}-${parts[1]}-${parts[0]}`;
         }
         
+        // Initialize the location filter dropdown
+        const locationFilterSelect = document.getElementById('filter-location');
+        
+        // Add location options to the dropdown
+        locationOptions.forEach(location => {
+            const option = document.createElement('option');
+            option.value = location.value;
+            option.textContent = location.name;
+            option.dataset.calendarFile = location.calendarFile;
+            locationFilterSelect.appendChild(option);
+        });
+        
+        // Update calendar download links when location changes
+        locationFilterSelect.addEventListener('change', function() {
+            const selectedOption = locationFilterSelect.options[locationFilterSelect.selectedIndex];
+            const calendarFile = selectedOption.dataset.calendarFile;
+            
+            // Update download links
+            document.getElementById('calendar-download').href = calendarFile;
+            document.getElementById('calendar-info-link').href = calendarFile;
+            
+            // Update calendar and table views
+            filterSchedule();
+            if (calendarInitialized) {
+                renderCalendar(currentDate);
+            }
+        });
+        
         // Search functionality
         document.getElementById('search').addEventListener('input', filterSchedule);
         document.getElementById('filter-day').addEventListener('change', filterSchedule);
+        document.getElementById('filter-location').addEventListener('change', filterSchedule);
         
         function filterSchedule() {
             const searchText = document.getElementById('search').value.toLowerCase();
             const dayFilter = document.getElementById('filter-day').value;
+            const locationFilter = document.getElementById('filter-location').value;
             const rows = document.getElementById('schedule-data').getElementsByTagName('tr');
             
             for (let i = 0; i < rows.length; i++) {
@@ -5271,6 +5909,7 @@
                 const date = rows[i].cells[1].textContent;
                 const time = rows[i].cells[2].textContent;
                 const location = rows[i].cells[3].textContent;
+                const locationId = rows[i].dataset.locationId || '';
                 
                 const matchesSearch = 
                     day.toLowerCase().includes(searchText) ||
@@ -5279,10 +5918,28 @@
                     location.toLowerCase().includes(searchText);
                 
                 const matchesDay = dayFilter === '' || day.trim() === dayFilter;
+                const matchesLocation = locationFilter === '' || locationId === locationFilter || 
+                    (locationFilter === '' && location.includes("neradni dan"));
                 
-                rows[i].style.display = (matchesSearch && matchesDay) ? '' : 'none';
+                rows[i].style.display = (matchesSearch && matchesDay && matchesLocation) ? '' : 'none';
             }
         }
+        
+        // Add location ID data attributes to table rows
+        document.querySelectorAll('#schedule-data tr').forEach(row => {
+            const locationCell = row.cells[3];
+            if (locationCell) {
+                const locationName = locationCell.textContent;
+                const isNonWorkingDay = locationName.includes("neradni dan");
+                
+                if (!isNonWorkingDay) {
+                    const location = locationOptions.find(loc => loc.name === locationName);
+                    if (location) {
+                        row.dataset.locationId = location.value;
+                    }
+                }
+            }
+        });
         
         // Tab switching
         document.querySelectorAll('.data-tab').forEach(tab => {
@@ -5330,6 +5987,7 @@
             
             const year = date.getFullYear();
             const month = date.getMonth();
+            const locationFilter = document.getElementById('filter-location').value;
             
             document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
             
@@ -5354,8 +6012,15 @@
                 const isoDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const croatianDateString = `${String(day).padStart(2, '0')}.${String(month + 1).padStart(2, '0')}.${year}.`;
                 
-                // Find schedule entries for this day
-                const dayEntries = scheduleData.filter(entry => entry.datum === isoDateString);
+                // Find schedule entries for this day, filtered by selected location if any
+                let dayEntries = scheduleData.filter(entry => entry.datum === isoDateString);
+                
+                // Apply location filter if set
+                if (locationFilter) {
+                    dayEntries = dayEntries.filter(entry => 
+                        entry.locationId === locationFilter || entry.isNeradniDan
+                    );
+                }
                 
                 let dayClass = 'calendar-day';
                 if (dayEntries.length > 0) {
