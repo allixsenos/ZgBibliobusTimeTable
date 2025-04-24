@@ -464,9 +464,75 @@ tr.non-working-day {
     font-weight: normal; /* Ensure font weight is normal */
 }
 
-/* Hide empty map column */
-table th:last-child, table td:last-child {
-    display: none;
+/* List view styles */
+#list-view-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.date-heading {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 8px;
+    margin-top: 25px;
+    margin-bottom: 12px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.date-heading:first-child {
+    margin-top: 0;
+}
+
+.date-heading .day-name {
+    font-weight: 400;
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+.schedule-entries {
+    margin-left: 10px;
+}
+
+.schedule-entry {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: flex-start;
+}
+
+.schedule-entry:last-child {
+    border-bottom: none;
+}
+
+.schedule-entry-time {
+    font-weight: 600;
+    color: var(--primary-color);
+    min-width: 70px;
+    margin-right: 15px;
+}
+
+.schedule-entry-location {
+    flex-grow: 1;
+}
+
+.non-working-date {
+    color: var(--error-color);
+    font-style: italic;
+}
+
+.non-working-date .schedule-entry-time {
+    color: var(--error-color);
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 20px;
+    color: var(--dark-gray);
+    font-style: italic;
 }
 
 /* Keep old map link style for backwards compatibility */
@@ -613,5 +679,34 @@ footer a {
     .data-download a {
         width: 100%;
         justify-content: center;
+    }
+    
+    /* List view responsive adjustments */
+    #list-view-container {
+        padding: 15px 10px;
+    }
+    
+    .date-heading {
+        font-size: 1.1rem;
+    }
+    
+    .date-heading .day-name {
+        display: block;
+        font-size: 0.8rem;
+        margin-top: 3px;
+    }
+    
+    .schedule-entry {
+        flex-direction: column;
+        padding: 10px 0;
+    }
+    
+    .schedule-entry-time {
+        margin-bottom: 5px;
+        margin-right: 0;
+    }
+    
+    .schedule-entries {
+        margin-left: 5px;
     }
 }
