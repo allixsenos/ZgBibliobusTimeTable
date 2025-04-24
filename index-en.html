@@ -23,7 +23,7 @@
             </div>
             <h1><i class="fas fa-bus"></i> Zagreb Bibliobus</h1>
             <p>Mobile Library Schedule</p>
-            <div class="updated">Updated: 04/24/2025 15:58</div>
+            <div class="updated">Updated: 04/24/2025 16:17</div>
         </div>
     </header>
 
@@ -5089,9 +5089,9 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0); // Set to start of today
             
-            // Create a date for one week ago
-            const oneWeekAgo = new Date(today);
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            // Create a date for showing recent dates (last 7 days, inclusive)
+            const recentDaysLimit = new Date(today);
+            recentDaysLimit.setDate(recentDaysLimit.getDate() - 7); // Show full 7 days as recent
             
             const futureDates = [];
             const recentPastDates = []; // Dates from the last week
@@ -5103,32 +5103,19 @@
                 
                 if (date >= today) {
                     futureDates.push(dateString);
-                } else if (date >= oneWeekAgo) {
+                } else if (date >= recentDaysLimit) {
                     recentPastDates.push(dateString);
                 } else {
                     olderPastDates.push(dateString);
                 }
             });
             
-            // Sort recent past dates in reverse chronological order (newest first)
-            recentPastDates.sort((a, b) => b.localeCompare(a));
+            // Sort recent past dates in chronological order (oldest to newest)
+            recentPastDates.sort((a, b) => a.localeCompare(b));
             
             console.log(`Found ${futureDates.length} future dates, ${recentPastDates.length} recent past dates (last week), and ${olderPastDates.length} older past dates`);
             
-            // If there are older past dates, add a button to show them
-            if (olderPastDates.length > 0) {
-                const showPastButton = document.createElement('button');
-                showPastButton.className = 'past-dates-button';
-                showPastButton.textContent = 'Show older schedule';
-                showPastButton.addEventListener('click', function() {
-                    const listContainer = document.getElementById('list-view-container');
-                    listContainer.classList.toggle('show-past-dates');
-                    this.textContent = listContainer.classList.contains('show-past-dates') 
-                        ? 'Hide older schedule' 
-                        : 'Show older schedule';
-                });
-                container.appendChild(showPastButton);
-            }
+            // Remove the 'Show older schedule' button as requested
             
             // Function to create date section - reused for both future and past dates
             function createDateSection(date, isPastDate = false) {
@@ -5253,7 +5240,133 @@
                 recentPastHeader.textContent = 'Recent dates (last 7 days)';
                 container.appendChild(recentPastHeader);
                 
-                recentPastDates.forEach(date => createDateSection(date, false));
+                // Create a content container for the recent dates section
+                const recentDatesContent = document.createElement('div');
+                recentDatesContent.className = 'section-content';
+                container.appendChild(recentDatesContent);
+                
+                // Add click handler to header to toggle section visibility
+                recentPastHeader.addEventListener('click', function() {
+                    recentPastHeader.classList.toggle('collapsed');
+                    recentDatesContent.classList.toggle('collapsed');
+                });
+                
+                // Add all recent dates to the content container
+                const recentContainer = recentDatesContent;
+                recentPastDates.forEach(date => {
+                    const sessions = sessionsByDate[date];
+                    const isNonWorking = sessions.some(s => s.isNeradniDan);
+                    
+                    // Get day name from the first session and translate to English
+                    const dayName = sessions.length > 0 ? translateDayName(sessions[0].dan) : '';
+                    
+                    // Create date heading
+                    const heading = document.createElement('h2');
+                    heading.className = 'date-heading';
+                    
+                    // Convert ISO date to English format
+                    const englishDate = isoToEnglishDate(date);
+                    
+                    heading.innerHTML = `${englishDate} <span class="day-name">${dayName}</span>`;
+                    recentContainer.appendChild(heading);
+                    
+                    // Create entries container
+                    const entriesDiv = document.createElement('div');
+                    entriesDiv.className = 'schedule-entries';
+                    
+                    if (isNonWorking) {
+                        // Non-working day
+                        const entry = document.createElement('div');
+                        entry.className = 'schedule-entry non-working-date';
+                        entry.innerHTML = '<div class="schedule-entry-time"></div><div class="schedule-entry-location">Non-working day</div>';
+                        entriesDiv.appendChild(entry);
+                    } else {
+                        // Sort sessions by time using our custom time sorting function
+                        sessions.sort((a, b) => compareTimeStrings(a.vrijeme, b.vrijeme));
+                        
+                        // Add each session
+                        sessions.forEach(session => {
+                            const entry = document.createElement('div');
+                            entry.className = 'schedule-entry';
+                            
+                            // Create time element
+                            const timeDiv = document.createElement('div');
+                            timeDiv.className = 'schedule-entry-time';
+                            
+                            // Handle raw HTML in time field and normalize
+                            let timeText = "";
+                            
+                            if (session.vrijeme.includes('<') && session.vrijeme.includes('>')) {
+                                // Extract text content from HTML 
+                                const tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = session.vrijeme;
+                                timeText = tempDiv.textContent.trim();
+                            } else {
+                                timeText = session.vrijeme;
+                            }
+                            
+                            // Ensure consistent display with leading zeros and standardized dash format
+                            if (timeText.includes('-')) {
+                                // Standardize the dash format to always be " - " with spaces
+                                let parts = timeText.split('-').map(part => part.trim());
+                                let startTime = parts[0];
+                                let endTime = parts[1];
+                                
+                                // Add leading zero if needed
+                                if (startTime.match(/^\d:\d\d/)) {
+                                    startTime = '0' + startTime;
+                                }
+                                
+                                // Add leading zero to end time if needed
+                                if (endTime.match(/^\d:\d\d/)) {
+                                    endTime = '0' + endTime;
+                                }
+                                
+                                // Always use standardized format with spaces around dash
+                                timeText = `${startTime} - ${endTime}`;
+                            } else if (timeText.match(/^\d:\d\d/)) {
+                                // Just a single time without range
+                                timeText = '0' + timeText;
+                            }
+                            
+                            timeDiv.textContent = timeText;
+                            
+                            // Create location element with possible link
+                            const locationDiv = document.createElement('div');
+                            locationDiv.className = 'schedule-entry-location';
+                            
+                            // Get clean location text
+                            let locationText = session.lokacija;
+                            if (locationText.includes('<') && locationText.includes('>')) {
+                                // Extract text content from HTML
+                                const tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = locationText;
+                                locationText = tempDiv.textContent.trim();
+                            }
+                            
+                            if (session.mapUrl) {
+                                const link = document.createElement('a');
+                                link.href = session.mapUrl;
+                                link.className = 'location-link';
+                                link.textContent = locationText;
+                                link.target = '_blank';
+                                link.title = session.address || locationText;
+                                locationDiv.appendChild(link);
+                            } else {
+                                locationDiv.textContent = locationText;
+                            }
+                            
+                            // Add time and location to entry
+                            entry.appendChild(timeDiv);
+                            entry.appendChild(locationDiv);
+                            
+                            // Add entry to container
+                            entriesDiv.appendChild(entry);
+                        });
+                    }
+                    
+                    recentContainer.appendChild(entriesDiv);
+                });
             }
             
             // Then display future dates
@@ -5263,7 +5376,129 @@
                 futureHeader.textContent = 'Upcoming dates';
                 container.appendChild(futureHeader);
                 
-                futureDates.forEach(date => createDateSection(date, false));
+                // Create a content container for the future dates section
+                const futureDatesContent = document.createElement('div');
+                futureDatesContent.className = 'section-content';
+                container.appendChild(futureDatesContent);
+                
+                // Future dates section should always be visible (no toggle)
+                
+                // Add all future dates to the content container
+                const futureContainer = futureDatesContent;
+                futureDates.forEach(date => {
+                    const sessions = sessionsByDate[date];
+                    const isNonWorking = sessions.some(s => s.isNeradniDan);
+                    
+                    // Get day name from the first session and translate to English
+                    const dayName = sessions.length > 0 ? translateDayName(sessions[0].dan) : '';
+                    
+                    // Create date heading
+                    const heading = document.createElement('h2');
+                    heading.className = 'date-heading';
+                    
+                    // Convert ISO date to English format
+                    const englishDate = isoToEnglishDate(date);
+                    
+                    heading.innerHTML = `${englishDate} <span class="day-name">${dayName}</span>`;
+                    futureContainer.appendChild(heading);
+                    
+                    // Create entries container
+                    const entriesDiv = document.createElement('div');
+                    entriesDiv.className = 'schedule-entries';
+                    
+                    if (isNonWorking) {
+                        // Non-working day
+                        const entry = document.createElement('div');
+                        entry.className = 'schedule-entry non-working-date';
+                        entry.innerHTML = '<div class="schedule-entry-time"></div><div class="schedule-entry-location">Non-working day</div>';
+                        entriesDiv.appendChild(entry);
+                    } else {
+                        // Sort sessions by time using our custom time sorting function
+                        sessions.sort((a, b) => compareTimeStrings(a.vrijeme, b.vrijeme));
+                        
+                        // Add each session
+                        sessions.forEach(session => {
+                            const entry = document.createElement('div');
+                            entry.className = 'schedule-entry';
+                            
+                            // Create time element
+                            const timeDiv = document.createElement('div');
+                            timeDiv.className = 'schedule-entry-time';
+                            
+                            // Handle raw HTML in time field and normalize
+                            let timeText = "";
+                            
+                            if (session.vrijeme.includes('<') && session.vrijeme.includes('>')) {
+                                // Extract text content from HTML 
+                                const tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = session.vrijeme;
+                                timeText = tempDiv.textContent.trim();
+                            } else {
+                                timeText = session.vrijeme;
+                            }
+                            
+                            // Ensure consistent display with leading zeros and standardized dash format
+                            if (timeText.includes('-')) {
+                                // Standardize the dash format to always be " - " with spaces
+                                let parts = timeText.split('-').map(part => part.trim());
+                                let startTime = parts[0];
+                                let endTime = parts[1];
+                                
+                                // Add leading zero if needed
+                                if (startTime.match(/^\d:\d\d/)) {
+                                    startTime = '0' + startTime;
+                                }
+                                
+                                // Add leading zero to end time if needed
+                                if (endTime.match(/^\d:\d\d/)) {
+                                    endTime = '0' + endTime;
+                                }
+                                
+                                // Always use standardized format with spaces around dash
+                                timeText = `${startTime} - ${endTime}`;
+                            } else if (timeText.match(/^\d:\d\d/)) {
+                                // Just a single time without range
+                                timeText = '0' + timeText;
+                            }
+                            
+                            timeDiv.textContent = timeText;
+                            
+                            // Create location element with possible link
+                            const locationDiv = document.createElement('div');
+                            locationDiv.className = 'schedule-entry-location';
+                            
+                            // Get clean location text
+                            let locationText = session.lokacija;
+                            if (locationText.includes('<') && locationText.includes('>')) {
+                                // Extract text content from HTML
+                                const tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = locationText;
+                                locationText = tempDiv.textContent.trim();
+                            }
+                            
+                            if (session.mapUrl) {
+                                const link = document.createElement('a');
+                                link.href = session.mapUrl;
+                                link.className = 'location-link';
+                                link.textContent = locationText;
+                                link.target = '_blank';
+                                link.title = session.address || locationText;
+                                locationDiv.appendChild(link);
+                            } else {
+                                locationDiv.textContent = locationText;
+                            }
+                            
+                            // Add time and location to entry
+                            entry.appendChild(timeDiv);
+                            entry.appendChild(locationDiv);
+                            
+                            // Add entry to container
+                            entriesDiv.appendChild(entry);
+                        });
+                    }
+                    
+                    futureContainer.appendChild(entriesDiv);
+                });
             }
             
             // Add older past dates (initially hidden)
@@ -5546,50 +5781,27 @@
             endDate.setMonth(today.getMonth() + 3);
             const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
             
-            // Using a simplified approach using direct initialization 
-            
             // Set widget properties
             const widgetTitle = isAllLocations ? 'Zagreb Bibliobus - Schedule' : `Zagreb Bibliobus - ${locationName}`;
             const widgetDescription = isAllLocations 
                 ? 'Schedule of Zagreb mobile library' 
                 : `Zagreb mobile library schedule for ${locationName}`;
-                
+            
             // Use absolute URL for iCal file (assume we're on the same domain)
             const host = window.location.origin;
             const calPath = calendarFile || 'bibliobus-calendar.ics';
             
-            // Create add-to-calendar button using the newer API
-            const atcbElement = document.createElement('div');
-            atcbElement.className = 'atcb';
-            atcbElement.style.display = 'none';
+            // Create a direct button to simulate Add to Calendar functionality
+            const buttonHTML = `
+                <a href="${host}/${calPath}" download class="calendar-download-btn">
+                    <i class="fas fa-calendar-alt"></i> Add to calendar
+                </a>
+            `;
             
-            const configProps = {
-                name: widgetTitle,
-                description: widgetDescription,
-                startDate: startDate,
-                endDate: endDateStr,
-                options: ['Apple', 'Google', 'iCal', 'Microsoft365', 'Outlook.com', 'Yahoo'],
-                timeZone: 'Europe/Zagreb',
-                iCalFileName: calPath.split('/').pop(),
-                listStyle: 'dropdown',
-                buttonStyle: 'round',
-                label: 'Add to calendar',
-                language: 'en',
-                ical: `${host}/${calPath}`
-            };
+            widgetContainer.innerHTML = buttonHTML;
             
-            // Convert config to JSON string and add as data attribute
-            atcbElement.setAttribute('data-config', JSON.stringify(configProps));
-            
-            // Append to container
-            widgetContainer.appendChild(atcbElement);
-            
-            // Manually initialize if the library is loaded
-            if (typeof atcb_init === 'function') {
-                setTimeout(() => {
-                    atcb_init();
-                }, 100);
-            }
+            // Log to debug that the widget has been updated
+            console.log('Add to Calendar widget updated with direct download link');
         }
         
         // Initialize views when the page loads
