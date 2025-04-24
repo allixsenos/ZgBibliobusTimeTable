@@ -119,21 +119,26 @@ public static class WebsiteGenerator
             sb.AppendLine($"<td>{sesija.Dan}</td>");
             sb.AppendLine($"<td>{formattedDate}</td>");
             sb.AppendLine($"<td>{sesija.Vrijeme}</td>");
-            sb.AppendLine($"<td>{sesija.Lokacija}</td>");
-            
-            // Log for debugging
-            Console.WriteLine($"Map info for '{sesija.Lokacija}': URL={sesija.MapUrl}, Coords={sesija.Coordinates}, Address={sesija.Address}");
-            
-            // Add map link if available
+            // Make location name a link to map if available
             if (!string.IsNullOrEmpty(sesija.MapUrl))
             {
-                sb.AppendLine($"<td><a href=\"{sesija.MapUrl}\" target=\"_blank\" class=\"map-link\" " +
-                    $"title=\"{(string.IsNullOrEmpty(sesija.Address) ? sesija.Lokacija : sesija.Address)}\">" +
-                    $"<i class=\"fas fa-map-marker-alt\"></i></a></td>");
+                string title = string.IsNullOrEmpty(sesija.Address) ? sesija.Lokacija : sesija.Address;
+                sb.AppendLine($"<td><a href=\"{sesija.MapUrl}\" target=\"_blank\" class=\"location-link\" " +
+                    $"title=\"{title}\">{sesija.Lokacija}</a></td>");
+                
+                // Keep empty map column for consistency
+                sb.AppendLine("<td></td>");
+                
+                // Log for debugging
+                Console.WriteLine($"Added location with map link: '{sesija.Lokacija}', URL={sesija.MapUrl}");
             }
             else
             {
+                // No map link, just display the location name
+                sb.AppendLine($"<td>{sesija.Lokacija}</td>");
                 sb.AppendLine("<td></td>");
+                
+                Console.WriteLine($"Added location without map link: '{sesija.Lokacija}'");
             }
             
             sb.AppendLine("</tr>");

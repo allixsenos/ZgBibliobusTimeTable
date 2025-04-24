@@ -53,7 +53,7 @@
                         <th>Datum</th>
                         <th>Vrijeme</th>
                         <th>Lokacija</th>
-                        <th>Karta</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="schedule-data">
@@ -398,26 +398,27 @@
                                 s.vrijeme && s.vrijeme.startsWith(entry.startTime)
                             );
                             
-                            let mapLink = '';
+                            // Generate location name with map link if available
+                            let locationHtml = '';
                             if (sessionData && sessionData.mapUrl) {
-                                mapLink = `<a href="${sessionData.mapUrl}" target="_blank" class="map-link" 
+                                // Make location name itself a link to the map
+                                locationHtml = `<a href="${sessionData.mapUrl}" target="_blank" class="location-link" 
                                     title="${sessionData.address || sessionData.lokacija}">
-                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${entry.location}
                                 </a>`;
+                            } else {
+                                // No map link, just display the location name
+                                locationHtml = entry.location;
                             }
                             
-                            // Add additional debug
-                            console.log(`Adding calendar entry: time=${entry.startTime}, location=${entry.location}, hasMapLink=${mapLink !== ''}`);
+                            // Add debug info
+                            console.log(`Building entry HTML: time=${entry.startTime}, location="${entry.location}", hasMap=${sessionData && sessionData.mapUrl ? 'true' : 'false'}`);
                             
-                            // Completely rewrite the calendar entry HTML with stronger styling
-                            console.log(`Building entry HTML: time=${entry.startTime}, location="${entry.location}", hasMap=${mapLink !== ''}`);
-                            
-                            // Create calendar entry with explicit inline styles to ensure visibility
+                            // Create calendar entry with updated structure
                             calendarHTML += `<div class="calendar-location">
                                 <div class="location-entry-container">
                                     <span class="location-time" style="font-weight:bold; color:#0066cc;">${entry.startTime}</span>
-                                    <span class="location-name" style="flex-grow:1; color:#555; display:inline-block;">${entry.location}</span>
-                                    ${mapLink ? `<span class="location-map" style="display:flex; flex-shrink:0;">${mapLink}</span>` : ''}
+                                    <span class="location-name" style="flex-grow:1; color:#555; display:inline-block;">${locationHtml}</span>
                                 </div>
                             </div>`;
                         });
