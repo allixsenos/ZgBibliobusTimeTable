@@ -393,6 +393,44 @@ tr.non-working-day {
     border-bottom: none;
 }
 
+/* New calendar location styling */
+.location-entry-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    font-size: 0.75rem;
+    overflow: hidden;
+    gap: 3px;
+    padding: 2px 0;
+}
+
+.location-time {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.location-name {
+    color: var(--dark-gray);
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: normal;
+    display: inline-block;
+    max-width: calc(100% - 30px);
+    margin-right: 3px;
+}
+
+.location-map {
+    display: flex;
+    margin-left: 3px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+/* Keep for backwards compatibility */
 .location-entry {
     font-size: 0.75rem;
     white-space: nowrap;
@@ -400,6 +438,9 @@ tr.non-working-day {
     text-overflow: ellipsis;
     display: inline-block;
     max-width: calc(100% - 25px);
+    color: var(--dark-gray); /* Ensure text color is visible */
+    vertical-align: middle; /* Align properly with map icon */
+    font-weight: normal; /* Ensure font weight is normal */
 }
 
 /* Style for map links */
@@ -407,15 +448,17 @@ tr.non-working-day {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 20px;
     width: 20px;
     height: 20px;
     border-radius: 50%;
     background-color: var(--primary-color);
     color: white;
-    margin-left: 5px;
+    margin-left: 3px;
     font-size: 0.7rem;
     text-decoration: none;
     transition: background-color 0.2s;
+    flex-shrink: 0;
 }
 
 .map-link:hover {

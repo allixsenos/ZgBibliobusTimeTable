@@ -406,9 +406,19 @@
                                 </a>`;
                             }
                             
+                            // Add additional debug
+                            console.log(`Adding calendar entry: time=${entry.startTime}, location=${entry.location}, hasMapLink=${mapLink !== ''}`);
+                            
+                            // Completely rewrite the calendar entry HTML with stronger styling
+                            console.log(`Building entry HTML: time=${entry.startTime}, location="${entry.location}", hasMap=${mapLink !== ''}`);
+                            
+                            // Create calendar entry with explicit inline styles to ensure visibility
                             calendarHTML += `<div class="calendar-location">
-                                <span class="location-entry">${entry.startTime} ${entry.location}</span>
-                                ${mapLink}
+                                <div class="location-entry-container">
+                                    <span class="location-time" style="font-weight:bold; color:#0066cc;">${entry.startTime}</span>
+                                    <span class="location-name" style="flex-grow:1; color:#555; display:inline-block;">${entry.location}</span>
+                                    ${mapLink ? `<span class="location-map" style="display:flex; flex-shrink:0;">${mapLink}</span>` : ''}
+                                </div>
                             </div>`;
                         });
                     }
@@ -453,6 +463,33 @@
                     });
                 });
             });
+            
+            // Debug: Examine the rendered calendar entries
+            setTimeout(() => {
+                console.log('Examining rendered calendar entries:');
+                document.querySelectorAll('.calendar-location').forEach((el, idx) => {
+                    console.log(`Entry ${idx}:`, el.innerHTML);
+                    
+                    // Check location-name specifically
+                    const locationName = el.querySelector('.location-name');
+                    if (locationName) {
+                        console.log(`  Location name: "${locationName.textContent}"`);
+                        console.log(`  Location name style:`, window.getComputedStyle(locationName));
+                        console.log(`  Location name visibility:`, locationName.offsetWidth > 0 && locationName.offsetHeight > 0);
+                    } else {
+                        console.log('  No location name element found');
+                    }
+                    
+                    // Check location-map
+                    const locationMap = el.querySelector('.location-map');
+                    if (locationMap) {
+                        console.log(`  Location map present`);
+                        console.log(`  Location map style:`, window.getComputedStyle(locationMap));
+                    } else {
+                        console.log('  No location map element found');
+                    }
+                });
+            }, 1000);
         }
         
         // Initialize the calendar view when the page loads
