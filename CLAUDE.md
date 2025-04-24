@@ -21,3 +21,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Keep consistent method organization in classes
 - Include appropriate XML documentation for public APIs
 - Use Task-based asynchronous pattern for I/O operations
+- Always end files with a newline

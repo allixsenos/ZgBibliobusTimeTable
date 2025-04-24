@@ -47,9 +47,9 @@ public static class ICalGenerator
                     string uid = $"zgbibliobus-{eventCount}@kgz.hr";
                     
                     // Parse the date
-                    if (DateTime.TryParse(sesija.Datum, out DateTime date))
+                    if (DateTime.TryParse(sesija.Datum, out DateTime eventDate))
                     {
-                        string dateString = date.ToString("yyyyMMdd");
+                        string dateString = eventDate.ToString("yyyyMMdd");
                         
                         sb.AppendLine("BEGIN:VEVENT");
                         sb.AppendLine($"UID:{uid}");
@@ -65,7 +65,7 @@ public static class ICalGenerator
             }
 
             // Parse the date and time information
-            if (DateTime.TryParse(sesija.Datum, out DateTime date))
+            if (DateTime.TryParse(sesija.Datum, out DateTime eventDate))
             {
                 // Parse time range (format: "09:00-11:15")
                 string[] timeRange = sesija.Vrijeme.Split('-');
@@ -94,11 +94,11 @@ public static class ICalGenerator
 
                 // Create start and end DateTime objects
                 DateTime startDateTime = new DateTime(
-                    date.Year, date.Month, date.Day, 
+                    eventDate.Year, eventDate.Month, eventDate.Day, 
                     startHour, startMinute, 0);
                 
                 DateTime endDateTime = new DateTime(
-                    date.Year, date.Month, date.Day, 
+                    eventDate.Year, eventDate.Month, eventDate.Day, 
                     endHour, endMinute, 0);
 
                 // Format dates for iCalendar
