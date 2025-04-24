@@ -326,7 +326,27 @@ tr.non-working-day {
 }
 
 /* Add to Calendar Button customization */
-.calendar-widget .atcb-button {
+.calendar-add-button {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-add-button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Style the calendar dropdown that will be generated */
+.atcb-list {
     font-family: 'Open Sans', sans-serif !important;
 }
 
