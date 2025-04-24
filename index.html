@@ -15,7 +15,7 @@
         <div class="container">
             <h1><i class="fas fa-bus"></i> Zagreb Bibliobus</h1>
             <p>Raspored bibliobusnih stajališta</p>
-            <div class="updated">Ažurirano: 24.04.2025. 12:08</div>
+            <div class="updated">Ažurirano: 24.04.2025. 12:17</div>
         </div>
     </header>
 
@@ -4878,8 +4878,27 @@
             // Sort dates chronologically
             const sortedDates = Object.keys(sessionsByDate).sort();
             
-            // For each date, create a section
-            sortedDates.forEach(date => {
+            // Determine which dates are in the past
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Set to start of today
+            
+            const futureDates = [];
+            const pastDates = [];
+            
+            sortedDates.forEach(dateString => {
+                const dateParts = dateString.split('-');
+                const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); // Months are 0-indexed
+                if (date >= today) {
+                    futureDates.push(dateString);
+                } else {
+                    pastDates.push(dateString);
+                }
+            });
+            
+            console.log(`Found ${futureDates.length} future dates and ${pastDates.length} past dates`);
+            
+            // Function to create date section - reused for both future and past dates
+            function createDateSection(date, isPastDate = false) {
                 const sessions = sessionsByDate[date];
                 const isNonWorking = sessions.some(s => s.isNeradniDan);
                 
@@ -4888,7 +4907,7 @@
                 
                 // Create date heading
                 const heading = document.createElement('h2');
-                heading.className = 'date-heading';
+                heading.className = isPastDate ? 'date-heading past-date-heading' : 'date-heading';
                 
                 // Convert ISO date to Croatian format
                 const croatianDate = isoToCroatianDate(date);
@@ -4898,7 +4917,7 @@
                 
                 // Create entries container
                 const entriesDiv = document.createElement('div');
-                entriesDiv.className = 'schedule-entries';
+                entriesDiv.className = isPastDate ? 'schedule-entries past-schedule-entries' : 'schedule-entries';
                 
                 if (isNonWorking) {
                     // Non-working day
@@ -4918,22 +4937,40 @@
                         // Create time element
                         const timeDiv = document.createElement('div');
                         timeDiv.className = 'schedule-entry-time';
-                        timeDiv.textContent = session.vrijeme;
+                        
+                        // Handle raw HTML in time field
+                        if (session.vrijeme.includes('<') && session.vrijeme.includes('>')) {
+                            // Extract text content from HTML 
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = session.vrijeme;
+                            timeDiv.textContent = tempDiv.textContent.trim();
+                        } else {
+                            timeDiv.textContent = session.vrijeme;
+                        }
                         
                         // Create location element with possible link
                         const locationDiv = document.createElement('div');
                         locationDiv.className = 'schedule-entry-location';
                         
+                        // Get clean location text
+                        let locationText = session.lokacija;
+                        if (locationText.includes('<') && locationText.includes('>')) {
+                            // Extract text content from HTML
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = locationText;
+                            locationText = tempDiv.textContent.trim();
+                        }
+                        
                         if (session.mapUrl) {
                             const link = document.createElement('a');
                             link.href = session.mapUrl;
                             link.className = 'location-link';
-                            link.textContent = session.lokacija;
+                            link.textContent = locationText;
                             link.target = '_blank';
-                            link.title = session.address || session.lokacija;
+                            link.title = session.address || locationText;
                             locationDiv.appendChild(link);
                         } else {
-                            locationDiv.textContent = session.lokacija;
+                            locationDiv.textContent = locationText;
                         }
                         
                         // Add time and location to entry
@@ -4946,14 +4983,40 @@
                 }
                 
                 container.appendChild(entriesDiv);
-            });
+            }
             
-            // If no entries, show a message
+            // First display future dates
+            futureDates.forEach(date => createDateSection(date, false));
+            
+            // If there are past dates, add a button to show them
+            if (pastDates.length > 0) {
+                const showPastButton = document.createElement('button');
+                showPastButton.className = 'past-dates-button';
+                showPastButton.textContent = 'Prikaži prethodni raspored';
+                showPastButton.addEventListener('click', function() {
+                    document.body.classList.toggle('show-past-dates');
+                    this.textContent = document.body.classList.contains('show-past-dates') 
+                        ? 'Sakrij prethodni raspored' 
+                        : 'Prikaži prethodni raspored';
+                });
+                container.appendChild(showPastButton);
+                
+                // Add past dates (initially hidden)
+                pastDates.forEach(date => createDateSection(date, true));
+            }
+            
+            // If no entries or only past dates, show appropriate message
             if (sortedDates.length === 0) {
                 const noData = document.createElement('p');
                 noData.className = 'no-data-message';
                 noData.textContent = 'Nema podataka za odabranu lokaciju.';
                 container.appendChild(noData);
+            } else if (futureDates.length === 0 && pastDates.length > 0) {
+                const noFutureData = document.createElement('p');
+                noFutureData.className = 'no-data-message';
+                noFutureData.textContent = 'Nema budućih datuma za odabranu lokaciju.';
+                // Insert this message before the past dates button
+                container.insertBefore(noFutureData, container.querySelector('.past-dates-button'));
             }
         }
         
@@ -5035,6 +5098,12 @@
                 const isoDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const croatianDateString = `${String(day).padStart(2, '0')}.${String(month + 1).padStart(2, '0')}.${year}.`;
                 
+                // Check if this day is in the past
+                const calendarDate = new Date(year, month, day);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const isPastDate = calendarDate < today;
+                
                 // Find schedule entries for this day, filtered by selected location if any
                 let dayEntries = scheduleData.filter(entry => entry.datum === isoDateString);
                 
@@ -5056,6 +5125,9 @@
                 let dayClass = 'calendar-day';
                 if (dayEntries.length > 0) {
                     dayClass += ' has-events';
+                }
+                if (isPastDate) {
+                    dayClass += ' past-date';
                 }
                 
                 calendarHTML += `<div class="${dayClass}" data-date="${croatianDateString}">`;
@@ -5173,22 +5245,39 @@
             
             document.getElementById('calendar-container').innerHTML = calendarHTML;
             
-            // Add click event to days with events
-            document.querySelectorAll('.calendar-day.has-events').forEach(day => {
-                day.addEventListener('click', () => {
-                    const date = day.dataset.date;
-                    
-                    // Switch to table view
-                    document.querySelector('.data-tab[data-tab="table"]').click();
-                    
-                    // Highlight the row with this date by adding a CSS class
-                    document.querySelectorAll('#schedule-data tr').forEach(row => {
-                        row.classList.remove('highlighted-row');
-                        if (row.cells && row.cells[1] && row.cells[1].textContent === date) {
-                            row.classList.add('highlighted-row');
-                        }
-                    });
+            // Add a toggle for past dates in the calendar if needed
+            const calendarContainer = document.getElementById('calendar-container');
+            const hasPastDates = document.querySelectorAll('.calendar-day.past-date.has-events').length > 0;
+            
+            // Remove any existing button before adding a new one
+            const existingButton = calendarContainer.querySelector('.past-dates-button');
+            if (existingButton) {
+                existingButton.remove();
+            }
+            
+            if (hasPastDates) {
+                const showPastButton = document.createElement('button');
+                showPastButton.className = 'past-dates-button';
+                showPastButton.textContent = 'Prikaži prethodni raspored';
+                showPastButton.addEventListener('click', function() {
+                    document.body.classList.toggle('show-past-dates');
+                    this.textContent = document.body.classList.contains('show-past-dates') 
+                        ? 'Sakrij prethodni raspored' 
+                        : 'Prikaži prethodni raspored';
                 });
+                calendarContainer.insertBefore(showPastButton, calendarContainer.firstChild);
+            }
+            
+            // No longer adding click events to days with events - we keep users in calendar view
+            document.querySelectorAll('.calendar-day.has-events').forEach(day => {
+                // Make the day look clickable but don't add navigation behavior
+                day.title = "Kliknite za detaljne informacije";
+                day.style.cursor = "pointer";
+                
+                // Optional: You could add a click handler that expands the day's events if you want
+                // day.addEventListener('click', () => {
+                //     // Expand day events or show more details if needed in the future
+                // });
             });
             
             // Debug: Examine the rendered calendar entries
