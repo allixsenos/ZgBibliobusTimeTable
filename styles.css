@@ -430,6 +430,18 @@ tr.non-working-day {
     align-items: center;
 }
 
+/* New class for location links */
+.location-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.location-link:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
 /* Keep for backwards compatibility */
 .location-entry {
     font-size: 0.75rem;
@@ -443,7 +455,12 @@ tr.non-working-day {
     font-weight: normal; /* Ensure font weight is normal */
 }
 
-/* Style for map links */
+/* Hide empty map column */
+table th:last-child, table td:last-child {
+    display: none;
+}
+
+/* Keep old map link style for backwards compatibility */
 .map-link {
     display: inline-flex;
     align-items: center;
