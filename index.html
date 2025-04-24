@@ -15,33 +15,28 @@
         <div class="container">
             <h1><i class="fas fa-bus"></i> Zagreb Bibliobus</h1>
             <p>Raspored bibliobusnih stajališta</p>
-            <div class="updated">Ažurirano: 24.04.2025. 11:03</div>
+            <div class="updated">Ažurirano: 24.04.2025. 11:12</div>
         </div>
     </header>
 
     <main class="container">
-        <div class="search-container">
-            <input type="text" id="search" placeholder="Pretraži po lokaciji ili datumu...">
-            <select id="filter-day">
-                <option value="">Svi dani</option>
-                <option value="PONEDJELJAK">Ponedjeljak</option>
-                <option value="UTORAK">Utorak</option>
-                <option value="SRIJEDA">Srijeda</option>
-                <option value="ČETVRTAK">Četvrtak</option>
-                <option value="PETAK">Petak</option>
-                <option value="SUBOTA">Subota</option>
-                <option value="NEDJELJA">Nedjelja</option>
-            </select>
-            <select id="filter-location" aria-label="Filtriraj lokaciju i preuzmi specifični kalendar">
-                <option value="" selected>Odaberi lokaciju</option>
-                <!-- Additional options will be populated from JSON data -->
-            </select>
-            <label for="filter-location" class="sr-only">Odaberi lokaciju za filtriranje i preuzimanje kalendara</label>
-        </div>
-
-        <div class="data-info">
-            <div class="data-tab active" data-tab="table">Tablični prikaz</div>
-            <div class="data-tab" data-tab="calendar">Kalendarski prikaz</div>
+        <div class="navigation-container">
+            <div class="data-views">
+                <div class="data-tab active" data-tab="table">Tablični prikaz</div>
+                <div class="data-tab" data-tab="calendar">Kalendarski prikaz</div>
+            </div>
+            
+            <div class="location-tabs-wrapper">
+                <div class="location-tabs" id="location-tabs">
+                    <div class="location-tab active" data-location-id="">Sve lokacije</div>
+                    <!-- Location tabs will be populated from JSON data -->
+                </div>
+                <div class="location-tabs-scroll">
+                    <button class="scroll-btn scroll-left" aria-label="Scroll left"><i class="fas fa-chevron-left"></i></button>
+                    <button class="scroll-btn scroll-right" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            
             <div class="data-download">
                 <a href="bibliobus-data.json" download><i class="fas fa-download"></i> Preuzmi JSON</a>
                 <a id="calendar-download" href="bibliobus-calendar.ics" download>
@@ -2284,7 +2279,7 @@
             <div class="calendar-info">
                 <p>Za dodavanje u Google Calendar ili drugi kalendar, preuzmite <a id="calendar-info-link" href="bibliobus-calendar.ics" download>iCalendar datoteku</a>, 
                 a zatim je uvezite u vašu aplikaciju za kalendar.</p>
-                <p class="location-specific-note"><strong>Važno:</strong> Kada odaberete lokaciju iz padajućeg izbornika, 
+                <p class="location-specific-note"><strong>Važno:</strong> Kada odaberete lokaciju iznad (npr. "KAJZERICA"), 
                 gumb za preuzimanje kalendara će automatski preuzeti iCalendar <strong>samo za odabranu lokaciju</strong>.</p>
             </div>
             <div id="calendar-container">
@@ -5870,77 +5865,93 @@
             return `${parts[2]}-${parts[1]}-${parts[0]}`;
         }
         
-        // Initialize the location filter dropdown
-        const locationFilterSelect = document.getElementById('filter-location');
+        // Initialize location tabs
+        const locationTabsContainer = document.getElementById('location-tabs');
         
-        // Add location options to the dropdown (skip "all locations" since we already have a placeholder)
+        // Add location options to the tabs (first one "Sve lokacije" is already there)
         locationOptions.slice(1).forEach(location => {
-            const option = document.createElement('option');
-            option.value = location.value;
-            option.textContent = location.name;
-            option.dataset.calendarFile = location.calendarFile;
-            locationFilterSelect.appendChild(option);
+            const tab = document.createElement('div');
+            tab.className = 'location-tab';
+            tab.textContent = location.name;
+            tab.dataset.locationId = location.value;
+            tab.dataset.calendarFile = location.calendarFile;
+            locationTabsContainer.appendChild(tab);
         });
         
-        // Update the placeholder option with the "all locations" calendar file
-        const placeholderOption = locationFilterSelect.options[0];
-        placeholderOption.dataset.calendarFile = "bibliobus-calendar.ics";
+        // Make sure the "All locations" tab has the correct data attributes
+        const allLocationsTab = locationTabsContainer.querySelector('.location-tab.active');
+        allLocationsTab.dataset.calendarFile = "bibliobus-calendar.ics";
         
-        // Update calendar download links when location changes
-        locationFilterSelect.addEventListener('change', function() {
-            const selectedOption = locationFilterSelect.options[locationFilterSelect.selectedIndex];
-            const calendarFile = selectedOption.dataset.calendarFile;
-            const locationName = selectedOption.textContent;
-            const isAllLocations = selectedOption.value === '';
-            
-            // Update download links
-            document.getElementById('calendar-download').href = calendarFile;
-            document.getElementById('calendar-info-link').href = calendarFile;
-            
-            // Update download text
-            const downloadTextElement = document.getElementById('calendar-download-text');
-            if (isAllLocations) {
-                downloadTextElement.textContent = 'Preuzmi iCalendar (sve lokacije)';
-            } else {
-                downloadTextElement.textContent = `Preuzmi iCalendar (${locationName})`;
-            }
-            
-            // Update calendar and table views
-            filterSchedule();
-            if (calendarInitialized) {
-                renderCalendar(currentDate);
-            }
+        // Add click events to location tabs
+        document.querySelectorAll('.location-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Update active tab
+                document.querySelectorAll('.location-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const locationId = tab.dataset.locationId;
+                const calendarFile = tab.dataset.calendarFile;
+                const locationName = tab.textContent;
+                const isAllLocations = locationId === '';
+                
+                // Update download links
+                document.getElementById('calendar-download').href = calendarFile;
+                document.getElementById('calendar-info-link').href = calendarFile;
+                
+                // Update download text
+                const downloadTextElement = document.getElementById('calendar-download-text');
+                if (isAllLocations) {
+                    downloadTextElement.textContent = 'Preuzmi iCalendar (sve lokacije)';
+                } else {
+                    downloadTextElement.textContent = `Preuzmi iCalendar (${locationName})`;
+                }
+                
+                // Update calendar and table views
+                filterScheduleByLocation(locationId);
+                if (calendarInitialized) {
+                    renderCalendar(currentDate);
+                }
+            });
         });
         
-        // Search functionality
-        document.getElementById('search').addEventListener('input', filterSchedule);
-        document.getElementById('filter-day').addEventListener('change', filterSchedule);
-        document.getElementById('filter-location').addEventListener('change', filterSchedule);
+        // Add horizontal scrolling for location tabs
+        const tabsContainer = document.querySelector('.location-tabs');
+        const scrollLeftBtn = document.querySelector('.scroll-left');
+        const scrollRightBtn = document.querySelector('.scroll-right');
         
-        function filterSchedule() {
-            const searchText = document.getElementById('search').value.toLowerCase();
-            const dayFilter = document.getElementById('filter-day').value;
-            const locationFilter = document.getElementById('filter-location').value;
+        scrollLeftBtn.addEventListener('click', () => {
+            tabsContainer.scrollBy({ left: -200, behavior: 'smooth' });
+        });
+        
+        scrollRightBtn.addEventListener('click', () => {
+            tabsContainer.scrollBy({ left: 200, behavior: 'smooth' });
+        });
+        
+        // Check if scrolling is needed and show/hide scroll buttons accordingly
+        function updateScrollButtons() {
+            const hasHorizontalScroll = tabsContainer.scrollWidth > tabsContainer.clientWidth;
+            const scrollContainer = document.querySelector('.location-tabs-scroll');
+            scrollContainer.style.display = hasHorizontalScroll ? 'flex' : 'none';
+        }
+        
+        // Update on load and on window resize
+        window.addEventListener('load', updateScrollButtons);
+        window.addEventListener('resize', updateScrollButtons);
+        
+        // Filter functionality based on location
+        function filterScheduleByLocation(locationId) {
             const rows = document.getElementById('schedule-data').getElementsByTagName('tr');
             
             for (let i = 0; i < rows.length; i++) {
-                const day = rows[i].cells[0].textContent;
-                const date = rows[i].cells[1].textContent;
-                const time = rows[i].cells[2].textContent;
                 const location = rows[i].cells[3].textContent;
-                const locationId = rows[i].dataset.locationId || '';
+                const rowLocationId = rows[i].dataset.locationId || '';
                 
-                const matchesSearch = 
-                    day.toLowerCase().includes(searchText) ||
-                    date.toLowerCase().includes(searchText) ||
-                    time.toLowerCase().includes(searchText) ||
-                    location.toLowerCase().includes(searchText);
+                // Show all rows if no location filter, or if location matches, or if it's a non-working day
+                const matchesLocation = locationId === '' || 
+                    rowLocationId === locationId || 
+                    (locationId === '' && location.includes("neradni dan"));
                 
-                const matchesDay = dayFilter === '' || day.trim() === dayFilter;
-                const matchesLocation = locationFilter === '' || locationId === locationFilter || 
-                    (locationFilter === '' && location.includes("neradni dan"));
-                
-                rows[i].style.display = (matchesSearch && matchesDay && matchesLocation) ? '' : 'none';
+                rows[i].style.display = matchesLocation ? '' : 'none';
             }
         }
         
@@ -6006,7 +6017,8 @@
             
             const year = date.getFullYear();
             const month = date.getMonth();
-            const locationFilter = document.getElementById('filter-location').value;
+            const activeTab = document.querySelector('.location-tab.active');
+            const locationFilter = activeTab ? activeTab.dataset.locationId : '';
             
             document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
             
@@ -6133,13 +6145,17 @@
             document.querySelectorAll('.calendar-day.has-events').forEach(day => {
                 day.addEventListener('click', () => {
                     const date = day.dataset.date;
-                    document.getElementById('search').value = date;
-                    document.getElementById('filter-day').value = '';
                     
                     // Switch to table view
                     document.querySelector('.data-tab[data-tab="table"]').click();
                     
-                    filterSchedule();
+                    // Highlight the row with this date by adding a CSS class
+                    document.querySelectorAll('#schedule-data tr').forEach(row => {
+                        row.classList.remove('highlighted-row');
+                        if (row.cells && row.cells[1] && row.cells[1].textContent === date) {
+                            row.classList.add('highlighted-row');
+                        }
+                    });
                 });
             });
         }
